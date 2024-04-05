@@ -1,0 +1,6 @@
+engine:
+  grpc_address: ":9000"
+
+services:
+  integration:
+    grpc_address: "integration:9001"

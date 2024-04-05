@@ -1,0 +1,29 @@
+services:
+  integration:
+    build:
+      context: ..
+      dockerfile: build/integration/Dockerfile
+    container_name: integration
+    restart: on-failure
+
+  engine:
+    build:
+      context: ..
+      dockerfile: build/engine/Dockerfile
+    container_name: engine
+    restart: on-failure
+    depends_on:
+      - integration
+
+  gateway:
+    build:
+      context: ..
+      dockerfile: build/gateway/Dockerfile
+    container_name: gateway
+    restart: on-failure
+    env_file:
+      - gateway.env
+    ports:
+      - "8080:8080"
+    depends_on:
+      - engine

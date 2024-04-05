@@ -1,0 +1,45 @@
+integration:
+  grpc_address: ":9001"
+
+  yookassa:
+    api:
+      secret_key: ""
+
+    channels:
+      yookassa_card:
+        
+
+    methods:
+      payment:
+        - id: "CARD"
+          name:
+            ru: "Банковская карта"
+            en: "Bank card"
+          external_system: "yookassa"
+          external_method: "yookassa_card"
+          limits:
+            currency: "RUB"
+            min_amount: 100.0
+            max_amount: 60000.0
+          commission:
+            type: "percent"
+            percent: 0.0
+
+      payout:
+        - id: "CARD"
+          name:
+            ru: "Банковская карта"
+            en: "Bank card"
+          external_system: "yookassa"
+          external_method: "yookassa_card"
+          limits:
+            currency: "RUB"
+            min_amount: 1000.0
+            max_amount: 30000.0
+          commission:
+            type: "percent"
+            percent: 0.0
+
+services:
+  engine:
+    grpc_address: "engine:9000"

@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package engine;
+
+import "api/proto/shared/method.proto";
+
+option go_package = "github.com/tmrrwnxtsn/ecomway/api/proto/engine";
+
+service EngineService {
+  rpc AvailableMethods(AvailableMethodsRequest) returns (AvailableMethodsResponse);
+}
+
+message AvailableMethodsRequest {
+  int64 user_id = 1;
+  shared.TransactionType transaction_type = 2;
+}
+
+message AvailableMethodsResponse {
+  repeated shared.Method methods = 1;
+}
+
