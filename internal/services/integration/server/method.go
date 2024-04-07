@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"sync"
 
 	pb "github.com/tmrrwnxtsn/ecomway/api/proto/integration"
@@ -11,8 +12,23 @@ import (
 )
 
 func (s *Server) AvailableMethods(ctx context.Context, request *pb.AvailableMethodsRequest) (*pb.AvailableMethodsResponse, error) {
-	userID := request.GetUserId()
 	txType := convert.TransactionTypeFromProto(request.GetTransactionType())
+
+	if request.ExternalSystem != nil {
+		integration, ok := s.integrations[request.GetExternalSystem()]
+		if !ok || integration == nil {
+			return nil, fmt.Errorf("unknown external system: %q", request.GetExternalSystem())
+		}
+
+		methods, err := integration.AvailableMethods(ctx, txType, request.GetCurrency())
+		if err != nil {
+			return nil, err
+		}
+
+		return &pb.AvailableMethodsResponse{
+			Methods: convert.MethodsToProto(methods),
+		}, nil
+	}
 
 	var wg sync.WaitGroup
 
@@ -21,16 +37,16 @@ func (s *Server) AvailableMethods(ctx context.Context, request *pb.AvailableMeth
 	for _, integration := range s.integrations {
 		if integration != nil {
 			wg.Add(1)
-			go func(ctx context.Context, integration Integration, userID int64, txType model.TransactionType) {
+			go func(ctx context.Context, integration Integration, txType model.TransactionType, currency string) {
 				defer wg.Done()
 
-				methods, err := integration.AvailableMethods(ctx, userID, txType)
+				methods, err := integration.AvailableMethods(ctx, txType, currency)
 				if err != nil {
 					return
 				}
 
 				methodsChan <- methods
-			}(ctx, integration, userID, txType)
+			}(ctx, integration, txType, request.GetCurrency())
 		}
 	}
 

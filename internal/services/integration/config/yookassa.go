@@ -6,4 +6,5 @@ type YooKassaConfig struct {
 }
 
 type YooKassaAPIConfig struct {
+	SecretKey string `yaml:"secret_key"`
 }

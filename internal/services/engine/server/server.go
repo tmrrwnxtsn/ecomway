@@ -11,13 +11,19 @@ import (
 )
 
 type MethodService interface {
-	AvailableMethods(ctx context.Context, userID int64, txType model.TransactionType) ([]model.Method, error)
+	All(ctx context.Context, txType model.TransactionType, currency string) ([]model.Method, error)
+	GetOne(ctx context.Context, txType model.TransactionType, currency, externalSystem, externalMethod string) (*model.Method, error)
+}
+
+type LimitService interface {
+	ValidateAmount(amount int64, currency string, method *model.Method) error
 }
 
 type Server struct {
 	server        *grpc.Server
 	listener      net.Listener
 	methodService MethodService
+	limitService  LimitService
 	pb.UnimplementedEngineServiceServer
 }
 
@@ -25,6 +31,7 @@ type Options struct {
 	Server        *grpc.Server
 	Listener      net.Listener
 	MethodService MethodService
+	LimitService  LimitService
 }
 
 func NewServer(opts Options) *Server {
@@ -32,6 +39,7 @@ func NewServer(opts Options) *Server {
 	s.server = opts.Server
 	s.listener = opts.Listener
 	s.methodService = opts.MethodService
+	s.limitService = opts.LimitService
 	return &s
 }
 

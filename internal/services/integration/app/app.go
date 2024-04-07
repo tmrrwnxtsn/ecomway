@@ -32,7 +32,7 @@ func New(configPath string) *App {
 	}
 
 	integrations := map[string]server.Integration{
-		yookassa.PaymentSystem: yookassa.NewIntegration(cfg.Integration.YooKassa),
+		yookassa.ExternalSystem: yookassa.NewIntegration(cfg.Integration.YooKassa),
 	}
 
 	grpcServer := grpc.NewServer()

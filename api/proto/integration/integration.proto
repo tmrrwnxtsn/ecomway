@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package integration;
 
-import "api/proto/shared/method.proto";
+import "api/proto/shared/shared.proto";
 
 option go_package = "github.com/tmrrwnxtsn/ecomway/api/proto/integration";
 
@@ -11,8 +11,9 @@ service IntegrationService {
 }
 
 message AvailableMethodsRequest {
-  int64 user_id = 1;
-  shared.TransactionType transaction_type = 2;
+  shared.TransactionType transaction_type = 1;
+  string currency = 2;
+  optional string external_system = 3;
 }
 
 message AvailableMethodsResponse {

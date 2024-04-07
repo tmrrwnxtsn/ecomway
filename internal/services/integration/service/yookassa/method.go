@@ -8,7 +8,7 @@ import (
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/model"
 )
 
-func (i *Integration) AvailableMethods(_ context.Context, _ int64, txType model.TransactionType) ([]model.Method, error) {
+func (i *Integration) AvailableMethods(_ context.Context, txType model.TransactionType, _ string) ([]model.Method, error) {
 	switch txType {
 	case model.TransactionTypePayment:
 		return slices.Clone(i.paymentMethods), nil

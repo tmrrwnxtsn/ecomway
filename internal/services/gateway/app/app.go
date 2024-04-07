@@ -16,6 +16,7 @@ import (
 	"github.com/tmrrwnxtsn/ecomway/internal/services/gateway/client/engine"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/gateway/config"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/gateway/service/method"
+	"github.com/tmrrwnxtsn/ecomway/internal/services/gateway/service/payment"
 )
 
 type App struct {
@@ -38,10 +39,12 @@ func New(configPath string) *App {
 	engineClient := engine.NewClient(pbEngine.NewEngineServiceClient(engineConn))
 
 	methodService := method.NewService(engineClient)
+	paymentService := payment.NewService(engineClient)
 
 	apiHandlerV1 := v1.NewHandler(v1.HandlerOptions{
-		MethodService: methodService,
-		APIKey:        cfg.Gateway.APIKey,
+		MethodService:  methodService,
+		PaymentService: paymentService,
+		APIKey:         cfg.Gateway.APIKey,
 	})
 	apiServer := api.NewServer(apiHandlerV1)
 

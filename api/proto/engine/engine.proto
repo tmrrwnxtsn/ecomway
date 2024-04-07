@@ -2,20 +2,36 @@ syntax = "proto3";
 
 package engine;
 
-import "api/proto/shared/method.proto";
+import "api/proto/shared/shared.proto";
+import "google/protobuf/struct.proto";
 
 option go_package = "github.com/tmrrwnxtsn/ecomway/api/proto/engine";
 
 service EngineService {
   rpc AvailableMethods(AvailableMethodsRequest) returns (AvailableMethodsResponse);
+  rpc CreatePayment(CreatePaymentRequest) returns (CreatePaymentResponse);
 }
 
 message AvailableMethodsRequest {
-  int64 user_id = 1;
-  shared.TransactionType transaction_type = 2;
+  shared.TransactionType transaction_type = 1;
+  string currency = 2;
+  int64 user_id = 3;
 }
 
 message AvailableMethodsResponse {
   repeated shared.Method methods = 1;
 }
 
+message CreatePaymentRequest {
+  int64 user_id = 1;
+  string lang_code = 2;
+  string external_system = 3;
+  string external_method = 4;
+  int64 amount = 5;
+  string currency = 6;
+  google.protobuf.Struct additional_data = 7;
+}
+
+message CreatePaymentResponse {
+  string redirect_url = 1;
+}

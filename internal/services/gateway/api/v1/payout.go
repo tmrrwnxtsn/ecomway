@@ -8,6 +8,15 @@ import (
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/model"
 )
 
+type payoutMethodsRequest struct {
+	// Идентификатор клиента
+	UserID int64 `query:"user_id" example:"11431" validate:"required"`
+	// Валюта платежа в соответствии со стандартом ISO 4217
+	Currency string `query:"currency" example:"RUB" validate:"required,iso4217"`
+	// Код языка, обозначение по RFC 5646
+	LangCode string `query:"lang_code" example:"en" validate:"required"`
+}
+
 type payoutMethodsResponse struct {
 	// Результат обработки запроса (всегда true)
 	Success bool `json:"success" example:"true" validate:"required"`
@@ -18,7 +27,7 @@ type payoutMethodsResponse struct {
 func (h *Handler) payoutMethods(c *fiber.Ctx) error {
 	ctx := context.Background()
 
-	var req request
+	var req payoutMethodsRequest
 	if err := c.QueryParser(&req); err != nil {
 		return h.requestValidationErrorResponse(c, err)
 	}
@@ -27,7 +36,7 @@ func (h *Handler) payoutMethods(c *fiber.Ctx) error {
 		return h.requestValidationErrorResponse(c, err)
 	}
 
-	methods, err := h.methodService.AvailableMethods(ctx, req.UserID, model.TransactionTypePayout)
+	methods, err := h.methodService.AvailableMethods(ctx, model.TransactionTypePayout, req.UserID, req.Currency)
 	if err != nil {
 		return h.internalErrorResponse(c, err)
 	}

@@ -6,7 +6,7 @@ import (
 	"github.com/tmrrwnxtsn/ecomway/internal/services/integration/convert"
 )
 
-const PaymentSystem = "yookassa"
+const ExternalSystem = "yookassa"
 
 type Integration struct {
 	paymentMethods []model.Method

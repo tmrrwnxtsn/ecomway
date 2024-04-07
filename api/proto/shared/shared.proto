@@ -10,9 +10,8 @@ enum TransactionType {
 }
 
 message Limits {
-  string currency = 1;
-  int64 min_amount = 2;
-  int64 max_amount = 3;
+  int64 min_amount = 1;
+  int64 max_amount = 2;
 }
 
 enum CommissionType {
@@ -35,6 +34,11 @@ message Method {
   map<string, string> displayed_name = 2;
   string external_system = 3;
   string external_method = 4;
-  Limits limits = 5;
+  map<string, Limits> limits = 5;
   Commission commission = 6;
+}
+
+message Error {
+  string group = 1;
+  string code = 2;
 }

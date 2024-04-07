@@ -39,12 +39,19 @@ func MethodToProto(method model.Method) *pb.Method {
 	}
 }
 
-func LimitsToProto(limits model.Limits) *pb.Limits {
-	return &pb.Limits{
-		Currency:  limits.Currency,
-		MinAmount: limits.MinAmount,
-		MaxAmount: limits.MaxAmount,
+func LimitsToProto(limits map[string]model.Limits) map[string]*pb.Limits {
+	if len(limits) == 0 {
+		return nil
 	}
+
+	result := make(map[string]*pb.Limits, len(limits))
+	for currency, l := range limits {
+		result[currency] = &pb.Limits{
+			MinAmount: l.MinAmount,
+			MaxAmount: l.MaxAmount,
+		}
+	}
+	return result
 }
 
 func CommissionToProto(commission model.Commission) *pb.Commission {

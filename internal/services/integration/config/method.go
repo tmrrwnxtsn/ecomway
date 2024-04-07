@@ -6,16 +6,15 @@ type MethodsConfig struct {
 }
 
 type MethodConfig struct {
-	ID             string                 `yaml:"id"`
-	DisplayedName  map[string]string      `yaml:"name"`
-	ExternalSystem string                 `yaml:"external_system"`
-	ExternalMethod string                 `yaml:"external_method"`
-	Limits         MethodLimitsConfig     `yaml:"limits"`
-	Commission     MethodCommissionConfig `yaml:"commission"`
+	ID             string                        `yaml:"id"`
+	DisplayedName  map[string]string             `yaml:"name"`
+	ExternalSystem string                        `yaml:"external_system"`
+	ExternalMethod string                        `yaml:"external_method"`
+	Limits         map[string]MethodLimitsConfig `yaml:"limits"`
+	Commission     MethodCommissionConfig        `yaml:"commission"`
 }
 
 type MethodLimitsConfig struct {
-	Currency  string  `yaml:"currency"`
 	MinAmount float64 `yaml:"min_amount"`
 	MaxAmount float64 `yaml:"max_amount"`
 }

@@ -5,6 +5,6 @@ type Method struct {
 	DisplayedName  map[string]string
 	ExternalSystem string
 	ExternalMethod string
-	Limits         Limits
+	Limits         map[string]Limits
 	Commission     Commission
 }

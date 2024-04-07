@@ -1,12 +1,18 @@
 package server
 
 import (
+	"context"
 	"net"
 
 	"google.golang.org/grpc"
 
 	pb "github.com/tmrrwnxtsn/ecomway/api/proto/integration"
+	"github.com/tmrrwnxtsn/ecomway/internal/pkg/model"
 )
+
+type Integration interface {
+	AvailableMethods(ctx context.Context, txType model.TransactionType, currency string) ([]model.Method, error)
+}
 
 type Server struct {
 	server       *grpc.Server

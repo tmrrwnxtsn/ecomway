@@ -15,6 +15,7 @@ import (
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/client/integration"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/config"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/server"
+	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/service/limit"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/service/method"
 )
 
@@ -42,12 +43,14 @@ func New(configPath string) *App {
 	integrationClient := integration.NewClient(pbIntegration.NewIntegrationServiceClient(integrationConn))
 
 	methodService := method.NewService(integrationClient)
+	limitService := limit.NewService()
 
 	grpcServer := grpc.NewServer()
 	srv := server.NewServer(server.Options{
 		Server:        grpcServer,
 		Listener:      grpcListener,
 		MethodService: methodService,
+		LimitService:  limitService,
 	})
 	pbEngine.RegisterEngineServiceServer(grpcServer, srv)
 

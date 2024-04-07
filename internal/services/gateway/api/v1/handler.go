@@ -12,18 +12,24 @@ import (
 )
 
 type MethodService interface {
-	AvailableMethods(ctx context.Context, userID int64, txType model.TransactionType) ([]model.Method, error)
+	AvailableMethods(ctx context.Context, txType model.TransactionType, userID int64, currency string) ([]model.Method, error)
+}
+
+type PaymentService interface {
+	Create(ctx context.Context, data model.CreatePaymentData) (model.CreatePaymentResult, error)
 }
 
 type Handler struct {
-	methodService MethodService
-	validate      *validator.Validate
-	apiKey        string
+	methodService  MethodService
+	paymentService PaymentService
+	validate       *validator.Validate
+	apiKey         string
 }
 
 type HandlerOptions struct {
-	MethodService MethodService
-	APIKey        string
+	MethodService  MethodService
+	PaymentService PaymentService
+	APIKey         string
 }
 
 func NewHandler(opts HandlerOptions) *Handler {
@@ -43,9 +49,10 @@ func NewHandler(opts HandlerOptions) *Handler {
 	})
 
 	return &Handler{
-		methodService: opts.MethodService,
-		validate:      validate,
-		apiKey:        opts.APIKey,
+		methodService:  opts.MethodService,
+		paymentService: opts.PaymentService,
+		validate:       validate,
+		apiKey:         opts.APIKey,
 	}
 }
 

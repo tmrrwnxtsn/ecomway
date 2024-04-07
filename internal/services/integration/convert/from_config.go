@@ -10,7 +10,7 @@ func MethodsFromConfig(methods []config.MethodConfig) []model.Method {
 	result := make([]model.Method, 0, len(methods))
 
 	for _, pbMethod := range methods {
-		method := MethodFromProto(pbMethod)
+		method := MethodFromConfig(pbMethod)
 
 		result = append(result, method)
 	}
@@ -18,26 +18,33 @@ func MethodsFromConfig(methods []config.MethodConfig) []model.Method {
 	return result
 }
 
-func MethodFromProto(method config.MethodConfig) model.Method {
+func MethodFromConfig(method config.MethodConfig) model.Method {
 	return model.Method{
 		ID:             method.ID,
 		DisplayedName:  method.DisplayedName,
 		ExternalSystem: method.ExternalSystem,
 		ExternalMethod: method.ExternalMethod,
-		Limits:         LimitsFromProto(method.Limits),
-		Commission:     CommissionFromProto(method.Commission),
+		Limits:         LimitsFromConfig(method.Limits),
+		Commission:     CommissionFromConfig(method.Commission),
 	}
 }
 
-func LimitsFromProto(limits config.MethodLimitsConfig) model.Limits {
-	return model.Limits{
-		Currency:  limits.Currency,
-		MinAmount: convert.BaseToCents(limits.MinAmount),
-		MaxAmount: convert.BaseToCents(limits.MaxAmount),
+func LimitsFromConfig(limits map[string]config.MethodLimitsConfig) map[string]model.Limits {
+	if len(limits) == 0 {
+		return nil
 	}
+
+	result := make(map[string]model.Limits, len(limits))
+	for currency, l := range limits {
+		result[currency] = model.Limits{
+			MinAmount: convert.BaseToCents(l.MinAmount),
+			MaxAmount: convert.BaseToCents(l.MaxAmount),
+		}
+	}
+	return result
 }
 
-func CommissionFromProto(commission config.MethodCommissionConfig) model.Commission {
+func CommissionFromConfig(commission config.MethodCommissionConfig) model.Commission {
 	return model.Commission{
 		Type:     model.CommissionType(commission.Type),
 		Currency: commission.Currency,
