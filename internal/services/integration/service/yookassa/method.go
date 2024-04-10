@@ -8,13 +8,13 @@ import (
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/model"
 )
 
-func (i *Integration) AvailableMethods(_ context.Context, txType model.TransactionType, _ string) ([]model.Method, error) {
-	switch txType {
-	case model.TransactionTypePayment:
+func (i *Integration) AvailableMethods(_ context.Context, opType model.OperationType, _ string) ([]model.Method, error) {
+	switch opType {
+	case model.OperationTypePayment:
 		return slices.Clone(i.paymentMethods), nil
-	case model.TransactionTypePayout:
+	case model.OperationTypePayout:
 		return slices.Clone(i.payoutMethods), nil
 	default:
-		return nil, fmt.Errorf("unresolved transaction type: %q", txType)
+		return nil, fmt.Errorf("unresolved operation type: %q", opType)
 	}
 }

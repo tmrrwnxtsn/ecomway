@@ -6,14 +6,26 @@ services:
     container_name: integration
     restart: on-failure
 
+  storage:
+    image: postgres
+    container_name: storage
+    restart: on-failure
+    env_file:
+      - storage.env
+    volumes:
+      - storage_volume:/var/lib/postgresql/data
+
   engine:
     build:
       context: ..
       dockerfile: build/engine/Dockerfile
     container_name: engine
     restart: on-failure
+    env_file:
+      - engine.env
     depends_on:
       - integration
+      - storage
 
   gateway:
     build:
@@ -27,3 +39,6 @@ services:
       - "8080:8080"
     depends_on:
       - engine
+
+volumes:
+  storage_volume:

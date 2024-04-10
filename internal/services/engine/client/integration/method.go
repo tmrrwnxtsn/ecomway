@@ -8,20 +8,20 @@ import (
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/model"
 )
 
-func (c *Client) AllAvailableMethods(ctx context.Context, txType model.TransactionType, currency string) ([]model.Method, error) {
+func (c *Client) AllAvailableMethods(ctx context.Context, opType model.OperationType, currency string) ([]model.Method, error) {
 	request := &pb.AvailableMethodsRequest{
-		TransactionType: convert.TransactionTypeToProto(txType),
-		Currency:        currency,
+		OperationType: convert.OperationTypeToProto(opType),
+		Currency:      currency,
 	}
 
 	return c.availableMethods(ctx, request)
 }
 
-func (c *Client) AvailableMethodsByExternalSystem(ctx context.Context, txType model.TransactionType, currency, externalSystem string) ([]model.Method, error) {
+func (c *Client) AvailableMethodsByExternalSystem(ctx context.Context, opType model.OperationType, currency, externalSystem string) ([]model.Method, error) {
 	request := &pb.AvailableMethodsRequest{
-		TransactionType: convert.TransactionTypeToProto(txType),
-		Currency:        currency,
-		ExternalSystem:  &externalSystem,
+		OperationType:  convert.OperationTypeToProto(opType),
+		Currency:       currency,
+		ExternalSystem: &externalSystem,
 	}
 
 	return c.availableMethods(ctx, request)

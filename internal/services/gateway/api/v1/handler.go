@@ -12,7 +12,7 @@ import (
 )
 
 type MethodService interface {
-	AvailableMethods(ctx context.Context, txType model.TransactionType, userID int64, currency string) ([]model.Method, error)
+	AvailableMethods(ctx context.Context, opType model.OperationType, userID int64, currency string) ([]model.Method, error)
 }
 
 type PaymentService interface {

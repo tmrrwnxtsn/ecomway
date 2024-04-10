@@ -8,8 +8,10 @@ type CreatePaymentData struct {
 	LangCode       string
 	UserID         int64
 	Amount         int64
+	OperationID    int64
 }
 
 type CreatePaymentResult struct {
 	RedirectURL string
+	ExternalID  string
 }

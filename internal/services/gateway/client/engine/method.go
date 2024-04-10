@@ -8,11 +8,11 @@ import (
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/model"
 )
 
-func (c *Client) AvailableMethods(ctx context.Context, txType model.TransactionType, userID int64, currency string) ([]model.Method, error) {
+func (c *Client) AvailableMethods(ctx context.Context, opType model.OperationType, userID int64, currency string) ([]model.Method, error) {
 	request := &pb.AvailableMethodsRequest{
-		TransactionType: convert.TransactionTypeToProto(txType),
-		Currency:        currency,
-		UserId:          userID,
+		OperationType: convert.OperationTypeToProto(opType),
+		Currency:      currency,
+		UserId:        userID,
 	}
 
 	response, err := c.client.AvailableMethods(ctx, request)

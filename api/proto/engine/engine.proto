@@ -13,7 +13,7 @@ service EngineService {
 }
 
 message AvailableMethodsRequest {
-  shared.TransactionType transaction_type = 1;
+  shared.OperationType operation_type = 1;
   string currency = 2;
   int64 user_id = 3;
 }

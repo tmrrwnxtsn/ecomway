@@ -36,7 +36,7 @@ func (h *Handler) paymentMethods(c *fiber.Ctx) error {
 		return h.requestValidationErrorResponse(c, err)
 	}
 
-	methods, err := h.methodService.AvailableMethods(ctx, model.TransactionTypePayment, req.UserID, req.Currency)
+	methods, err := h.methodService.AvailableMethods(ctx, model.OperationTypePayment, req.UserID, req.Currency)
 	if err != nil {
 		return h.internalErrorResponse(c, err)
 	}

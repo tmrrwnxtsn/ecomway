@@ -7,13 +7,20 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+const databaseURLEnvKey = "DATABASE_URL"
+
 type Config struct {
 	Engine   EngineConfig   `yaml:"engine"`
 	Services ServicesConfig `yaml:"services"`
 }
 
 type EngineConfig struct {
-	GRPCAddress string `yaml:"grpc_address"`
+	GRPCAddress string        `yaml:"grpc_address"`
+	Storage     StorageConfig `yaml:"storage"`
+}
+
+type StorageConfig struct {
+	DatabaseURL string // подгружаем значения из переменных среды окружения
 }
 
 type ServicesConfig struct {
@@ -40,5 +47,13 @@ func Load(configPath string) (Config, error) {
 		return cfg, err
 	}
 
+	cfg.loadFromEnv()
+
 	return cfg, nil
+}
+
+func (c *Config) loadFromEnv() {
+	if dsnFromEnv, exists := os.LookupEnv(databaseURLEnvKey); exists {
+		c.Engine.Storage.DatabaseURL = dsnFromEnv
+	}
 }

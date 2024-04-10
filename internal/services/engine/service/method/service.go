@@ -9,8 +9,8 @@ import (
 )
 
 type IntegrationClient interface {
-	AllAvailableMethods(ctx context.Context, txType model.TransactionType, currency string) ([]model.Method, error)
-	AvailableMethodsByExternalSystem(ctx context.Context, txType model.TransactionType, currency, externalSystem string) ([]model.Method, error)
+	AllAvailableMethods(ctx context.Context, opType model.OperationType, currency string) ([]model.Method, error)
+	AvailableMethodsByExternalSystem(ctx context.Context, opType model.OperationType, currency, externalSystem string) ([]model.Method, error)
 }
 
 type Service struct {
@@ -23,8 +23,8 @@ func NewService(integrationClient IntegrationClient) *Service {
 	}
 }
 
-func (s *Service) All(ctx context.Context, txType model.TransactionType, currency string) ([]model.Method, error) {
-	methods, err := s.integrationClient.AllAvailableMethods(ctx, txType, currency)
+func (s *Service) All(ctx context.Context, opType model.OperationType, currency string) ([]model.Method, error) {
+	methods, err := s.integrationClient.AllAvailableMethods(ctx, opType, currency)
 	if err != nil {
 		return nil, err
 	}
@@ -40,8 +40,8 @@ func (s *Service) All(ctx context.Context, txType model.TransactionType, currenc
 	return result, nil
 }
 
-func (s *Service) GetOne(ctx context.Context, txType model.TransactionType, currency, externalSystem, externalMethod string) (*model.Method, error) {
-	methods, err := s.integrationClient.AvailableMethodsByExternalSystem(ctx, txType, currency, externalSystem)
+func (s *Service) GetOne(ctx context.Context, opType model.OperationType, currency, externalSystem, externalMethod string) (*model.Method, error) {
+	methods, err := s.integrationClient.AvailableMethodsByExternalSystem(ctx, opType, currency, externalSystem)
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +52,7 @@ func (s *Service) GetOne(ctx context.Context, txType model.TransactionType, curr
 	if methodIdx == -1 {
 		return nil, fmt.Errorf(
 			"%v method not found for external system %q, external method %q",
-			txType, externalSystem, externalMethod,
+			opType, externalSystem, externalMethod,
 		)
 	}
 
@@ -61,7 +61,7 @@ func (s *Service) GetOne(ctx context.Context, txType model.TransactionType, curr
 	if _, found := method.Limits[currency]; !found {
 		return nil, fmt.Errorf(
 			"%v external method %q does not support currency %q",
-			txType, externalMethod, currency)
+			opType, externalMethod, currency)
 	}
 
 	return &method, nil

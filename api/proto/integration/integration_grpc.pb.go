@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion7
 
 const (
 	IntegrationService_AvailableMethods_FullMethodName = "/integration.IntegrationService/AvailableMethods"
+	IntegrationService_CreatePayment_FullMethodName    = "/integration.IntegrationService/CreatePayment"
 )
 
 // IntegrationServiceClient is the client API for IntegrationService service.
@@ -27,6 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type IntegrationServiceClient interface {
 	AvailableMethods(ctx context.Context, in *AvailableMethodsRequest, opts ...grpc.CallOption) (*AvailableMethodsResponse, error)
+	CreatePayment(ctx context.Context, in *CreatePaymentRequest, opts ...grpc.CallOption) (*CreatePaymentResponse, error)
 }
 
 type integrationServiceClient struct {
@@ -46,11 +48,21 @@ func (c *integrationServiceClient) AvailableMethods(ctx context.Context, in *Ava
 	return out, nil
 }
 
+func (c *integrationServiceClient) CreatePayment(ctx context.Context, in *CreatePaymentRequest, opts ...grpc.CallOption) (*CreatePaymentResponse, error) {
+	out := new(CreatePaymentResponse)
+	err := c.cc.Invoke(ctx, IntegrationService_CreatePayment_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // IntegrationServiceServer is the server API for IntegrationService service.
 // All implementations must embed UnimplementedIntegrationServiceServer
 // for forward compatibility
 type IntegrationServiceServer interface {
 	AvailableMethods(context.Context, *AvailableMethodsRequest) (*AvailableMethodsResponse, error)
+	CreatePayment(context.Context, *CreatePaymentRequest) (*CreatePaymentResponse, error)
 	mustEmbedUnimplementedIntegrationServiceServer()
 }
 
@@ -60,6 +72,9 @@ type UnimplementedIntegrationServiceServer struct {
 
 func (UnimplementedIntegrationServiceServer) AvailableMethods(context.Context, *AvailableMethodsRequest) (*AvailableMethodsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AvailableMethods not implemented")
+}
+func (UnimplementedIntegrationServiceServer) CreatePayment(context.Context, *CreatePaymentRequest) (*CreatePaymentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreatePayment not implemented")
 }
 func (UnimplementedIntegrationServiceServer) mustEmbedUnimplementedIntegrationServiceServer() {}
 
@@ -92,6 +107,24 @@ func _IntegrationService_AvailableMethods_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _IntegrationService_CreatePayment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreatePaymentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IntegrationServiceServer).CreatePayment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: IntegrationService_CreatePayment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IntegrationServiceServer).CreatePayment(ctx, req.(*CreatePaymentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // IntegrationService_ServiceDesc is the grpc.ServiceDesc for IntegrationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -102,6 +135,10 @@ var IntegrationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AvailableMethods",
 			Handler:    _IntegrationService_AvailableMethods_Handler,
+		},
+		{
+			MethodName: "CreatePayment",
+			Handler:    _IntegrationService_CreatePayment_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

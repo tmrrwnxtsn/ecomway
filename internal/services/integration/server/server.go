@@ -11,7 +11,8 @@ import (
 )
 
 type Integration interface {
-	AvailableMethods(ctx context.Context, txType model.TransactionType, currency string) ([]model.Method, error)
+	AvailableMethods(ctx context.Context, opType model.OperationType, currency string) ([]model.Method, error)
+	CreatePayment(ctx context.Context, data model.CreatePaymentData) (model.CreatePaymentResult, error)
 }
 
 type Server struct {

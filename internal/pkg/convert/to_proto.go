@@ -5,12 +5,12 @@ import (
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/model"
 )
 
-func TransactionTypeToProto(txType model.TransactionType) pb.TransactionType {
-	switch txType {
-	case model.TransactionTypePayment:
-		return pb.TransactionType_PAYMENT
-	case model.TransactionTypePayout:
-		return pb.TransactionType_PAYOUT
+func OperationTypeToProto(opType model.OperationType) pb.OperationType {
+	switch opType {
+	case model.OperationTypePayment:
+		return pb.OperationType_PAYMENT
+	case model.OperationTypePayout:
+		return pb.OperationType_PAYOUT
 	default:
 		return -1
 	}

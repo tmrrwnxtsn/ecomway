@@ -12,7 +12,7 @@ import (
 )
 
 func (s *Server) AvailableMethods(ctx context.Context, request *pb.AvailableMethodsRequest) (*pb.AvailableMethodsResponse, error) {
-	txType := convert.TransactionTypeFromProto(request.GetTransactionType())
+	opType := convert.OperationTypeFromProto(request.GetOperationType())
 
 	if request.ExternalSystem != nil {
 		integration, ok := s.integrations[request.GetExternalSystem()]
@@ -20,7 +20,7 @@ func (s *Server) AvailableMethods(ctx context.Context, request *pb.AvailableMeth
 			return nil, fmt.Errorf("unknown external system: %q", request.GetExternalSystem())
 		}
 
-		methods, err := integration.AvailableMethods(ctx, txType, request.GetCurrency())
+		methods, err := integration.AvailableMethods(ctx, opType, request.GetCurrency())
 		if err != nil {
 			return nil, err
 		}
@@ -37,16 +37,16 @@ func (s *Server) AvailableMethods(ctx context.Context, request *pb.AvailableMeth
 	for _, integration := range s.integrations {
 		if integration != nil {
 			wg.Add(1)
-			go func(ctx context.Context, integration Integration, txType model.TransactionType, currency string) {
+			go func(ctx context.Context, integration Integration, opType model.OperationType, currency string) {
 				defer wg.Done()
 
-				methods, err := integration.AvailableMethods(ctx, txType, currency)
+				methods, err := integration.AvailableMethods(ctx, opType, currency)
 				if err != nil {
 					return
 				}
 
 				methodsChan <- methods
-			}(ctx, integration, txType, request.GetCurrency())
+			}(ctx, integration, opType, request.GetCurrency())
 		}
 	}
 

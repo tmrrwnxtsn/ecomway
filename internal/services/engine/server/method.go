@@ -8,9 +8,9 @@ import (
 )
 
 func (s *Server) AvailableMethods(ctx context.Context, request *pb.AvailableMethodsRequest) (*pb.AvailableMethodsResponse, error) {
-	txType := convert.TransactionTypeFromProto(request.GetTransactionType())
+	opType := convert.OperationTypeFromProto(request.GetOperationType())
 
-	methods, err := s.methodService.All(ctx, txType, request.GetCurrency())
+	methods, err := s.methodService.All(ctx, opType, request.GetCurrency())
 	if err != nil {
 		return nil, err
 	}

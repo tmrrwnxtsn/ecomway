@@ -4,7 +4,7 @@ package shared;
 
 option go_package = "github.com/tmrrwnxtsn/ecomway/api/proto/shared";
 
-enum TransactionType {
+enum OperationType {
   PAYMENT = 0;
   PAYOUT = 1;
 }

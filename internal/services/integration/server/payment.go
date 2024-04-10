@@ -2,37 +2,41 @@ package server
 
 import (
 	"context"
+	"fmt"
 
-	pb "github.com/tmrrwnxtsn/ecomway/api/proto/engine"
+	pb "github.com/tmrrwnxtsn/ecomway/api/proto/integration"
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/model"
 )
 
 func (s *Server) CreatePayment(ctx context.Context, request *pb.CreatePaymentRequest) (*pb.CreatePaymentResponse, error) {
-	method, err := s.methodService.GetOne(ctx, model.OperationTypePayment, request.GetCurrency(), request.GetExternalSystem(), request.GetExternalMethod())
-	if err != nil {
-		return nil, err
-	}
-
-	if err = s.limitService.ValidateAmount(request.GetAmount(), request.GetCurrency(), method); err != nil {
-		return nil, err
+	integration, ok := s.integrations[request.GetExternalSystem()]
+	if !ok || integration == nil {
+		return nil, fmt.Errorf("unknown external system: %q", request.GetExternalSystem())
 	}
 
 	data := model.CreatePaymentData{
-		AdditionalData: request.GetAdditionalData().AsMap(),
+		AdditionalData: request.AdditionalData.AsMap(),
 		ExternalSystem: request.GetExternalSystem(),
 		ExternalMethod: request.GetExternalMethod(),
 		Currency:       request.GetCurrency(),
 		LangCode:       request.GetLangCode(),
 		UserID:         request.GetUserId(),
 		Amount:         request.GetAmount(),
+		OperationID:    request.GetOperationId(),
 	}
 
-	result, err := s.paymentService.Create(ctx, data)
+	result, err := integration.CreatePayment(ctx, data)
 	if err != nil {
 		return nil, err
 	}
 
-	return &pb.CreatePaymentResponse{
+	response := &pb.CreatePaymentResponse{
 		RedirectUrl: result.RedirectURL,
-	}, nil
+	}
+
+	if result.ExternalID != "" {
+		response.ExternalId = &result.ExternalID
+	}
+
+	return response, nil
 }
