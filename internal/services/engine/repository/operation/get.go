@@ -26,15 +26,19 @@ func (r *Repository) AcquireOneLocked(ctx context.Context, criteria model.Operat
 		}
 	}(dbTX, ctx)
 
-	var op *model.Operation
-	op, err = r.getOne(ctx, dbTX, criteria, true)
+	dbOp, err := r.dbGetOne(ctx, dbTX, criteria, true)
 	if err != nil {
 		return err
 	}
 
+	// на время выполнения действий над операцией преобразуем её в общую структуру (модель)
+	op := operationFromDB(dbOp)
+
 	oldStatus := op.Status
 	defer func() {
-		updateErr := r.updateOne(ctx, dbTX, op)
+		dbOp = operationToDB(op)
+
+		updateErr := r.dbUpdateOne(ctx, dbTX, dbOp)
 		if updateErr != nil {
 			err = multierror.Append(err, updateErr)
 			return
@@ -48,10 +52,12 @@ func (r *Repository) AcquireOneLocked(ctx context.Context, criteria model.Operat
 	return script(ctx, op)
 }
 
-func (r *Repository) getOne(ctx context.Context, dbTX pgx.Tx, criteria model.OperationCriteria, withLock bool) (*model.Operation, error) {
+func (r *Repository) dbGetOne(ctx context.Context, dbTX pgx.Tx, criteria model.OperationCriteria, withLock bool) (dbOperation, error) {
+	var dbOp dbOperation
+
 	whereStmt, args, err := r.whereStmt(criteria)
 	if err != nil {
-		return nil, err
+		return dbOp, err
 	}
 
 	forUpdateStmt := "FOR UPDATE"
@@ -59,7 +65,6 @@ func (r *Repository) getOne(ctx context.Context, dbTX pgx.Tx, criteria model.Ope
 		forUpdateStmt = ""
 	}
 
-	var dbOp dbOperation
 	err = pgxscan.Get(ctx, dbTX, &dbOp, fmt.Sprintf(`
 SELECT %[3]v.id,
        %[3]v.user_id,
@@ -80,15 +85,15 @@ SELECT %[3]v.id,
        %[4]v.processed_at
 FROM %[1]v %[3]v
          JOIN %[2]v %[4]v on %[3]v.id = %[4]v.operation_id
-WHERE id %v %v
+WHERE %v %v
 `, operationTable, operationMetadataTable, operationTableAbbr, operationMetadataTableAbbr, whereStmt, forUpdateStmt),
 		args...)
 	if err != nil {
 		if pgxscan.NotFound(err) {
-			return nil, sql.ErrNoRows
+			return dbOp, sql.ErrNoRows
 		}
-		return nil, err
+		return dbOp, err
 	}
 
-	return operationFromDB(dbOp), nil
+	return dbOp, nil
 }

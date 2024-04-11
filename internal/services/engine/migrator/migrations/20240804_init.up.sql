@@ -20,18 +20,6 @@ CREATE INDEX ix_operation_external_id ON operation (external_id);
 CREATE INDEX ix_operation_status ON operation (status);
 CREATE INDEX ix_operation_created_at ON operation (created_at);
 
-CREATE TABLE IF NOT EXISTS operation_metadata
-(
-    operation_id      BIGINT NOT NULL REFERENCES operation ON DELETE CASCADE,
-    tool_id           BIGINT REFERENCES tool ON DELETE NO ACTION,
-    additional        JSONB,
-    fail_reason       VARCHAR(255),
-    confirmation_code VARCHAR(255),
-    processed_at      TIMESTAMP WITH TIME ZONE
-);
-
-CREATE INDEX ix_operation_metadata_tool_id ON operation_metadata (tool_id);
-
 CREATE TABLE IF NOT EXISTS tool
 (
     id              SERIAL PRIMARY KEY,
@@ -44,3 +32,15 @@ CREATE TABLE IF NOT EXISTS tool
     created_at      TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     updated_at      TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
+
+CREATE TABLE IF NOT EXISTS operation_metadata
+(
+    operation_id      BIGINT NOT NULL REFERENCES operation ON DELETE CASCADE,
+    tool_id           BIGINT REFERENCES tool ON DELETE NO ACTION,
+    additional        JSONB,
+    fail_reason       VARCHAR(255),
+    confirmation_code VARCHAR(255),
+    processed_at      TIMESTAMP WITH TIME ZONE
+);
+
+CREATE INDEX ix_operation_metadata_tool_id ON operation_metadata (tool_id);

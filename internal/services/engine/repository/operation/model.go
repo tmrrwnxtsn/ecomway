@@ -21,7 +21,7 @@ type dbOperation struct {
 	CreatedAt      time.Time `db:"created_at"`
 	UpdatedAt      time.Time `db:"updated_at"`
 
-	ToolID           int64          `db:"tool_id"`
+	ToolID           *int64         `db:"tool_id"`
 	Additional       map[string]any `db:"additional"`
 	FailReason       *string        `db:"fail_reason"`
 	ConfirmationCode *string        `db:"confirmation_code"`
@@ -40,7 +40,6 @@ func operationToDB(op *model.Operation) dbOperation {
 		ExternalMethod: op.ExternalMethod,
 		CreatedAt:      op.CreatedAt,
 		UpdatedAt:      op.UpdatedAt,
-		ToolID:         op.ToolID,
 	}
 
 	if op.ExternalID != "" {
@@ -53,6 +52,10 @@ func operationToDB(op *model.Operation) dbOperation {
 
 	if len(op.Additional) > 0 {
 		dbOp.Additional = op.Additional
+	}
+
+	if op.ToolID != 0 {
+		dbOp.ToolID = &op.ToolID
 	}
 
 	if op.FailReason != "" {
@@ -82,7 +85,6 @@ func operationFromDB(dbOp dbOperation) *model.Operation {
 		ExternalMethod: dbOp.ExternalMethod,
 		CreatedAt:      dbOp.CreatedAt,
 		UpdatedAt:      dbOp.UpdatedAt,
-		ToolID:         dbOp.ToolID,
 	}
 
 	if dbOp.ExternalID != nil {
@@ -95,6 +97,10 @@ func operationFromDB(dbOp dbOperation) *model.Operation {
 
 	if len(dbOp.Additional) > 0 {
 		op.Additional = dbOp.Additional
+	}
+
+	if dbOp.ToolID != nil {
+		op.ToolID = *dbOp.ToolID
 	}
 
 	if dbOp.FailReason != nil {

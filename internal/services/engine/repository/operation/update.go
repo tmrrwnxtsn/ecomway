@@ -5,11 +5,9 @@ import (
 	"fmt"
 
 	"github.com/jackc/pgx/v4"
-
-	"github.com/tmrrwnxtsn/ecomway/internal/pkg/model"
 )
 
-func (r *Repository) updateOne(ctx context.Context, dbTx pgx.Tx, op *model.Operation) error {
+func (r *Repository) dbUpdateOne(ctx context.Context, dbTx pgx.Tx, dbOp dbOperation) error {
 	_, err := dbTx.Exec(ctx, fmt.Sprintf(`
 UPDATE %v
 SET status          = $2,
@@ -18,10 +16,10 @@ SET status          = $2,
     updated_at      = NOW()
 WHERE id = $1
 `, operationTable),
-		op.ID,
-		op.Status,
-		op.ExternalID,
-		op.ExternalStatus,
+		dbOp.ID,
+		dbOp.Status,
+		dbOp.ExternalID,
+		dbOp.ExternalStatus,
 	)
 	if err != nil {
 		return err
@@ -36,12 +34,12 @@ SET tool_id           = $2,
     processed_at      = $6
 WHERE operation_id = $1
 `, operationMetadataTable),
-		op.ID,
-		op.ToolID,
-		op.Additional,
-		op.FailReason,
-		op.ConfirmationCode,
-		op.ProcessedAt,
+		dbOp.ID,
+		dbOp.ToolID,
+		dbOp.Additional,
+		dbOp.FailReason,
+		dbOp.ConfirmationCode,
+		dbOp.ProcessedAt,
 	)
 	if err != nil {
 		return err

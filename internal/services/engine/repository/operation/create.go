@@ -3,28 +3,32 @@ package operation
 import (
 	"context"
 	"fmt"
-	"log"
-
-	"github.com/jackc/pgx/v4"
 
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/model"
 )
 
 func (r *Repository) Create(ctx context.Context, op *model.Operation) error {
-	dbTX, err := r.conn.Begin(ctx)
-	if err != nil {
-		return err
-	}
-	defer func(dbTX pgx.Tx, ctx context.Context) {
-		if err = dbTX.Rollback(ctx); err != nil {
-			log.Printf("rollback db transaction: %v", err)
-		}
-	}(dbTX, ctx)
-
 	dbOp := operationToDB(op)
 	if dbOp.ID != 0 {
 		return fmt.Errorf("creating operation with existing ID: %v", dbOp.ID)
 	}
+
+	operationID, err := r.dbCreate(ctx, dbOp)
+	if err != nil {
+		return err
+	}
+
+	// проставляем идентификатор созданной операции, чтобы использовать его в дальнейшем
+	op.ID = operationID
+	return nil
+}
+
+func (r *Repository) dbCreate(ctx context.Context, dbOp dbOperation) (int64, error) {
+	dbTX, err := r.conn.Begin(ctx)
+	if err != nil {
+		return 0, err
+	}
+	defer r.dbRollback(ctx, dbTX)
 
 	if err = dbTX.QueryRow(ctx, fmt.Sprintf(`
 INSERT INTO %v (user_id,
@@ -49,7 +53,7 @@ RETURNING id`,
 	).Scan(
 		&dbOp.ID,
 	); err != nil {
-		return err
+		return 0, err
 	}
 
 	_, err = dbTX.Exec(ctx, fmt.Sprintf(`
@@ -68,8 +72,12 @@ VALUES ($1, $2, $3, $4, $5, $6)`,
 		dbOp.ConfirmationCode,
 		dbOp.ProcessedAt)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	return dbTX.Commit(ctx)
+	if err = dbTX.Commit(ctx); err != nil {
+		return 0, err
+	}
+
+	return dbOp.ID, nil
 }
