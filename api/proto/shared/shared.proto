@@ -9,6 +9,13 @@ enum OperationType {
   PAYOUT = 1;
 }
 
+enum OperationExternalStatus {
+  UNKNOWN = 0;
+  PENDING = 1;
+  SUCCESS = 2;
+  FAILED = 3;
+}
+
 message Limits {
   int64 min_amount = 1;
   int64 max_amount = 2;
@@ -41,4 +48,10 @@ message Method {
 message Error {
   string group = 1;
   string code = 2;
+}
+
+message ReturnURLs {
+  string common = 1;
+  optional string success = 2;
+  optional string fail = 3;
 }

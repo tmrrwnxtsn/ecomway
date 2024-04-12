@@ -47,7 +47,7 @@ func operationToDB(op *model.Operation) dbOperation {
 	}
 
 	if op.ExternalStatus != "" {
-		dbOp.ExternalStatus = &op.ExternalStatus
+		dbOp.ExternalStatus = (*string)(&op.ExternalStatus)
 	}
 
 	if len(op.Additional) > 0 {
@@ -92,7 +92,7 @@ func operationFromDB(dbOp dbOperation) *model.Operation {
 	}
 
 	if dbOp.ExternalStatus != nil {
-		op.ExternalStatus = *dbOp.ExternalStatus
+		op.ExternalStatus = model.OperationExternalStatus(*dbOp.ExternalStatus)
 	}
 
 	if len(dbOp.Additional) > 0 {

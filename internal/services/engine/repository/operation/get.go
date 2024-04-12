@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"log"
+	"log/slog"
 
 	"github.com/georgysavva/scany/pgxscan"
 	"github.com/hashicorp/go-multierror"
@@ -45,7 +45,7 @@ func (r *Repository) AcquireOneLocked(ctx context.Context, criteria model.Operat
 		}
 
 		if oldStatus != op.Status {
-			log.Printf("operation state changed: %v -> %v", oldStatus, op.Status)
+			slog.Info("operation status changed", "old_status", oldStatus, "new_status", op.Status)
 		}
 	}()
 

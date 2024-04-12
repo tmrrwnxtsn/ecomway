@@ -4,6 +4,8 @@ import (
 	"context"
 	"io"
 	"log"
+	"log/slog"
+	"os"
 
 	"github.com/gofiber/fiber/v2"
 	"golang.org/x/sync/errgroup"
@@ -26,6 +28,9 @@ type App struct {
 }
 
 func New(configPath string) *App {
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
+	slog.SetDefault(logger)
+
 	cfg, err := config.Load(configPath)
 	if err != nil {
 		log.Fatalf("loading config: %v", err)

@@ -19,6 +19,15 @@ const (
 	OperationStatusFailed OperationStatus = "FAILED"
 )
 
+type OperationExternalStatus string
+
+const (
+	OperationExternalStatusUnknown OperationExternalStatus = "UNKNOWN"
+	OperationExternalStatusPending OperationExternalStatus = "PENDING"
+	OperationExternalStatusSuccess OperationExternalStatus = "SUCCESS"
+	OperationExternalStatusFailed  OperationExternalStatus = "FAILED"
+)
+
 type Operation struct {
 	ID             int64
 	UserID         int64
@@ -29,7 +38,7 @@ type Operation struct {
 	ExternalID     string
 	ExternalSystem string
 	ExternalMethod string
-	ExternalStatus string
+	ExternalStatus OperationExternalStatus
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
 

@@ -3,7 +3,7 @@ package payment
 import (
 	"context"
 	"fmt"
-	"log"
+	"log/slog"
 
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/model"
 )
@@ -61,7 +61,7 @@ func (s *Service) Create(ctx context.Context, data model.CreatePaymentData) (mod
 				return nil
 			},
 		); err != nil {
-			log.Printf("creating payment: %v", err)
+			slog.Error("failed to create payment", "error", err)
 		}
 		return result, err
 	}
@@ -69,11 +69,15 @@ func (s *Service) Create(ctx context.Context, data model.CreatePaymentData) (mod
 	if err = s.operationRepository.AcquireOneLocked(ctx, model.OperationCriteria{ID: &op.ID},
 		func(ctx context.Context, op *model.Operation) error {
 			op.ExternalID = result.ExternalID
+			op.ExternalStatus = result.ExternalStatus
 			return nil
 		},
 	); err != nil {
 		return result, err
 	}
+
+	// если операция успешно создана, возвращаем идентификатор созданной операции
+	result.OperationID = op.ID
 
 	return result, nil
 }

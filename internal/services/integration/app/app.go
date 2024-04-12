@@ -4,15 +4,17 @@ import (
 	"context"
 	"io"
 	"log"
+	"log/slog"
 	"net"
+	"os"
 
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
 
 	pbIntegration "github.com/tmrrwnxtsn/ecomway/api/proto/integration"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/integration/config"
+	"github.com/tmrrwnxtsn/ecomway/internal/services/integration/provider/yookassa"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/integration/server"
-	"github.com/tmrrwnxtsn/ecomway/internal/services/integration/service/yookassa"
 )
 
 type App struct {
@@ -21,6 +23,9 @@ type App struct {
 }
 
 func New(configPath string) *App {
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
+	slog.SetDefault(logger)
+
 	cfg, err := config.Load(configPath)
 	if err != nil {
 		log.Fatalf("loading config: %v", err)

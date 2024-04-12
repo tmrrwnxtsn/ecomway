@@ -3,11 +3,14 @@ integration:
 
   yookassa:
     api:
+      base_url: "https://api.yookassa.ru/v3"
+      shop_id: "365155"
       secret_key: "test_Y3Y-q38sNweIkPQawtC8mvJtecmBodEShgazQuvjs-Y"
 
     channels:
       yookassa_bank_card:
-
+        code: "card"
+        payment_method_type: "bank_card"
 
     methods:
       payment:
@@ -19,8 +22,8 @@ integration:
           external_method: "yookassa_bank_card"
           limits:
             RUB:
-              min_amount: 100.0
-              max_amount: 60000.0
+              min_amount: 1.0
+              max_amount: 350000.0
           commission:
             type: "percent"
             percent: 0.0

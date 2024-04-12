@@ -3,7 +3,7 @@ package migrator
 import (
 	"embed"
 	"fmt"
-	"log"
+	"log/slog"
 
 	"github.com/Boostport/migration"
 	"github.com/Boostport/migration/driver/postgres"
@@ -43,7 +43,7 @@ func (m *PostgresMigrator) Migrate() error {
 		return fmt.Errorf("failed to run migrations: %w", err)
 	}
 
-	log.Printf("migrations applied: %v", applied)
+	slog.Debug("migrations applied", "count", applied)
 	return nil
 }
 

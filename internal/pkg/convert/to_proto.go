@@ -16,6 +16,21 @@ func OperationTypeToProto(opType model.OperationType) pb.OperationType {
 	}
 }
 
+func OperationExternalStatusToProto(opExternalStatus model.OperationExternalStatus) pb.OperationExternalStatus {
+	switch opExternalStatus {
+	case model.OperationExternalStatusPending:
+		return pb.OperationExternalStatus_PENDING
+	case model.OperationExternalStatusSuccess:
+		return pb.OperationExternalStatus_SUCCESS
+	case model.OperationExternalStatusFailed:
+		return pb.OperationExternalStatus_FAILED
+	case model.OperationExternalStatusUnknown:
+		return pb.OperationExternalStatus_UNKNOWN
+	default:
+		return -1
+	}
+}
+
 func MethodsToProto(methods []model.Method) []*pb.Method {
 	result := make([]*pb.Method, 0, len(methods))
 
@@ -76,5 +91,13 @@ func CommissionTypeToProto(commissionType model.CommissionType) pb.CommissionTyp
 		return pb.CommissionType_TEXT
 	default:
 		return -1
+	}
+}
+
+func ReturnURLsToProto(returnURLs model.ReturnURLs) *pb.ReturnURLs {
+	return &pb.ReturnURLs{
+		Common:  returnURLs.Common,
+		Success: returnURLs.Success,
+		Fail:    returnURLs.Fail,
 	}
 }

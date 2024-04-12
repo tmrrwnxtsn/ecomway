@@ -6,6 +6,7 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 
 	pb "github.com/tmrrwnxtsn/ecomway/api/proto/integration"
+	"github.com/tmrrwnxtsn/ecomway/internal/pkg/convert"
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/model"
 )
 
@@ -26,6 +27,7 @@ func (c *Client) CreatePayment(ctx context.Context, data model.CreatePaymentData
 		Amount:         data.Amount,
 		Currency:       data.Currency,
 		AdditionalData: pbAdditional,
+		ReturnUrls:     convert.ReturnURLsToProto(data.ReturnURLs),
 	}
 
 	response, err := c.client.CreatePayment(ctx, request)
@@ -34,7 +36,14 @@ func (c *Client) CreatePayment(ctx context.Context, data model.CreatePaymentData
 	}
 
 	result.RedirectURL = response.GetRedirectUrl()
-	result.ExternalID = response.GetExternalId()
+
+	if response.ExternalId != nil {
+		result.ExternalID = response.GetExternalId()
+	}
+
+	if response.ExternalStatus != nil {
+		result.ExternalStatus = convert.OperationExternalStatusFromProto(response.GetExternalStatus())
+	}
 
 	return result, nil
 }

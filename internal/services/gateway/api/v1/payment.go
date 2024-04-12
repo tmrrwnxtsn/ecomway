@@ -49,6 +49,15 @@ func (h *Handler) paymentMethods(c *fiber.Ctx) error {
 	return c.JSON(resp)
 }
 
+type paymentReturnURLs struct {
+	// URL для возврата пользователя, используемый когда результат платежа неизвестен или по умолчанию
+	Common string `json:"common" example:"https://example.com" validate:"required"`
+	// URL для возврата пользователя, используемый при успешном осуществлении платежа
+	Success *string `json:"success" example:"https://example.com/success"`
+	// URL для возврата пользователя, используемый при неуспешном осуществлении платежа
+	Fail *string `json:"fail" example:"https://example.com/failed"`
+}
+
 type paymentCreateRequest struct {
 	// Идентификатор клиента
 	UserID int64 `json:"user_id" example:"11431" validate:"required"`
@@ -62,6 +71,8 @@ type paymentCreateRequest struct {
 	ExternalMethod string `json:"external_method" example:"yookassa_bank_card" validate:"required"`
 	// Код языка, обозначение по RFC 5646
 	LangCode string `json:"lang_code" example:"en" validate:"required"`
+	// Объект, содержащий ссылки для возврата пользователя для каждого из возможных результатов проведения платежа
+	ReturnURLs paymentReturnURLs `json:"return_urls" validate:"required"`
 	// Дополнительная информация, специфичная для платежной системы, к которой направляется целевой запрос
 	AdditionalData map[string]any `json:"additional_data" example:"ip:127.0.0.1,phone_number:+71234567890"`
 }
@@ -70,7 +81,9 @@ type paymentCreateResponse struct {
 	// Результат обработки запроса (всегда true)
 	Success bool `json:"success" example:"true" validate:"required"`
 	// URL платежной страницы, на которую необходимо перенаправить клиента
-	RedirectURL string `json:"redirect_url" example:"example.com" validate:"required"`
+	RedirectURL string `json:"redirect_url" example:"https://securepayments.example.com" validate:"required"`
+	// Идентификатор созданного платежа
+	OperationID int64 `json:"operation_id" example:"102492" validate:"required"`
 }
 
 func (h *Handler) paymentCreate(c *fiber.Ctx) error {
@@ -86,6 +99,7 @@ func (h *Handler) paymentCreate(c *fiber.Ctx) error {
 	}
 
 	data := model.CreatePaymentData{
+		ReturnURLs:     model.ReturnURLs(req.ReturnURLs),
 		AdditionalData: req.AdditionalData,
 		ExternalSystem: req.ExternalSystem,
 		ExternalMethod: req.ExternalMethod,
@@ -103,6 +117,7 @@ func (h *Handler) paymentCreate(c *fiber.Ctx) error {
 	resp := &paymentCreateResponse{
 		Success:     true,
 		RedirectURL: result.RedirectURL,
+		OperationID: result.OperationID,
 	}
 
 	return c.JSON(resp)

@@ -30,8 +30,10 @@ message CreatePaymentRequest {
   int64 amount = 5;
   string currency = 6;
   google.protobuf.Struct additional_data = 7;
+  shared.ReturnURLs return_urls = 8;
 }
 
 message CreatePaymentResponse {
   string redirect_url = 1;
+  int64 operation_id = 2;
 }

@@ -1,6 +1,13 @@
 package model
 
+type ReturnURLs struct {
+	Common  string
+	Success *string
+	Fail    *string
+}
+
 type CreatePaymentData struct {
+	ReturnURLs     ReturnURLs
 	AdditionalData map[string]any
 	ExternalSystem string
 	ExternalMethod string
@@ -12,6 +19,8 @@ type CreatePaymentData struct {
 }
 
 type CreatePaymentResult struct {
-	RedirectURL string
-	ExternalID  string
+	RedirectURL    string
+	ExternalID     string
+	ExternalStatus OperationExternalStatus
+	OperationID    int64
 }

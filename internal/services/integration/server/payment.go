@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	pb "github.com/tmrrwnxtsn/ecomway/api/proto/integration"
+	"github.com/tmrrwnxtsn/ecomway/internal/pkg/convert"
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/model"
 )
 
@@ -15,6 +16,7 @@ func (s *Server) CreatePayment(ctx context.Context, request *pb.CreatePaymentReq
 	}
 
 	data := model.CreatePaymentData{
+		ReturnURLs:     convert.ReturnURLsFromProto(request.GetReturnUrls()),
 		AdditionalData: request.AdditionalData.AsMap(),
 		ExternalSystem: request.GetExternalSystem(),
 		ExternalMethod: request.GetExternalMethod(),
@@ -36,6 +38,11 @@ func (s *Server) CreatePayment(ctx context.Context, request *pb.CreatePaymentReq
 
 	if result.ExternalID != "" {
 		response.ExternalId = &result.ExternalID
+	}
+
+	if result.ExternalStatus != "" {
+		pbExternalStatus := convert.OperationExternalStatusToProto(result.ExternalStatus)
+		response.ExternalStatus = &pbExternalStatus
 	}
 
 	return response, nil

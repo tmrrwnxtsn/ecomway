@@ -4,7 +4,9 @@ import (
 	"context"
 	"io"
 	"log"
+	"log/slog"
 	"net"
+	"os"
 
 	"github.com/jackc/pgx/v4/pgxpool"
 	"golang.org/x/sync/errgroup"
@@ -31,6 +33,9 @@ type App struct {
 
 func New(configPath string) *App {
 	ctx := context.Background()
+
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
+	slog.SetDefault(logger)
 
 	cfg, err := config.Load(configPath)
 	if err != nil {
