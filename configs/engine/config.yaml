@@ -1,6 +1,22 @@
 engine:
   grpc_address: ":9000"
 
+  scheduler:
+    is_enabled: true
+    tasks:
+      finalize_operations:
+        is_enabled: true
+        interval: 60
+        operation_batch_size: 100
+        max_workers: 1
+        actualize_status_intervals:
+          600: 120
+          900: 240
+          1500: 360
+          2400: 600
+        external_system_lifetime:
+          yookassa: 60
+
 services:
   integration:
     grpc_address: "integration:9001"

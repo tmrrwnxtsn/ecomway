@@ -13,6 +13,7 @@ type YooKassaAPIConfig struct {
 }
 
 type YooKassaChannelConfig struct {
-	Code              string `yaml:"code"`
-	PaymentMethodType string `yaml:"payment_method_type"`
+	Code                      string `yaml:"code"`
+	PaymentMethodType         string `yaml:"payment_method_type"`
+	PaymentTimeoutToFailedMin int    `yaml:"payment_timeout_to_failed_min"`
 }

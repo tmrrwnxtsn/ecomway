@@ -2,7 +2,7 @@ package channel
 
 import (
 	"fmt"
-	"log/slog"
+	"time"
 
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/model"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/integration/config"
@@ -11,6 +11,7 @@ import (
 
 type Channel interface {
 	CreatePaymentRequest(data model.CreatePaymentData) data.CreatePaymentRequest
+	PaymentTimeoutToFailed() time.Duration
 }
 
 type Resolver struct {
@@ -28,12 +29,7 @@ func channels(channelsConfigs map[string]config.YooKassaChannelConfig) map[strin
 	if channelsNum := len(channelsConfigs); channelsNum > 0 {
 		result = make(map[string]Channel, channelsNum)
 		for externalMethod, channelCfg := range channelsConfigs {
-			switch channelCfg.Code {
-			case channelCodeCard:
-				result[externalMethod] = newCardChannel(channelCfg)
-			default:
-				slog.Warn("unresolved channel code", "code", channelCfg.Code)
-			}
+			result[externalMethod] = newBaseChannel(channelCfg)
 		}
 	}
 	return result

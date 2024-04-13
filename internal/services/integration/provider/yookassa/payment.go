@@ -20,6 +20,17 @@ func (i *Integration) CreatePayment(ctx context.Context, paymentData model.Creat
 
 	response, err := i.apiClient.CreatePayment(ctx, request)
 	if err != nil {
+		// TODO: создавать кастомную ошибку для проброса в engine (причина отклонения) и gateway (отображение ошибки)
+		//var errorResponse *data.ErrorResponse
+		//if errors.As(err, &errorResponse) {
+		//	pmnterror.NewExternal()
+		//	failReason := errorResponse.Error()
+		//	log.Warnf("creating invoice: %v", failReason)
+		//	return common.ErrorResult(failReason), nil
+		//} else {
+		//	err = log.ErrorfErr("creating invoice: %v", err)
+		//	return common.TechnicalErrorResult(err), nil
+		//}
 		return result, fmt.Errorf("sending external system request: %w", err)
 	}
 

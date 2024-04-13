@@ -85,7 +85,10 @@ func (h *Handler) commission(item model.Commission, langCode string) commission 
 		Type:     string(item.Type),
 		Percent:  item.Percent,
 		Absolute: item.Absolute,
-		Currency: item.Currency,
+	}
+
+	if item.Currency != "" {
+		result.Currency = &item.Currency
 	}
 
 	caption, ok := item.Message[langCode]

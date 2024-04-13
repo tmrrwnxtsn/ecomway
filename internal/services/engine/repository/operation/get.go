@@ -13,6 +13,8 @@ import (
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/model"
 )
 
+const defaultOperationMaxCount = 10000
+
 func (r *Repository) AcquireOneLocked(ctx context.Context, criteria model.OperationCriteria, script model.ScriptAcquiredFor) (err error) {
 	dbTX, err := r.conn.Begin(ctx)
 	if err != nil {
@@ -45,11 +47,29 @@ func (r *Repository) AcquireOneLocked(ctx context.Context, criteria model.Operat
 		}
 
 		if oldStatus != op.Status {
-			slog.Info("operation status changed", "old_status", oldStatus, "new_status", op.Status)
+			slog.Info(
+				"operation status changed",
+				"operation_id", op.ID,
+				"old_status", oldStatus,
+				"new_status", op.Status,
+			)
 		}
 	}()
 
 	return script(ctx, op)
+}
+
+func (r *Repository) All(ctx context.Context, criteria model.OperationCriteria) ([]*model.Operation, error) {
+	dbOps, err := r.dbGetAll(ctx, criteria)
+	if err != nil {
+		return nil, err
+	}
+
+	ops := make([]*model.Operation, 0, len(dbOps))
+	for _, dbOp := range dbOps {
+		ops = append(ops, operationFromDB(dbOp))
+	}
+	return ops, nil
 }
 
 func (r *Repository) dbGetOne(ctx context.Context, dbTX pgx.Tx, criteria model.OperationCriteria, withLock bool) (dbOperation, error) {
@@ -96,4 +116,45 @@ WHERE %v %v
 	}
 
 	return dbOp, nil
+}
+
+func (r *Repository) dbGetAll(ctx context.Context, criteria model.OperationCriteria) ([]dbOperation, error) {
+	if criteria.MaxCount == 0 {
+		criteria.MaxCount = defaultOperationMaxCount
+	}
+
+	whereStmt, args, err := r.whereStmt(criteria)
+	if err != nil {
+		return nil, err
+	}
+
+	var dbOps []dbOperation
+	err = pgxscan.Select(ctx, r.conn, &dbOps, fmt.Sprintf(`
+SELECT %[3]v.id,
+       %[3]v.user_id,
+       %[3]v.type,
+       %[3]v.currency,
+       %[3]v.amount,
+       %[3]v.status,
+       %[3]v.external_id,
+       %[3]v.external_system,
+       %[3]v.external_method,
+       %[3]v.external_status,
+       %[3]v.created_at,
+       %[3]v.updated_at,
+       %[4]v.tool_id,
+       %[4]v.additional,
+       %[4]v.fail_reason,
+       %[4]v.confirmation_code,
+       %[4]v.processed_at
+FROM %[1]v %[3]v
+         JOIN %[2]v %[4]v on %[3]v.id = %[4]v.operation_id
+WHERE %v ORDER BY random() LIMIT %v
+`, operationTable, operationMetadataTable, operationTableAbbr, operationMetadataTableAbbr, whereStmt, criteria.MaxCount),
+		args...)
+	if err != nil {
+		return nil, err
+	}
+
+	return dbOps, nil
 }

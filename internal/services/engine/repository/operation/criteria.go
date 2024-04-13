@@ -52,6 +52,40 @@ func (r *Repository) whereStmt(c model.OperationCriteria) (string, []any, error)
 		whereValues = append(whereValues, fmt.Sprintf("%s.status IN (%s)", operationTableAbbr, inRoundBrackets))
 	}
 
+	if len(c.StatusesByType) > 0 && c.Types == nil && c.Statuses == nil {
+		var filter string
+		for operationType, operationStatuses := range c.StatusesByType {
+			if filter == "" {
+				filter = fmt.Sprintf("(%s.type=$%d AND ", operationTableAbbr, currArgID)
+			} else {
+				filter += fmt.Sprintf("OR (%s.type=$%d AND ", operationTableAbbr, currArgID)
+			}
+			args = append(args, operationType)
+			currArgID++
+
+			argsInRoundBrackets := make([]string, 0, len(operationStatuses))
+			for _, s := range operationStatuses {
+				argsInRoundBrackets = append(argsInRoundBrackets, fmt.Sprintf("$%d", currArgID))
+				args = append(args, s)
+				currArgID++
+			}
+			inRoundBrackets := strings.Join(argsInRoundBrackets, ", ")
+			filter += fmt.Sprintf("%s.status IN (%s))", operationTableAbbr, inRoundBrackets)
+		}
+		whereValues = append(whereValues, fmt.Sprintf("(%v)", filter))
+	}
+
+	if c.ExternalSystems != nil {
+		argsInRoundBrackets := make([]string, 0, len(*c.ExternalSystems))
+		for _, es := range *c.ExternalSystems {
+			argsInRoundBrackets = append(argsInRoundBrackets, fmt.Sprintf("$%d", currArgID))
+			args = append(args, es)
+			currArgID++
+		}
+		inRoundBrackets := strings.Join(argsInRoundBrackets, ", ")
+		whereValues = append(whereValues, fmt.Sprintf("%s.external_system IN (%s)", operationTableAbbr, inRoundBrackets))
+	}
+
 	if c.ExternalID != nil {
 		whereValues = append(whereValues, fmt.Sprintf("%s.external_id=$%d", operationTableAbbr, currArgID))
 		args = append(args, *c.ExternalID)
@@ -84,6 +118,10 @@ func (r *Repository) nonNilCriteriaArgs(c model.OperationCriteria) (int, int) {
 		nonNilCriteria++
 		nonNilCriteriaArgs++
 	}
+	if c.ExternalID != nil {
+		nonNilCriteria++
+		nonNilCriteriaArgs++
+	}
 	if c.Types != nil {
 		nonNilCriteria++
 		nonNilCriteriaArgs += len(*c.Types)
@@ -92,9 +130,15 @@ func (r *Repository) nonNilCriteriaArgs(c model.OperationCriteria) (int, int) {
 		nonNilCriteria++
 		nonNilCriteriaArgs += len(*c.Statuses)
 	}
-	if c.ExternalID != nil {
+	if c.ExternalSystems != nil {
 		nonNilCriteria++
-		nonNilCriteriaArgs++
+		nonNilCriteriaArgs += len(*c.ExternalSystems)
+	}
+	if len(c.StatusesByType) > 0 {
+		nonNilCriteria++
+		for _, statuses := range c.StatusesByType {
+			nonNilCriteriaArgs += len(statuses) + 1
+		}
 	}
 	if !c.CreatedAtFrom.IsZero() {
 		nonNilCriteria++

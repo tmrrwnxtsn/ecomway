@@ -2,6 +2,7 @@ package channel
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/convert"
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/model"
@@ -9,15 +10,23 @@ import (
 	"github.com/tmrrwnxtsn/ecomway/internal/services/integration/provider/yookassa/data"
 )
 
+const defaultPaymentTimeoutToFailed = 90 * time.Minute
+
 type baseChannel struct {
-	code              string
-	paymentMethodType string
+	code                   string
+	paymentMethodType      string
+	paymentTimeoutToFailed time.Duration
 }
 
 func newBaseChannel(cfg config.YooKassaChannelConfig) baseChannel {
+	paymentTimeoutToFailed := time.Duration(cfg.PaymentTimeoutToFailedMin) * time.Minute
+	if cfg.PaymentTimeoutToFailedMin == 0 {
+		paymentTimeoutToFailed = defaultPaymentTimeoutToFailed
+	}
 	return baseChannel{
-		code:              cfg.Code,
-		paymentMethodType: cfg.PaymentMethodType,
+		code:                   cfg.Code,
+		paymentMethodType:      cfg.PaymentMethodType,
+		paymentTimeoutToFailed: paymentTimeoutToFailed,
 	}
 }
 
@@ -33,11 +42,15 @@ func (c baseChannel) CreatePaymentRequest(d model.CreatePaymentData) data.Create
 		},
 		Amount: data.PaymentAmount{
 			Currency: d.Currency,
-			Amount:   convert.CentsToBase(d.Amount),
+			Value:    convert.CentsToBase(d.Amount),
 		},
 		Description: getDescription(d.LangCode, d.OperationID),
 		Capture:     true,
 	}
+}
+
+func (c baseChannel) PaymentTimeoutToFailed() time.Duration {
+	return c.paymentTimeoutToFailed
 }
 
 func getDescription(langCode string, operationID int64) string {

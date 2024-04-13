@@ -70,13 +70,18 @@ func LimitsToProto(limits map[string]model.Limits) map[string]*pb.Limits {
 }
 
 func CommissionToProto(commission model.Commission) *pb.Commission {
-	return &pb.Commission{
+	result := &pb.Commission{
 		Type:     CommissionTypeToProto(commission.Type),
-		Currency: commission.Currency,
 		Percent:  commission.Percent,
 		Absolute: commission.Absolute,
 		Message:  commission.Message,
 	}
+
+	if commission.Currency != "" {
+		result.Currency = &commission.Currency
+	}
+
+	return result
 }
 
 func CommissionTypeToProto(commissionType model.CommissionType) pb.CommissionType {
@@ -95,9 +100,17 @@ func CommissionTypeToProto(commissionType model.CommissionType) pb.CommissionTyp
 }
 
 func ReturnURLsToProto(returnURLs model.ReturnURLs) *pb.ReturnURLs {
-	return &pb.ReturnURLs{
-		Common:  returnURLs.Common,
-		Success: returnURLs.Success,
-		Fail:    returnURLs.Fail,
+	pbReturnURLs := &pb.ReturnURLs{
+		Common: returnURLs.Common,
 	}
+
+	if returnURLs.Success != "" {
+		pbReturnURLs.Success = &returnURLs.Success
+	}
+
+	if returnURLs.Fail != "" {
+		pbReturnURLs.Fail = &returnURLs.Fail
+	}
+
+	return pbReturnURLs
 }

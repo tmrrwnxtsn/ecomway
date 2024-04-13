@@ -13,6 +13,7 @@ import (
 type Integration interface {
 	AvailableMethods(ctx context.Context, opType model.OperationType, currency string) ([]model.Method, error)
 	CreatePayment(ctx context.Context, data model.CreatePaymentData) (model.CreatePaymentResult, error)
+	GetOperationStatus(ctx context.Context, data model.GetOperationStatusData) (model.GetOperationStatusResult, error)
 }
 
 type Server struct {

@@ -11,7 +11,7 @@ const (
 
 type Commission struct {
 	Type     CommissionType
-	Currency *string
+	Currency string
 	Percent  *float64
 	Absolute *float64
 	Message  map[string]string

@@ -21,7 +21,7 @@ type MethodLimitsConfig struct {
 
 type MethodCommissionConfig struct {
 	Type     string            `yaml:"type"`
-	Currency *string           `yaml:"currency"`
+	Currency string            `yaml:"currency"`
 	Percent  *float64          `yaml:"percent"`
 	Absolute *float64          `yaml:"absolute"`
 	Message  map[string]string `yaml:"message"`

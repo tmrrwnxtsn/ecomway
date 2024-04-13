@@ -14,9 +14,9 @@ const (
 
 func (c *Client) setRequiredHeaders(req *http.Request) {
 	req.SetBasicAuth(c.shopID, c.secretKey)
-	req.Header.Set(headerIdempotenceKey, generateXRequestID())
 
 	if req.Method == http.MethodPost {
+		req.Header.Set(headerIdempotenceKey, generateXRequestID())
 		req.Header.Set(headerContentType, "application/json")
 	}
 }

@@ -15,6 +15,7 @@ const ExternalSystem = "yookassa"
 
 type APIClient interface {
 	CreatePayment(ctx context.Context, request data.CreatePaymentRequest) (data.CreatePaymentResponse, error)
+	GetPayment(ctx context.Context, paymentID string) (data.GetPaymentResponse, error)
 }
 
 type ChannelResolver interface {

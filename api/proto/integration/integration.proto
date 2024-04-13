@@ -10,6 +10,7 @@ option go_package = "github.com/tmrrwnxtsn/ecomway/api/proto/integration";
 service IntegrationService {
   rpc AvailableMethods(AvailableMethodsRequest) returns (AvailableMethodsResponse);
   rpc CreatePayment(CreatePaymentRequest) returns (CreatePaymentResponse);
+  rpc GetOperationStatus(GetOperationStatusRequest) returns (GetOperationStatusResponse);
 }
 
 message AvailableMethodsRequest {
@@ -38,4 +39,24 @@ message CreatePaymentResponse {
   string redirect_url = 1;
   optional string external_id = 2;
   optional shared.OperationExternalStatus external_status = 3;
+}
+
+message GetOperationStatusRequest {
+  int64 operation_id = 1;
+  shared.OperationType operation_type = 2;
+  optional string external_id = 3;
+  int64 user_id = 4;
+  string external_system = 5;
+  string external_method = 6;
+  int64 amount = 7;
+  string currency = 8;
+  int64 created_at = 9;
+}
+
+message GetOperationStatusResponse {
+  shared.OperationExternalStatus external_status = 1;
+  optional string external_id = 2;
+  optional int64 processed_at = 3;
+  optional string fail_reason = 4;
+  optional int64 new_amount = 5;
 }

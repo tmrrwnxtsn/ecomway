@@ -75,7 +75,7 @@ func CommissionFromProto(commission *pb.Commission) model.Commission {
 	}
 	return model.Commission{
 		Type:     CommissionTypeFromProto(commission.Type),
-		Currency: commission.Currency,
+		Currency: commission.GetCurrency(),
 		Percent:  commission.Percent,
 		Absolute: commission.Absolute,
 		Message:  commission.Message,
@@ -100,7 +100,7 @@ func CommissionTypeFromProto(commissionType pb.CommissionType) model.CommissionT
 func ReturnURLsFromProto(returnURLs *pb.ReturnURLs) model.ReturnURLs {
 	return model.ReturnURLs{
 		Common:  returnURLs.GetCommon(),
-		Success: returnURLs.Success,
-		Fail:    returnURLs.Fail,
+		Success: returnURLs.GetSuccess(),
+		Fail:    returnURLs.GetFail(),
 	}
 }

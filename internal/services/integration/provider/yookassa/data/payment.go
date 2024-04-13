@@ -1,5 +1,7 @@
 package data
 
+import "time"
+
 const (
 	PaymentStatusPending   = "pending"
 	PaymentStatusSucceeded = "succeeded"
@@ -8,7 +10,7 @@ const (
 
 type PaymentAmount struct {
 	Currency string
-	Amount   float64
+	Value    float64
 }
 
 type PaymentMethod struct {
@@ -37,4 +39,17 @@ type CreatePaymentResponse struct {
 	ID              string
 	ConfirmationURL string
 	Status          string
+}
+
+type PaymentCancellation struct {
+	Party  string
+	Reason string
+}
+
+type GetPaymentResponse struct {
+	CapturedAt   time.Time
+	ID           string
+	Status       string
+	Cancellation PaymentCancellation
+	IncomeAmount PaymentAmount
 }

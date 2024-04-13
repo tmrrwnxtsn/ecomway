@@ -99,7 +99,7 @@ func (h *Handler) paymentCreate(c *fiber.Ctx) error {
 	}
 
 	data := model.CreatePaymentData{
-		ReturnURLs:     model.ReturnURLs(req.ReturnURLs),
+		ReturnURLs:     returnURLsModelFromRequest(req.ReturnURLs),
 		AdditionalData: req.AdditionalData,
 		ExternalSystem: req.ExternalSystem,
 		ExternalMethod: req.ExternalMethod,
@@ -121,4 +121,20 @@ func (h *Handler) paymentCreate(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(resp)
+}
+
+func returnURLsModelFromRequest(returnURLs paymentReturnURLs) model.ReturnURLs {
+	result := model.ReturnURLs{
+		Common: returnURLs.Common,
+	}
+
+	if returnURLs.Success != nil {
+		result.Success = *returnURLs.Success
+	}
+
+	if returnURLs.Fail != nil {
+		result.Fail = *returnURLs.Fail
+	}
+
+	return result
 }

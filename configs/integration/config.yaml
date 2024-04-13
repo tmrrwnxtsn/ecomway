@@ -11,10 +11,22 @@ integration:
       yookassa_bank_card:
         code: "card"
         payment_method_type: "bank_card"
+      yookassa_wallet:
+        code: "wallet"
+        payment_method_type: "yoo_money"
+      yookassa_sberpay:
+        code: "sberpay"
+        payment_method_type: "sberbank"
+      yookassa_tinkoffpay:
+        code: "tinkoffpay"
+        payment_method_type: "tinkoff_bank"
+      yookassa_sbp:
+        code: "sbp"
+        payment_method_type: "sbp"
 
     methods:
       payment:
-        - id: "CARD"
+        - id: "YOOKASSA_CARD"
           name:
             ru: "Банковская карта"
             en: "Bank card"
@@ -24,6 +36,62 @@ integration:
             RUB:
               min_amount: 1.0
               max_amount: 350000.0
+          commission:
+            type: "percent"
+            percent: 0.0
+
+        - id: "YOOKASSA_WALLET"
+          name:
+            ru: "ЮMoney"
+            en: "YooMoney"
+          external_system: "yookassa"
+          external_method: "yookassa_wallet"
+          limits:
+            RUB:
+              min_amount: 1.0
+              max_amount: 15000.0
+          commission:
+            type: "percent"
+            percent: 0.0
+
+        - id: "YOOKASSA_SBERPAY"
+          name:
+            ru: "SberPay"
+            en: "SberPay"
+          external_system: "yookassa"
+          external_method: "yookassa_sberpay"
+          limits:
+            RUB:
+              min_amount: 1.0
+              max_amount: 700000.0
+          commission:
+            type: "percent"
+            percent: 0.0
+
+        - id: "YOOKASSA_TINKOFFPAY"
+          name:
+            ru: "Тinkoff Pay"
+            en: "Тinkoff Pay"
+          external_system: "yookassa"
+          external_method: "yookassa_tinkoffpay"
+          limits:
+            RUB:
+              min_amount: 1.0
+              max_amount: 700000.0
+          commission:
+            type: "percent"
+            percent: 0.0
+
+        - id: "YOOKASSA_SBP"
+          name:
+            ru: "СБП"
+            en: "FPS"
+          external_system: "yookassa"
+          external_method: "yookassa_sbp"
+          limits:
+            RUB:
+              min_amount: 1.0
+              max_amount: 700000.0
           commission:
             type: "percent"
             percent: 0.0

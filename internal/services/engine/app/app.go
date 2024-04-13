@@ -19,6 +19,7 @@ import (
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/config"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/migrator"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/repository/operation"
+	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/scheduler"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/server"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/service/limit"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/service/method"
@@ -75,6 +76,21 @@ func New(configPath string) *App {
 	methodService := method.NewService(integrationClient)
 	limitService := limit.NewService()
 	paymentService := payment.NewService(operationRepository, integrationClient)
+
+	if cfg.Engine.Scheduler.IsEnabled {
+		var tasks []scheduler.BackgroundTask
+
+		if cfg.Engine.Scheduler.Tasks.FinalizeOperations.IsEnabled {
+			tasks = append(tasks, scheduler.NewFinalizeOperationsTask(
+				cfg.Engine.Scheduler.Tasks.FinalizeOperations,
+				operationRepository,
+				integrationClient,
+				paymentService,
+			))
+		}
+
+		scheduler.NewScheduler(tasks...).Start(ctx)
+	}
 
 	grpcServer := grpc.NewServer()
 	srv := server.NewServer(server.Options{

@@ -4,7 +4,27 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+
+	"github.com/tmrrwnxtsn/ecomway/internal/services/integration/provider/yookassa/data"
 )
+
+const (
+	errorResponseCodeNotFound = "not_found"
+)
+
+type errorResponse struct {
+	ID          string `json:"id"`
+	Code        string `json:"code"`
+	Description string `json:"description"`
+}
+
+func errorResponseData(resp errorResponse) *data.ErrorResponse {
+	return &data.ErrorResponse{
+		ID:          resp.ID,
+		Code:        resp.Code,
+		Description: resp.Description,
+	}
+}
 
 func closeResponseBody(resp *http.Response) {
 	if resp == nil {

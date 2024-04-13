@@ -15,8 +15,9 @@ const (
 type OperationStatus string
 
 const (
-	OperationStatusNew    OperationStatus = "NEW"
-	OperationStatusFailed OperationStatus = "FAILED"
+	OperationStatusNew     OperationStatus = "NEW"
+	OperationStatusFailed  OperationStatus = "FAILED"
+	OperationStatusSuccess OperationStatus = "SUCCESS"
 )
 
 type OperationExternalStatus string
@@ -52,11 +53,15 @@ type Operation struct {
 type ScriptAcquiredFor func(ctx context.Context, op *Operation) error
 
 type OperationCriteria struct {
-	ID            *int64
-	UserID        *int64
-	Types         *[]string
-	Statuses      *[]string
-	ExternalID    *string
-	CreatedAtFrom time.Time
-	CreatedAtTo   time.Time
+	ID         *int64
+	UserID     *int64
+	ExternalID *string
+
+	Types           *[]OperationType
+	Statuses        *[]OperationStatus
+	StatusesByType  map[OperationType][]OperationStatus
+	ExternalSystems *[]string
+	CreatedAtFrom   time.Time
+	CreatedAtTo     time.Time
+	MaxCount        int64
 }

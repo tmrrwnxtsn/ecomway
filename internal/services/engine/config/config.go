@@ -15,12 +15,31 @@ type Config struct {
 }
 
 type EngineConfig struct {
-	GRPCAddress string        `yaml:"grpc_address"`
-	Storage     StorageConfig `yaml:"storage"`
+	GRPCAddress string          `yaml:"grpc_address"`
+	Storage     StorageConfig   `yaml:"storage"`
+	Scheduler   SchedulerConfig `yaml:"scheduler"`
 }
 
 type StorageConfig struct {
 	DatabaseURL string // подгружаем значения из переменных среды окружения
+}
+
+type SchedulerConfig struct {
+	IsEnabled bool                 `yaml:"is_enabled"`
+	Tasks     SchedulerTasksConfig `yaml:"tasks"`
+}
+
+type SchedulerTasksConfig struct {
+	FinalizeOperations SchedulerTaskConfig `yaml:"finalize_operations"`
+}
+
+type SchedulerTaskConfig struct {
+	IsEnabled                bool           `yaml:"is_enabled"`
+	Interval                 int            `yaml:"interval"`
+	OperationBatchSize       int64          `yaml:"operation_batch_size"`
+	MaxWorkers               int            `yaml:"max_workers"`
+	ActualizeStatusIntervals map[int]int    `yaml:"actualize_status_intervals"`
+	ExternalSystemLifetime   map[string]int `yaml:"external_system_lifetime"`
 }
 
 type ServicesConfig struct {
