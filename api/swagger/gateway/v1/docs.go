@@ -9,7 +9,10 @@ const docTemplate = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "contact": {},
+        "contact": {
+            "name": "Курмыза Павел",
+            "email": "tmrrwnxtsn@gmail.com"
+        },
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -33,13 +36,6 @@ const docTemplate = `{
                 ],
                 "summary": "Создать запрос на пополнение баланса",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Authorization",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
                     {
                         "description": "Тело запроса",
                         "name": "input",
@@ -81,13 +77,6 @@ const docTemplate = `{
                 ],
                 "summary": "Получить список способов для пополнения баланса",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Authorization",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
                     {
                         "type": "integer",
                         "description": "Идентификатор клиента",
@@ -145,13 +134,6 @@ const docTemplate = `{
                 "summary": "Создать запрос на вывод средств",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "Authorization",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
                         "description": "Тело запроса",
                         "name": "input",
                         "in": "body",
@@ -193,13 +175,6 @@ const docTemplate = `{
                 "summary": "Получить список способов для вывода средств",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "Authorization",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
                         "type": "integer",
                         "description": "Идентификатор клиента",
                         "name": "user_id",
@@ -226,64 +201,6 @@ const docTemplate = `{
                         "description": "Успешный ответ",
                         "schema": {
                             "$ref": "#/definitions/v1.payoutMethodsResponse"
-                        }
-                    },
-                    "default": {
-                        "description": "Ответ с ошибкой",
-                        "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/payout/{id}/confirm": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Выплаты"
-                ],
-                "summary": "Подтвердить вывод средств",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Authorization",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Идентификатор выплаты",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Тело запроса",
-                        "name": "input",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/v1.payoutConfirmRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Успешный ответ",
-                        "schema": {
-                            "$ref": "#/definitions/v1.payoutConfirmResponse"
                         }
                     },
                     "default": {
@@ -452,6 +369,13 @@ const docTemplate = `{
                     "description": "Название платежной системы",
                     "type": "string",
                     "example": "Банковская карта"
+                },
+                "tools": {
+                    "description": "Массив объектов, содержащих данные о сохраненных платежных инструментах",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.tool"
+                    }
                 }
             }
         },
@@ -512,6 +436,11 @@ const docTemplate = `{
                         }
                     ]
                 },
+                "tool_id": {
+                    "description": "Идентификатор сохраненного платежного средства",
+                    "type": "integer",
+                    "example": 1024125
+                },
                 "user_id": {
                     "description": "Идентификатор клиента",
                     "type": "integer",
@@ -523,10 +452,15 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "operation_id",
-                "redirect_url",
-                "success"
+                "success",
+                "type"
             ],
             "properties": {
+                "message": {
+                    "description": "Сообщение, которое необходимо показать клиенту",
+                    "type": "string",
+                    "example": "Заказ оплачен!"
+                },
                 "operation_id": {
                     "description": "Идентификатор созданного платежа",
                     "type": "integer",
@@ -541,6 +475,11 @@ const docTemplate = `{
                     "description": "Результат обработки запроса (всегда true)",
                     "type": "boolean",
                     "example": true
+                },
+                "type": {
+                    "description": "Тип ответа:\n* Перенаправление клиента на платежную страницу - \"redirect\"\n* Текстовое сообщение - \"message\"",
+                    "type": "string",
+                    "example": "redirect"
                 }
             }
         },
@@ -585,50 +524,6 @@ const docTemplate = `{
                     "description": "URL для возврата пользователя, используемый при успешном осуществлении платежа",
                     "type": "string",
                     "example": "https://example.com/success"
-                }
-            }
-        },
-        "v1.payoutConfirmRequest": {
-            "type": "object",
-            "required": [
-                "confirmation_code",
-                "lang_code",
-                "user_id"
-            ],
-            "properties": {
-                "confirmation_code": {
-                    "description": "Код подтверждения выплаты",
-                    "type": "string",
-                    "example": "123144"
-                },
-                "lang_code": {
-                    "description": "Код языка, обозначение по RFC 5646",
-                    "type": "string",
-                    "example": "en"
-                },
-                "user_id": {
-                    "description": "Идентификатор клиента",
-                    "type": "integer",
-                    "example": 11431
-                }
-            }
-        },
-        "v1.payoutConfirmResponse": {
-            "type": "object",
-            "required": [
-                "operation_id",
-                "success"
-            ],
-            "properties": {
-                "operation_id": {
-                    "description": "Идентификатор созданной выплаты",
-                    "type": "integer",
-                    "example": 102492
-                },
-                "success": {
-                    "description": "Результат обработки запроса (всегда true)",
-                    "type": "boolean",
-                    "example": true
                 }
             }
         },
@@ -726,10 +621,79 @@ const docTemplate = `{
                     "example": true
                 }
             }
+        },
+        "v1.tool": {
+            "type": "object",
+            "required": [
+                "caption",
+                "id",
+                "type"
+            ],
+            "properties": {
+                "caption": {
+                    "description": "Значение платежного инструмента, например:\n* Маскированная банковская карта\n* Номер электронного кошелька\n* Адрес электронной почты\n* и т.д.",
+                    "type": "string",
+                    "example": "444444******4444"
+                },
+                "details": {
+                    "description": "Дополнительная информация о платежном инструменте",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/v1.toolDetails"
+                        }
+                    ]
+                },
+                "id": {
+                    "description": "Идентификатор платежного инструмента",
+                    "type": "integer",
+                    "example": 14124
+                },
+                "type": {
+                    "description": "Тип платежного инструмента:\n* Банковская карта - \"card\"\n* Электронный кошелек - \"wallet\"",
+                    "type": "string",
+                    "example": "card"
+                }
+            }
+        },
+        "v1.toolDetails": {
+            "type": "object",
+            "properties": {
+                "bank_name": {
+                    "description": "Название банка, выпустившего банковскую карту",
+                    "type": "string",
+                    "example": "Sberbank"
+                },
+                "card_holder": {
+                    "description": "Владелец банковской карты",
+                    "type": "string",
+                    "example": "Ivanov Ivan"
+                },
+                "card_type": {
+                    "description": "Тип банковской карты",
+                    "type": "string",
+                    "example": "Visa"
+                },
+                "expiry_month": {
+                    "description": "Срок действия банковской карты (месяц, MM)",
+                    "type": "integer",
+                    "example": 10
+                },
+                "expiry_year": {
+                    "description": "Срок действия банковской карты (год, YYYY)",
+                    "type": "integer",
+                    "example": 2023
+                },
+                "wallet_number": {
+                    "description": "Номер электронного кошелька",
+                    "type": "string",
+                    "example": "410011758831136"
+                }
+            }
         }
     },
     "securityDefinitions": {
         "ApiKeyAuth": {
+            "description": "Секретный ключ",
             "type": "apiKey",
             "name": "Authorization",
             "in": "header"
@@ -740,7 +704,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "",
+	Host:             "localhost:8080",
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
 	Title:            "Платежный шлюз для E-commerce системы",

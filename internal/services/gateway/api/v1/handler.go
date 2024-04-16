@@ -40,14 +40,19 @@ type HandlerOptions struct {
 	APIKey         string
 }
 
-// @title						Платежный шлюз для E-commerce системы
-// @version					1.0
+//	@title						Платежный шлюз для E-commerce системы
+//	@version					1.0
 //
-// @BasePath					/api/v1
+//	@contact.name				Курмыза Павел
+//	@contact.email				tmrrwnxtsn@gmail.com
 //
-// @securityDefinitions.apikey ApiKeyAuth
-// @in							header
-// @name						Authorization
+//	@host						localhost:8080
+//	@BasePath					/api/v1
+//
+//	@securityDefinitions.apikey	ApiKeyAuth
+//	@in							header
+//	@name						Authorization
+//	@description				Секретный ключ
 func NewHandler(opts HandlerOptions) *Handler {
 	validate := validator.New()
 	validate.RegisterTagNameFunc(func(fld reflect.StructField) string {

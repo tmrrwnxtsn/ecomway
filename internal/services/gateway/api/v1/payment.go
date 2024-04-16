@@ -29,17 +29,12 @@ type paymentMethodsResponse struct {
 //	@Summary	Получить список способов для пополнения баланса
 //	@Tags		Платежи
 //	@Produce	json
-//
 //	@Security	ApiKeyAuth
-//
-//	@Param		Authorization	header		string					true	"Authorization"
-//
-//	@Param		user_id			query		int						true	"Идентификатор клиента"
-//	@Param		currency		query		string					true	"Валюта платежа в соответствии со стандартом ISO 4217"
-//	@Param		lang_code		query		string					true	"Код языка, обозначение по RFC 5646"
-//
-//	@Success	200				{object}	paymentMethodsResponse	"Успешный ответ"
-//	@Failure	default			{object}	errorResponse			"Ответ с ошибкой"
+//	@Param		user_id		query		int						true	"Идентификатор клиента"
+//	@Param		currency	query		string					true	"Валюта платежа в соответствии со стандартом ISO 4217"
+//	@Param		lang_code	query		string					true	"Код языка, обозначение по RFC 5646"
+//	@Success	200			{object}	paymentMethodsResponse	"Успешный ответ"
+//	@Failure	default		{object}	errorResponse			"Ответ с ошибкой"
 //	@Router		/payment/methods [get]
 func (h *Handler) paymentMethods(c *fiber.Ctx) error {
 	ctx := context.Background()
@@ -127,13 +122,10 @@ type paymentCreateResponse struct {
 //	@Tags		Платежи
 //	@Accept		json
 //	@Produce	json
-//
 //	@Security	ApiKeyAuth
-//
-//	@Param		Authorization	header		string					true	"Authorization"
-//	@Param		input			body		paymentCreateRequest	true	"Тело запроса"
-//	@Success	200				{object}	paymentCreateResponse	"Успешный ответ"
-//	@Failure	default			{object}	errorResponse			"Ответ с ошибкой"
+//	@Param		input	body		paymentCreateRequest	true	"Тело запроса"
+//	@Success	200		{object}	paymentCreateResponse	"Успешный ответ"
+//	@Failure	default	{object}	errorResponse			"Ответ с ошибкой"
 //	@Router		/payment/create [post]
 func (h *Handler) paymentCreate(c *fiber.Ctx) error {
 	ctx := context.Background()
