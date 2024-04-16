@@ -19,8 +19,17 @@ func (s *Service) Create(ctx context.Context, data model.CreatePaymentData) (mod
 		Status:         model.OperationStatusNew,
 		ExternalSystem: data.ExternalSystem,
 		ExternalMethod: data.ExternalMethod,
-		ToolID:         0, // TODO: возможно, здесь стоит передавать инструмент из model.CreatePaymentData
+		ToolID:         data.ToolID,
 		Additional:     data.AdditionalData,
+	}
+
+	// если для операции используется сохраненное платежное средство, передаём его тоже
+	if data.ToolID != 0 {
+		tool, err := s.toolRepository.GetOne(ctx, data.ToolID, data.UserID, data.ExternalMethod)
+		if err != nil {
+			return result, fmt.Errorf("get tool from db: %w", err)
+		}
+		data.Tool = tool
 	}
 
 	err := s.operationRepository.Create(ctx, op)

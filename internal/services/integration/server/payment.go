@@ -27,6 +27,11 @@ func (s *Server) CreatePayment(ctx context.Context, request *pb.CreatePaymentReq
 		OperationID:    request.GetOperationId(),
 	}
 
+	if request.Tool != nil {
+		data.Tool = convert.ToolFromProto(request.GetTool())
+		data.ToolID = data.Tool.ID
+	}
+
 	result, err := integration.CreatePayment(ctx, data)
 	if err != nil {
 		return nil, err

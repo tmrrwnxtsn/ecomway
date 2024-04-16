@@ -137,6 +137,11 @@ func (t *FinalizeOperationsTask) execute(ctx context.Context, externalSystem str
 
 			switch result.ExternalStatus {
 			case model.OperationExternalStatusSuccess:
+				// новые инструменты создаём, а уже созданные - обновляем
+				if result.Tool != nil {
+					result.Tool.ID = operation.ToolID
+				}
+
 				data := model.SuccessPaymentData{
 					ProcessedAt:    result.ProcessedAt,
 					ExternalID:     result.ExternalID,

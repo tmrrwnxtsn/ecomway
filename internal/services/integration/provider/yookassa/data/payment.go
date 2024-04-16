@@ -41,9 +41,10 @@ type PaymentConfirmation struct {
 
 type CreatePaymentRequest struct {
 	Confirmation      PaymentConfirmation
-	PaymentMethod     PaymentMethod
+	PaymentMethodData PaymentMethod
 	Amount            PaymentAmount
 	Description       string
+	PaymentMethodID   string
 	Capture           bool
 	SavePaymentMethod bool
 }

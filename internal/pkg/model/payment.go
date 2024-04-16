@@ -9,6 +9,7 @@ type ReturnURLs struct {
 }
 
 type CreatePaymentData struct {
+	Tool           *Tool
 	ReturnURLs     ReturnURLs
 	AdditionalData map[string]any
 	ExternalSystem string
@@ -16,6 +17,7 @@ type CreatePaymentData struct {
 	Currency       string
 	LangCode       string
 	UserID         int64
+	ToolID         int64
 	Amount         int64
 	OperationID    int64
 }

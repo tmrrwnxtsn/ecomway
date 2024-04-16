@@ -146,6 +146,7 @@ type CreatePaymentRequest struct {
 	Currency       string             `protobuf:"bytes,7,opt,name=currency,proto3" json:"currency,omitempty"`
 	AdditionalData *structpb.Struct   `protobuf:"bytes,8,opt,name=additional_data,json=additionalData,proto3" json:"additional_data,omitempty"`
 	ReturnUrls     *shared.ReturnURLs `protobuf:"bytes,9,opt,name=return_urls,json=returnUrls,proto3" json:"return_urls,omitempty"`
+	Tool           *shared.Tool       `protobuf:"bytes,10,opt,name=tool,proto3,oneof" json:"tool,omitempty"`
 }
 
 func (x *CreatePaymentRequest) Reset() {
@@ -239,6 +240,13 @@ func (x *CreatePaymentRequest) GetAdditionalData() *structpb.Struct {
 func (x *CreatePaymentRequest) GetReturnUrls() *shared.ReturnURLs {
 	if x != nil {
 		return x.ReturnUrls
+	}
+	return nil
+}
+
+func (x *CreatePaymentRequest) GetTool() *shared.Tool {
+	if x != nil {
+		return x.Tool
 	}
 	return nil
 }
@@ -530,7 +538,7 @@ var file_api_proto_integration_integration_proto_rawDesc = []byte{
 	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x28, 0x0a, 0x07, 0x6d, 0x65, 0x74, 0x68, 0x6f,
 	0x64, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0e, 0x2e, 0x73, 0x68, 0x61, 0x72, 0x65,
 	0x64, 0x2e, 0x4d, 0x65, 0x74, 0x68, 0x6f, 0x64, 0x52, 0x07, 0x6d, 0x65, 0x74, 0x68, 0x6f, 0x64,
-	0x73, 0x22, 0xec, 0x02, 0x0a, 0x14, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x50, 0x61, 0x79, 0x6d,
+	0x73, 0x22, 0x9c, 0x03, 0x0a, 0x14, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x50, 0x61, 0x79, 0x6d,
 	0x65, 0x6e, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x21, 0x0a, 0x0c, 0x6f, 0x70,
 	0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03,
 	0x52, 0x0b, 0x6f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x64, 0x12, 0x17, 0x0a,
@@ -553,6 +561,9 @@ var file_api_proto_integration_integration_proto_rawDesc = []byte{
 	0x65, 0x74, 0x75, 0x72, 0x6e, 0x5f, 0x75, 0x72, 0x6c, 0x73, 0x18, 0x09, 0x20, 0x01, 0x28, 0x0b,
 	0x32, 0x12, 0x2e, 0x73, 0x68, 0x61, 0x72, 0x65, 0x64, 0x2e, 0x52, 0x65, 0x74, 0x75, 0x72, 0x6e,
 	0x55, 0x52, 0x4c, 0x73, 0x52, 0x0a, 0x72, 0x65, 0x74, 0x75, 0x72, 0x6e, 0x55, 0x72, 0x6c, 0x73,
+	0x12, 0x25, 0x0a, 0x04, 0x74, 0x6f, 0x6f, 0x6c, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0c,
+	0x2e, 0x73, 0x68, 0x61, 0x72, 0x65, 0x64, 0x2e, 0x54, 0x6f, 0x6f, 0x6c, 0x48, 0x00, 0x52, 0x04,
+	0x74, 0x6f, 0x6f, 0x6c, 0x88, 0x01, 0x01, 0x42, 0x07, 0x0a, 0x05, 0x5f, 0x74, 0x6f, 0x6f, 0x6c,
 	0x22, 0xd3, 0x01, 0x0a, 0x15, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x50, 0x61, 0x79, 0x6d, 0x65,
 	0x6e, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x21, 0x0a, 0x0c, 0x72, 0x65,
 	0x64, 0x69, 0x72, 0x65, 0x63, 0x74, 0x5f, 0x75, 0x72, 0x6c, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
@@ -662,29 +673,30 @@ var file_api_proto_integration_integration_proto_goTypes = []interface{}{
 	(*shared.Method)(nil),               // 7: shared.Method
 	(*structpb.Struct)(nil),             // 8: google.protobuf.Struct
 	(*shared.ReturnURLs)(nil),           // 9: shared.ReturnURLs
-	(shared.OperationExternalStatus)(0), // 10: shared.OperationExternalStatus
-	(*shared.Tool)(nil),                 // 11: shared.Tool
+	(*shared.Tool)(nil),                 // 10: shared.Tool
+	(shared.OperationExternalStatus)(0), // 11: shared.OperationExternalStatus
 }
 var file_api_proto_integration_integration_proto_depIdxs = []int32{
 	6,  // 0: integration.AvailableMethodsRequest.operation_type:type_name -> shared.OperationType
 	7,  // 1: integration.AvailableMethodsResponse.methods:type_name -> shared.Method
 	8,  // 2: integration.CreatePaymentRequest.additional_data:type_name -> google.protobuf.Struct
 	9,  // 3: integration.CreatePaymentRequest.return_urls:type_name -> shared.ReturnURLs
-	10, // 4: integration.CreatePaymentResponse.external_status:type_name -> shared.OperationExternalStatus
-	6,  // 5: integration.GetOperationStatusRequest.operation_type:type_name -> shared.OperationType
-	10, // 6: integration.GetOperationStatusResponse.external_status:type_name -> shared.OperationExternalStatus
-	11, // 7: integration.GetOperationStatusResponse.tool:type_name -> shared.Tool
-	0,  // 8: integration.IntegrationService.AvailableMethods:input_type -> integration.AvailableMethodsRequest
-	2,  // 9: integration.IntegrationService.CreatePayment:input_type -> integration.CreatePaymentRequest
-	4,  // 10: integration.IntegrationService.GetOperationStatus:input_type -> integration.GetOperationStatusRequest
-	1,  // 11: integration.IntegrationService.AvailableMethods:output_type -> integration.AvailableMethodsResponse
-	3,  // 12: integration.IntegrationService.CreatePayment:output_type -> integration.CreatePaymentResponse
-	5,  // 13: integration.IntegrationService.GetOperationStatus:output_type -> integration.GetOperationStatusResponse
-	11, // [11:14] is the sub-list for method output_type
-	8,  // [8:11] is the sub-list for method input_type
-	8,  // [8:8] is the sub-list for extension type_name
-	8,  // [8:8] is the sub-list for extension extendee
-	0,  // [0:8] is the sub-list for field type_name
+	10, // 4: integration.CreatePaymentRequest.tool:type_name -> shared.Tool
+	11, // 5: integration.CreatePaymentResponse.external_status:type_name -> shared.OperationExternalStatus
+	6,  // 6: integration.GetOperationStatusRequest.operation_type:type_name -> shared.OperationType
+	11, // 7: integration.GetOperationStatusResponse.external_status:type_name -> shared.OperationExternalStatus
+	10, // 8: integration.GetOperationStatusResponse.tool:type_name -> shared.Tool
+	0,  // 9: integration.IntegrationService.AvailableMethods:input_type -> integration.AvailableMethodsRequest
+	2,  // 10: integration.IntegrationService.CreatePayment:input_type -> integration.CreatePaymentRequest
+	4,  // 11: integration.IntegrationService.GetOperationStatus:input_type -> integration.GetOperationStatusRequest
+	1,  // 12: integration.IntegrationService.AvailableMethods:output_type -> integration.AvailableMethodsResponse
+	3,  // 13: integration.IntegrationService.CreatePayment:output_type -> integration.CreatePaymentResponse
+	5,  // 14: integration.IntegrationService.GetOperationStatus:output_type -> integration.GetOperationStatusResponse
+	12, // [12:15] is the sub-list for method output_type
+	9,  // [9:12] is the sub-list for method input_type
+	9,  // [9:9] is the sub-list for extension type_name
+	9,  // [9:9] is the sub-list for extension extendee
+	0,  // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_api_proto_integration_integration_proto_init() }
@@ -767,6 +779,7 @@ func file_api_proto_integration_integration_proto_init() {
 		}
 	}
 	file_api_proto_integration_integration_proto_msgTypes[0].OneofWrappers = []interface{}{}
+	file_api_proto_integration_integration_proto_msgTypes[2].OneofWrappers = []interface{}{}
 	file_api_proto_integration_integration_proto_msgTypes[3].OneofWrappers = []interface{}{}
 	file_api_proto_integration_integration_proto_msgTypes[4].OneofWrappers = []interface{}{}
 	file_api_proto_integration_integration_proto_msgTypes[5].OneofWrappers = []interface{}{}

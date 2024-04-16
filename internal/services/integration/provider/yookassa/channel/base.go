@@ -37,7 +37,7 @@ func (c baseChannel) CreatePaymentRequest(d model.CreatePaymentData) data.Create
 			ReturnURL: d.ReturnURLs.Common,
 			Locale:    getLocale(d.LangCode),
 		},
-		PaymentMethod: data.PaymentMethod{
+		PaymentMethodData: data.PaymentMethod{
 			Type: c.paymentMethodType,
 		},
 		Amount: data.PaymentAmount{

@@ -30,6 +30,10 @@ func (c *Client) CreatePayment(ctx context.Context, data model.CreatePaymentData
 		ReturnUrls:     convert.ReturnURLsToProto(data.ReturnURLs),
 	}
 
+	if data.Tool != nil {
+		request.Tool = convert.ToolToProto(data.Tool)
+	}
+
 	response, err := c.client.CreatePayment(ctx, request)
 	if err != nil {
 		return result, err

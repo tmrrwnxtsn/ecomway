@@ -22,6 +22,19 @@ func newBankCardChannel(cfg config.YooKassaChannelConfig) bankCardChannel {
 	}
 }
 
+func (c bankCardChannel) CreatePaymentRequest(d model.CreatePaymentData) data.CreatePaymentRequest {
+	request := c.baseChannel.CreatePaymentRequest(d)
+
+	if d.ToolID != 0 && d.Tool != nil {
+		token, ok := d.Tool.Details["token"].(string)
+		if ok {
+			request.PaymentMethodID = token
+		}
+	}
+
+	return request
+}
+
 func (c bankCardChannel) PaymentTool(d model.GetOperationStatusData, resp data.GetPaymentResponse) *model.Tool {
 	if resp.PaymentMethod.Type != c.paymentMethodType || !resp.PaymentMethod.Saved {
 		return nil

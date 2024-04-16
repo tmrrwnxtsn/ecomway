@@ -51,9 +51,10 @@ type createPaymentRequest struct {
 	Amount            paymentAmount       `json:"amount"`
 	Capture           bool                `json:"capture"`
 	SavePaymentMethod bool                `json:"save_payment_method"`
-	PaymentMethodData paymentMethod       `json:"payment_method_data"`
+	PaymentMethodData *paymentMethod      `json:"payment_method_data,omitempty"`
 	Confirmation      paymentConfirmation `json:"confirmation"`
 	Description       string              `json:"description,omitempty"`
+	PaymentMethodID   string              `json:"payment_method_id,omitempty"`
 }
 
 type createPaymentResponse struct {
@@ -72,15 +73,20 @@ func (c *Client) CreatePayment(ctx context.Context, request data.CreatePaymentRe
 		},
 		Capture:           request.Capture,
 		SavePaymentMethod: request.SavePaymentMethod,
-		PaymentMethodData: paymentMethod{
-			Type: request.PaymentMethod.Type,
-		},
 		Confirmation: paymentConfirmation{
 			Type:      request.Confirmation.Type,
 			Locale:    request.Confirmation.Locale,
 			ReturnURL: request.Confirmation.ReturnURL,
 		},
 		Description: request.Description,
+	}
+
+	if request.PaymentMethodID != "" {
+		req.PaymentMethodID = request.PaymentMethodID
+	} else {
+		req.PaymentMethodData = &paymentMethod{
+			Type: request.PaymentMethodData.Type,
+		}
 	}
 
 	reqPayload, err := json.Marshal(req)

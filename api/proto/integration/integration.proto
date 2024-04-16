@@ -33,6 +33,7 @@ message CreatePaymentRequest {
   string currency = 7;
   google.protobuf.Struct additional_data = 8;
   shared.ReturnURLs return_urls = 9;
+  optional shared.Tool tool = 10;
 }
 
 message CreatePaymentResponse {

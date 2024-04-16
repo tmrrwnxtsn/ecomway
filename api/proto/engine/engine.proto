@@ -25,13 +25,14 @@ message AvailableMethodsResponse {
 
 message CreatePaymentRequest {
   int64 user_id = 1;
-  string lang_code = 2;
-  string external_system = 3;
-  string external_method = 4;
-  int64 amount = 5;
-  string currency = 6;
-  google.protobuf.Struct additional_data = 7;
-  shared.ReturnURLs return_urls = 8;
+  optional int64 tool_id = 2;
+  string lang_code = 3;
+  string external_system = 4;
+  string external_method = 5;
+  int64 amount = 6;
+  string currency = 7;
+  google.protobuf.Struct additional_data = 8;
+  shared.ReturnURLs return_urls = 9;
 }
 
 message CreatePaymentResponse {

@@ -26,6 +26,7 @@ func (s *Server) CreatePayment(ctx context.Context, request *pb.CreatePaymentReq
 		Currency:       request.GetCurrency(),
 		LangCode:       request.GetLangCode(),
 		UserID:         request.GetUserId(),
+		ToolID:         request.GetToolId(),
 		Amount:         request.GetAmount(),
 	}
 
