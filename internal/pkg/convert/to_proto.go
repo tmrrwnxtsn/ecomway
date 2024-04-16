@@ -1,6 +1,8 @@
 package convert
 
 import (
+	"google.golang.org/protobuf/types/known/structpb"
+
 	pb "github.com/tmrrwnxtsn/ecomway/api/proto/shared"
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/model"
 )
@@ -113,4 +115,39 @@ func ReturnURLsToProto(returnURLs model.ReturnURLs) *pb.ReturnURLs {
 	}
 
 	return pbReturnURLs
+}
+
+func ToolTypeToProto(toolType model.ToolType) pb.ToolType {
+	switch toolType {
+	case model.ToolTypeBankCard:
+		return pb.ToolType_BANK_CARD
+	default:
+		return -1
+	}
+}
+
+func ToolToProto(tool *model.Tool) *pb.Tool {
+	result := &pb.Tool{
+		Id:             tool.ID,
+		UserId:         tool.UserID,
+		ExternalMethod: tool.ExternalMethod,
+		Displayed:      tool.Displayed,
+		Fake:           tool.Fake,
+		CreatedAt:      tool.CreatedAt.UTC().Unix(),
+		UpdatedAt:      tool.UpdatedAt.UTC().Unix(),
+	}
+
+	if tool.Type != "" {
+		pbToolType := ToolTypeToProto(tool.Type)
+		result.Type = &pbToolType
+	}
+
+	if tool.Details != nil {
+		pbDetails, err := structpb.NewStruct(tool.Details)
+		if err == nil {
+			result.Details = pbDetails
+		}
+	}
+
+	return result
 }

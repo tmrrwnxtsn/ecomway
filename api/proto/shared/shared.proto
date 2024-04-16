@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package shared;
 
+import "google/protobuf/struct.proto";
+
 option go_package = "github.com/tmrrwnxtsn/ecomway/api/proto/shared";
 
 enum OperationType {
@@ -54,4 +56,20 @@ message ReturnURLs {
   string common = 1;
   optional string success = 2;
   optional string fail = 3;
+}
+
+enum ToolType {
+  BANK_CARD = 0;
+}
+
+message Tool {
+  int64 id = 1;
+  int64 user_id = 2;
+  string external_method = 3;
+  optional ToolType type = 4;
+  optional google.protobuf.Struct details = 5;
+  string displayed = 6;
+  bool fake = 7;
+  int64 created_at = 8;
+  int64 updated_at = 9;
 }

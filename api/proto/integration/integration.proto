@@ -59,4 +59,5 @@ message GetOperationStatusResponse {
   optional int64 processed_at = 3;
   optional string fail_reason = 4;
   optional int64 new_amount = 5;
+  optional shared.Tool tool = 6;
 }

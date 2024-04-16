@@ -33,6 +33,7 @@ type SuccessPaymentData struct {
 	ExternalStatus OperationExternalStatus
 	OperationID    int64
 	NewAmount      int64
+	Tool           *Tool
 }
 
 type FailPaymentData struct {

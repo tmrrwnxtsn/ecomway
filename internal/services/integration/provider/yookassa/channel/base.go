@@ -44,8 +44,17 @@ func (c baseChannel) CreatePaymentRequest(d model.CreatePaymentData) data.Create
 			Currency: d.Currency,
 			Value:    convert.CentsToBase(d.Amount),
 		},
-		Description: getDescription(d.LangCode, d.OperationID),
-		Capture:     true,
+		Description:       getDescription(d.LangCode, d.OperationID),
+		Capture:           true,
+		SavePaymentMethod: true,
+	}
+}
+
+func (c baseChannel) PaymentTool(d model.GetOperationStatusData, _ data.GetPaymentResponse) *model.Tool {
+	return &model.Tool{
+		UserID:         d.UserID,
+		ExternalMethod: d.ExternalMethod,
+		Fake:           true,
 	}
 }
 

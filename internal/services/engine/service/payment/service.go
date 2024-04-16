@@ -15,14 +15,24 @@ type IntegrationClient interface {
 	CreatePayment(ctx context.Context, data model.CreatePaymentData) (model.CreatePaymentResult, error)
 }
 
+type ToolRepository interface {
+	Save(ctx context.Context, tool *model.Tool) error
+}
+
 type Service struct {
 	operationRepository OperationRepository
 	integrationClient   IntegrationClient
+	toolRepository      ToolRepository
 }
 
-func NewService(operationRepository OperationRepository, integrationClient IntegrationClient) *Service {
+func NewService(
+	operationRepository OperationRepository,
+	integrationClient IntegrationClient,
+	toolRepository ToolRepository,
+) *Service {
 	return &Service{
 		operationRepository: operationRepository,
 		integrationClient:   integrationClient,
+		toolRepository:      toolRepository,
 	}
 }

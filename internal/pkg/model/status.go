@@ -24,4 +24,5 @@ type GetOperationStatusResult struct {
 	ProcessedAt    time.Time
 	FailReason     string
 	NewAmount      int64
+	Tool           *Tool
 }

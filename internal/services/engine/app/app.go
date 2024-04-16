@@ -19,6 +19,7 @@ import (
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/config"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/migrator"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/repository/operation"
+	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/repository/tool"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/scheduler"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/server"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/service/limit"
@@ -70,12 +71,13 @@ func New(configPath string) *App {
 	}
 
 	operationRepository := operation.NewRepository(postgresConn)
+	toolRepository := tool.NewRepository(postgresConn)
 
 	integrationClient := integration.NewClient(pbIntegration.NewIntegrationServiceClient(integrationConn))
 
 	methodService := method.NewService(integrationClient)
 	limitService := limit.NewService()
-	paymentService := payment.NewService(operationRepository, integrationClient)
+	paymentService := payment.NewService(operationRepository, integrationClient, toolRepository)
 
 	if cfg.Engine.Scheduler.IsEnabled {
 		var tasks []scheduler.BackgroundTask

@@ -46,5 +46,13 @@ func (c *Client) GetOperationStatus(ctx context.Context, data model.GetOperation
 		result.FailReason = response.GetFailReason()
 	}
 
+	if response.NewAmount != nil {
+		result.NewAmount = response.GetNewAmount()
+	}
+
+	if response.Tool != nil {
+		result.Tool = convert.ToolFromProto(response.GetTool())
+	}
+
 	return result, nil
 }

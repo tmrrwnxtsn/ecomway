@@ -21,4 +21,12 @@ proto-shared:
 .PHONY: proto
 proto: proto-shared proto-engine proto-integration
 
+.PHONY: swag-fmt
+swag-fmt:
+	@swag fmt -d internal/services/gateway/api/v1
+
+.PHONY: swag-init
+swag-init:
+	@swag init -g handler.go -d internal/services/gateway/api/v1 -o api/swagger/gateway/v1 --outputTypes go,json
+
 .DEFAULT_GOAL := compose-up

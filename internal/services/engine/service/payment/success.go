@@ -29,11 +29,12 @@ func (s *Service) Success(ctx context.Context, data model.SuccessPaymentData) er
 				return errors.New("payment FAILED to SUCCESS not allowed")
 			}
 
-			// TODO: осуществлять уведомление E-commerce системы
-			slog.Info(
-				"ecommerce system has been notified successfully",
-				"operation_id", op.ID,
-			)
+			if data.Tool != nil {
+				if err := s.toolRepository.Save(ctx, data.Tool); err != nil {
+					return fmt.Errorf("save tool: %w", err)
+				}
+				op.ToolID = data.Tool.ID
+			}
 
 			op.Status = model.OperationStatusSuccess
 			op.FailReason = ""
@@ -55,6 +56,12 @@ func (s *Service) Success(ctx context.Context, data model.SuccessPaymentData) er
 			} else {
 				op.ProcessedAt = time.Now().UTC()
 			}
+
+			// TODO: осуществлять уведомление E-commerce системы
+			slog.Info(
+				"ecommerce system has been notified successfully",
+				"operation_id", op.ID,
+			)
 
 			return nil
 		},

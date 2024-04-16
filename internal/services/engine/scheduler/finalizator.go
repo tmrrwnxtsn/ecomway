@@ -142,6 +142,8 @@ func (t *FinalizeOperationsTask) execute(ctx context.Context, externalSystem str
 					ExternalID:     result.ExternalID,
 					ExternalStatus: result.ExternalStatus,
 					OperationID:    operation.ID,
+					NewAmount:      result.NewAmount,
+					Tool:           result.Tool,
 				}
 
 				if err = t.paymentService.Success(ctx, data); err != nil {

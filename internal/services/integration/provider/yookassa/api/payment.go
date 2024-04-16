@@ -24,8 +24,19 @@ type paymentAmount struct {
 	Currency string `json:"currency"`
 }
 
-type paymentMethodData struct {
-	Type string `json:"type"`
+type paymentMethodCard struct {
+	First6      string `json:"first6"`
+	Last4       string `json:"last4"`
+	ExpiryYear  string `json:"expiry_year"`
+	ExpiryMonth string `json:"expiry_month"`
+	CardType    string `json:"card_type"`
+}
+
+type paymentMethod struct {
+	Type  string             `json:"type"`
+	ID    string             `json:"id,omitempty"`
+	Saved bool               `json:"saved,omitempty"`
+	Card  *paymentMethodCard `json:"card,omitempty"`
 }
 
 type paymentConfirmation struct {
@@ -38,7 +49,8 @@ type paymentConfirmation struct {
 type createPaymentRequest struct {
 	Amount            paymentAmount       `json:"amount"`
 	Capture           bool                `json:"capture"`
-	PaymentMethodData paymentMethodData   `json:"payment_method_data"`
+	SavePaymentMethod bool                `json:"save_payment_method"`
+	PaymentMethodData paymentMethod       `json:"payment_method_data"`
 	Confirmation      paymentConfirmation `json:"confirmation"`
 	Description       string              `json:"description,omitempty"`
 }
@@ -57,8 +69,9 @@ func (c *Client) CreatePayment(ctx context.Context, request data.CreatePaymentRe
 			Value:    convert.FloatWithoutTrailingZeroes(request.Amount.Value, amountPrecision),
 			Currency: request.Amount.Currency,
 		},
-		Capture: request.Capture,
-		PaymentMethodData: paymentMethodData{
+		Capture:           request.Capture,
+		SavePaymentMethod: request.SavePaymentMethod,
+		PaymentMethodData: paymentMethod{
 			Type: request.PaymentMethod.Type,
 		},
 		Confirmation: paymentConfirmation{
@@ -132,11 +145,12 @@ type paymentCancellation struct {
 }
 
 type getPaymentResponse struct {
-	ID           string              `json:"id"`
-	Status       string              `json:"status"`
-	CapturedAt   string              `json:"captured_at"`
-	IncomeAmount paymentAmount       `json:"income_amount"`
-	Cancellation paymentCancellation `json:"cancellation_details"`
+	ID            string              `json:"id"`
+	Status        string              `json:"status"`
+	CapturedAt    string              `json:"captured_at"`
+	IncomeAmount  paymentAmount       `json:"income_amount"`
+	Cancellation  paymentCancellation `json:"cancellation_details"`
+	PaymentMethod paymentMethod       `json:"payment_method"`
 }
 
 func (c *Client) GetPayment(ctx context.Context, paymentID string) (data.GetPaymentResponse, error) {
@@ -206,8 +220,21 @@ func (c *Client) GetPayment(ctx context.Context, paymentID string) (data.GetPaym
 
 	response.ID = resp.ID
 	response.Status = resp.Status
-	response.Cancellation.Party = resp.Cancellation.Party
-	response.Cancellation.Reason = resp.Cancellation.Reason
+	response.Cancellation = data.PaymentCancellation(resp.Cancellation)
+	response.PaymentMethod = data.PaymentMethod{
+		Type:  resp.PaymentMethod.Type,
+		ID:    resp.PaymentMethod.ID,
+		Saved: resp.PaymentMethod.Saved,
+	}
+	if resp.PaymentMethod.Card != nil {
+		response.PaymentMethod.Card = data.PaymentMethodCard{
+			First6:      resp.PaymentMethod.Card.First6,
+			Last4:       resp.PaymentMethod.Card.Last4,
+			ExpiryYear:  resp.PaymentMethod.Card.ExpiryYear,
+			ExpiryMonth: resp.PaymentMethod.Card.ExpiryMonth,
+			CardType:    resp.PaymentMethod.Card.CardType,
+		}
+	}
 
 	return response, nil
 }

@@ -11,6 +11,7 @@ import (
 
 type Channel interface {
 	CreatePaymentRequest(data model.CreatePaymentData) data.CreatePaymentRequest
+	PaymentTool(d model.GetOperationStatusData, resp data.GetPaymentResponse) *model.Tool
 	PaymentTimeoutToFailed() time.Duration
 }
 
@@ -29,7 +30,12 @@ func channels(channelsConfigs map[string]config.YooKassaChannelConfig) map[strin
 	if channelsNum := len(channelsConfigs); channelsNum > 0 {
 		result = make(map[string]Channel, channelsNum)
 		for externalMethod, channelCfg := range channelsConfigs {
-			result[externalMethod] = newBaseChannel(channelCfg)
+			switch channelCfg.Code {
+			case channelCodeBankCard:
+				result[externalMethod] = newBankCardChannel(channelCfg)
+			default:
+				result[externalMethod] = newBaseChannel(channelCfg)
+			}
 		}
 	}
 	return result

@@ -1,6 +1,8 @@
 package convert
 
 import (
+	"time"
+
 	pb "github.com/tmrrwnxtsn/ecomway/api/proto/shared"
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/model"
 )
@@ -103,4 +105,35 @@ func ReturnURLsFromProto(returnURLs *pb.ReturnURLs) model.ReturnURLs {
 		Success: returnURLs.GetSuccess(),
 		Fail:    returnURLs.GetFail(),
 	}
+}
+
+func ToolTypeFromProto(toolType pb.ToolType) model.ToolType {
+	switch toolType {
+	case pb.ToolType_BANK_CARD:
+		return model.ToolTypeBankCard
+	default:
+		return ""
+	}
+}
+
+func ToolFromProto(tool *pb.Tool) *model.Tool {
+	result := &model.Tool{
+		ID:             tool.GetId(),
+		UserID:         tool.GetUserId(),
+		ExternalMethod: tool.GetExternalMethod(),
+		Displayed:      tool.GetDisplayed(),
+		Fake:           tool.GetFake(),
+		CreatedAt:      time.Unix(tool.GetCreatedAt(), 0).UTC(),
+		UpdatedAt:      time.Unix(tool.GetUpdatedAt(), 0).UTC(),
+	}
+
+	if tool.Type != nil {
+		result.Type = ToolTypeFromProto(tool.GetType())
+	}
+
+	if tool.Details != nil {
+		result.Details = tool.Details.AsMap()
+	}
+
+	return result
 }

@@ -24,6 +24,23 @@ type paymentMethodsResponse struct {
 	Methods []method `json:"payment_methods" validate:"required"`
 }
 
+// paymentMethods godoc
+//
+//	@Summary	Получить список способов для пополнения баланса
+//	@Tags		Платежи
+//	@Produce	json
+//
+//	@Security	ApiKeyAuth
+//
+//	@Param		Authorization	header		string					true	"Authorization"
+//
+//	@Param		user_id			query		int						true	"Идентификатор клиента"
+//	@Param		currency		query		string					true	"Валюта платежа в соответствии со стандартом ISO 4217"
+//	@Param		lang_code		query		string					true	"Код языка, обозначение по RFC 5646"
+//
+//	@Success	200				{object}	paymentMethodsResponse	"Успешный ответ"
+//	@Failure	default			{object}	errorResponse			"Ответ с ошибкой"
+//	@Router		/payment/methods [get]
 func (h *Handler) paymentMethods(c *fiber.Ctx) error {
 	ctx := context.Background()
 
@@ -74,7 +91,7 @@ type paymentCreateRequest struct {
 	// Объект, содержащий ссылки для возврата пользователя для каждого из возможных результатов проведения платежа
 	ReturnURLs paymentReturnURLs `json:"return_urls" validate:"required"`
 	// Дополнительная информация, специфичная для платежной системы, к которой направляется целевой запрос
-	AdditionalData map[string]any `json:"additional_data" example:"ip:127.0.0.1,phone_number:+71234567890"`
+	AdditionalData map[string]any `json:"additional_data" swaggertype:"object,string" example:"ip:127.0.0.1,phone_number:+71234567890"`
 }
 
 type paymentCreateResponse struct {
@@ -86,6 +103,20 @@ type paymentCreateResponse struct {
 	OperationID int64 `json:"operation_id" example:"102492" validate:"required"`
 }
 
+// paymentCreate godoc
+//
+//	@Summary	Создать запрос на пополнение баланса
+//	@Tags		Платежи
+//	@Accept		json
+//	@Produce	json
+//
+//	@Security	ApiKeyAuth
+//
+//	@Param		Authorization	header		string					true	"Authorization"
+//	@Param		input			body		paymentCreateRequest	true	"Тело запроса"
+//	@Success	200				{object}	paymentCreateResponse	"Успешный ответ"
+//	@Failure	default			{object}	errorResponse			"Ответ с ошибкой"
+//	@Router		/payment/create [post]
 func (h *Handler) paymentCreate(c *fiber.Ctx) error {
 	ctx := context.Background()
 

@@ -68,8 +68,14 @@ func (i *Integration) GetOperationStatus(ctx context.Context, statusData model.G
 			)
 		}
 
+		ch, err := i.channelResolver.Channel(statusData.ExternalMethod)
+		if err != nil {
+			return result, fmt.Errorf("resolving channel: %w", err)
+		}
+
 		result.ProcessedAt = response.CapturedAt.UTC()
 		result.NewAmount = convert.BaseToCents(response.IncomeAmount.Value)
+		result.Tool = ch.PaymentTool(statusData, response)
 	case model.OperationExternalStatusFailed:
 		result.FailReason = fmt.Sprintf("%v: %v", response.Cancellation.Party, response.Cancellation.Reason)
 	}

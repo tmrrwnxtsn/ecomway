@@ -13,8 +13,19 @@ type PaymentAmount struct {
 	Value    float64
 }
 
+type PaymentMethodCard struct {
+	First6      string
+	Last4       string
+	ExpiryYear  string
+	ExpiryMonth string
+	CardType    string
+}
+
 type PaymentMethod struct {
-	Type string
+	Type  string
+	ID    string
+	Saved bool
+	Card  PaymentMethodCard
 }
 
 const (
@@ -28,11 +39,12 @@ type PaymentConfirmation struct {
 }
 
 type CreatePaymentRequest struct {
-	Confirmation  PaymentConfirmation
-	PaymentMethod PaymentMethod
-	Amount        PaymentAmount
-	Description   string
-	Capture       bool
+	Confirmation      PaymentConfirmation
+	PaymentMethod     PaymentMethod
+	Amount            PaymentAmount
+	Description       string
+	Capture           bool
+	SavePaymentMethod bool
 }
 
 type CreatePaymentResponse struct {
@@ -47,9 +59,10 @@ type PaymentCancellation struct {
 }
 
 type GetPaymentResponse struct {
-	CapturedAt   time.Time
-	ID           string
-	Status       string
-	Cancellation PaymentCancellation
-	IncomeAmount PaymentAmount
+	CapturedAt    time.Time
+	ID            string
+	Status        string
+	Cancellation  PaymentCancellation
+	IncomeAmount  PaymentAmount
+	PaymentMethod PaymentMethod
 }
