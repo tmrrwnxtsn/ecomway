@@ -46,17 +46,21 @@ type method struct {
 	Limits []limits `json:"limits" validate:"required"`
 	// Объект, содержащий данные о комиссии
 	Commission commission `json:"commission" validate:"required"`
+	// Массив объектов, содержащих данные о сохраненных платежных инструментах
+	Tools []tool `json:"tools,omitempty"`
 }
 
-func (h *Handler) methods(items []model.Method, langCode string) []method {
+func (h *Handler) methods(items []model.Method, toolsGrouped map[string][]*model.Tool, langCode string) []method {
 	result := make([]method, 0, len(items))
 	for _, item := range items {
-		result = append(result, h.method(item, langCode))
+		tools := toolsGrouped[item.ExternalMethod]
+
+		result = append(result, h.method(item, tools, langCode))
 	}
 	return result
 }
 
-func (h *Handler) method(item model.Method, langCode string) method {
+func (h *Handler) method(item model.Method, tools []*model.Tool, langCode string) method {
 	return method{
 		ID:             item.ID,
 		Name:           item.DisplayedName[langCode],
@@ -65,6 +69,7 @@ func (h *Handler) method(item model.Method, langCode string) method {
 		IsFavorite:     false,
 		Limits:         h.limits(item.Limits),
 		Commission:     h.commission(item.Commission, langCode),
+		Tools:          h.tools(tools),
 	}
 }
 

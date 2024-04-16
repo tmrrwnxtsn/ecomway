@@ -290,6 +290,100 @@ func (x *CreatePaymentResponse) GetOperationId() int64 {
 	return 0
 }
 
+type AvailableToolsRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	UserId int64 `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+}
+
+func (x *AvailableToolsRequest) Reset() {
+	*x = AvailableToolsRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_proto_engine_engine_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AvailableToolsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AvailableToolsRequest) ProtoMessage() {}
+
+func (x *AvailableToolsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_api_proto_engine_engine_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AvailableToolsRequest.ProtoReflect.Descriptor instead.
+func (*AvailableToolsRequest) Descriptor() ([]byte, []int) {
+	return file_api_proto_engine_engine_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *AvailableToolsRequest) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+type AvailableToolsResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Tools []*shared.Tool `protobuf:"bytes,1,rep,name=tools,proto3" json:"tools,omitempty"`
+}
+
+func (x *AvailableToolsResponse) Reset() {
+	*x = AvailableToolsResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_proto_engine_engine_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *AvailableToolsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AvailableToolsResponse) ProtoMessage() {}
+
+func (x *AvailableToolsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_api_proto_engine_engine_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AvailableToolsResponse.ProtoReflect.Descriptor instead.
+func (*AvailableToolsResponse) Descriptor() ([]byte, []int) {
+	return file_api_proto_engine_engine_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *AvailableToolsResponse) GetTools() []*shared.Tool {
+	if x != nil {
+		return x.Tools
+	}
+	return nil
+}
+
 var File_api_proto_engine_engine_proto protoreflect.FileDescriptor
 
 var file_api_proto_engine_engine_proto_rawDesc = []byte{
@@ -339,7 +433,14 @@ var file_api_proto_engine_engine_proto_rawDesc = []byte{
 	0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x72, 0x65, 0x64, 0x69, 0x72, 0x65, 0x63, 0x74, 0x55, 0x72,
 	0x6c, 0x12, 0x21, 0x0a, 0x0c, 0x6f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x69,
 	0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x03, 0x52, 0x0b, 0x6f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69,
-	0x6f, 0x6e, 0x49, 0x64, 0x32, 0xb4, 0x01, 0x0a, 0x0d, 0x45, 0x6e, 0x67, 0x69, 0x6e, 0x65, 0x53,
+	0x6f, 0x6e, 0x49, 0x64, 0x22, 0x30, 0x0a, 0x15, 0x41, 0x76, 0x61, 0x69, 0x6c, 0x61, 0x62, 0x6c,
+	0x65, 0x54, 0x6f, 0x6f, 0x6c, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x17, 0x0a,
+	0x07, 0x75, 0x73, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x06,
+	0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x22, 0x3c, 0x0a, 0x16, 0x41, 0x76, 0x61, 0x69, 0x6c, 0x61,
+	0x62, 0x6c, 0x65, 0x54, 0x6f, 0x6f, 0x6c, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x12, 0x22, 0x0a, 0x05, 0x74, 0x6f, 0x6f, 0x6c, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32,
+	0x0c, 0x2e, 0x73, 0x68, 0x61, 0x72, 0x65, 0x64, 0x2e, 0x54, 0x6f, 0x6f, 0x6c, 0x52, 0x05, 0x74,
+	0x6f, 0x6f, 0x6c, 0x73, 0x32, 0x85, 0x02, 0x0a, 0x0d, 0x45, 0x6e, 0x67, 0x69, 0x6e, 0x65, 0x53,
 	0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x55, 0x0a, 0x10, 0x41, 0x76, 0x61, 0x69, 0x6c, 0x61,
 	0x62, 0x6c, 0x65, 0x4d, 0x65, 0x74, 0x68, 0x6f, 0x64, 0x73, 0x12, 0x1f, 0x2e, 0x65, 0x6e, 0x67,
 	0x69, 0x6e, 0x65, 0x2e, 0x41, 0x76, 0x61, 0x69, 0x6c, 0x61, 0x62, 0x6c, 0x65, 0x4d, 0x65, 0x74,
@@ -350,11 +451,16 @@ var file_api_proto_engine_engine_proto_rawDesc = []byte{
 	0x2e, 0x65, 0x6e, 0x67, 0x69, 0x6e, 0x65, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x50, 0x61,
 	0x79, 0x6d, 0x65, 0x6e, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1d, 0x2e, 0x65,
 	0x6e, 0x67, 0x69, 0x6e, 0x65, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x50, 0x61, 0x79, 0x6d,
-	0x65, 0x6e, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x42, 0x30, 0x5a, 0x2e, 0x67,
-	0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x74, 0x6d, 0x72, 0x72, 0x77, 0x6e,
-	0x78, 0x74, 0x73, 0x6e, 0x2f, 0x65, 0x63, 0x6f, 0x6d, 0x77, 0x61, 0x79, 0x2f, 0x61, 0x70, 0x69,
-	0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x65, 0x6e, 0x67, 0x69, 0x6e, 0x65, 0x62, 0x06, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x65, 0x6e, 0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x4f, 0x0a, 0x0e, 0x41,
+	0x76, 0x61, 0x69, 0x6c, 0x61, 0x62, 0x6c, 0x65, 0x54, 0x6f, 0x6f, 0x6c, 0x73, 0x12, 0x1d, 0x2e,
+	0x65, 0x6e, 0x67, 0x69, 0x6e, 0x65, 0x2e, 0x41, 0x76, 0x61, 0x69, 0x6c, 0x61, 0x62, 0x6c, 0x65,
+	0x54, 0x6f, 0x6f, 0x6c, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1e, 0x2e, 0x65,
+	0x6e, 0x67, 0x69, 0x6e, 0x65, 0x2e, 0x41, 0x76, 0x61, 0x69, 0x6c, 0x61, 0x62, 0x6c, 0x65, 0x54,
+	0x6f, 0x6f, 0x6c, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x42, 0x30, 0x5a, 0x2e,
+	0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x74, 0x6d, 0x72, 0x72, 0x77,
+	0x6e, 0x78, 0x74, 0x73, 0x6e, 0x2f, 0x65, 0x63, 0x6f, 0x6d, 0x77, 0x61, 0x79, 0x2f, 0x61, 0x70,
+	0x69, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x65, 0x6e, 0x67, 0x69, 0x6e, 0x65, 0x62, 0x06,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -369,31 +475,37 @@ func file_api_proto_engine_engine_proto_rawDescGZIP() []byte {
 	return file_api_proto_engine_engine_proto_rawDescData
 }
 
-var file_api_proto_engine_engine_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_api_proto_engine_engine_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_api_proto_engine_engine_proto_goTypes = []interface{}{
 	(*AvailableMethodsRequest)(nil),  // 0: engine.AvailableMethodsRequest
 	(*AvailableMethodsResponse)(nil), // 1: engine.AvailableMethodsResponse
 	(*CreatePaymentRequest)(nil),     // 2: engine.CreatePaymentRequest
 	(*CreatePaymentResponse)(nil),    // 3: engine.CreatePaymentResponse
-	(shared.OperationType)(0),        // 4: shared.OperationType
-	(*shared.Method)(nil),            // 5: shared.Method
-	(*structpb.Struct)(nil),          // 6: google.protobuf.Struct
-	(*shared.ReturnURLs)(nil),        // 7: shared.ReturnURLs
+	(*AvailableToolsRequest)(nil),    // 4: engine.AvailableToolsRequest
+	(*AvailableToolsResponse)(nil),   // 5: engine.AvailableToolsResponse
+	(shared.OperationType)(0),        // 6: shared.OperationType
+	(*shared.Method)(nil),            // 7: shared.Method
+	(*structpb.Struct)(nil),          // 8: google.protobuf.Struct
+	(*shared.ReturnURLs)(nil),        // 9: shared.ReturnURLs
+	(*shared.Tool)(nil),              // 10: shared.Tool
 }
 var file_api_proto_engine_engine_proto_depIdxs = []int32{
-	4, // 0: engine.AvailableMethodsRequest.operation_type:type_name -> shared.OperationType
-	5, // 1: engine.AvailableMethodsResponse.methods:type_name -> shared.Method
-	6, // 2: engine.CreatePaymentRequest.additional_data:type_name -> google.protobuf.Struct
-	7, // 3: engine.CreatePaymentRequest.return_urls:type_name -> shared.ReturnURLs
-	0, // 4: engine.EngineService.AvailableMethods:input_type -> engine.AvailableMethodsRequest
-	2, // 5: engine.EngineService.CreatePayment:input_type -> engine.CreatePaymentRequest
-	1, // 6: engine.EngineService.AvailableMethods:output_type -> engine.AvailableMethodsResponse
-	3, // 7: engine.EngineService.CreatePayment:output_type -> engine.CreatePaymentResponse
-	6, // [6:8] is the sub-list for method output_type
-	4, // [4:6] is the sub-list for method input_type
-	4, // [4:4] is the sub-list for extension type_name
-	4, // [4:4] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	6,  // 0: engine.AvailableMethodsRequest.operation_type:type_name -> shared.OperationType
+	7,  // 1: engine.AvailableMethodsResponse.methods:type_name -> shared.Method
+	8,  // 2: engine.CreatePaymentRequest.additional_data:type_name -> google.protobuf.Struct
+	9,  // 3: engine.CreatePaymentRequest.return_urls:type_name -> shared.ReturnURLs
+	10, // 4: engine.AvailableToolsResponse.tools:type_name -> shared.Tool
+	0,  // 5: engine.EngineService.AvailableMethods:input_type -> engine.AvailableMethodsRequest
+	2,  // 6: engine.EngineService.CreatePayment:input_type -> engine.CreatePaymentRequest
+	4,  // 7: engine.EngineService.AvailableTools:input_type -> engine.AvailableToolsRequest
+	1,  // 8: engine.EngineService.AvailableMethods:output_type -> engine.AvailableMethodsResponse
+	3,  // 9: engine.EngineService.CreatePayment:output_type -> engine.CreatePaymentResponse
+	5,  // 10: engine.EngineService.AvailableTools:output_type -> engine.AvailableToolsResponse
+	8,  // [8:11] is the sub-list for method output_type
+	5,  // [5:8] is the sub-list for method input_type
+	5,  // [5:5] is the sub-list for extension type_name
+	5,  // [5:5] is the sub-list for extension extendee
+	0,  // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_api_proto_engine_engine_proto_init() }
@@ -450,6 +562,30 @@ func file_api_proto_engine_engine_proto_init() {
 				return nil
 			}
 		}
+		file_api_proto_engine_engine_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*AvailableToolsRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_proto_engine_engine_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*AvailableToolsResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -457,7 +593,7 @@ func file_api_proto_engine_engine_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_api_proto_engine_engine_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -19,12 +19,13 @@ import (
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/config"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/migrator"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/repository/operation"
-	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/repository/tool"
+	toolrepo "github.com/tmrrwnxtsn/ecomway/internal/services/engine/repository/tool"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/scheduler"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/server"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/service/limit"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/service/method"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/service/payment"
+	toolservice "github.com/tmrrwnxtsn/ecomway/internal/services/engine/service/tool"
 )
 
 type App struct {
@@ -71,13 +72,14 @@ func New(configPath string) *App {
 	}
 
 	operationRepository := operation.NewRepository(postgresConn)
-	toolRepository := tool.NewRepository(postgresConn)
+	toolRepository := toolrepo.NewRepository(postgresConn)
 
 	integrationClient := integration.NewClient(pbIntegration.NewIntegrationServiceClient(integrationConn))
 
 	methodService := method.NewService(integrationClient)
 	limitService := limit.NewService()
 	paymentService := payment.NewService(operationRepository, integrationClient, toolRepository)
+	toolService := toolservice.NewService(toolRepository)
 
 	if cfg.Engine.Scheduler.IsEnabled {
 		var tasks []scheduler.BackgroundTask
@@ -101,6 +103,7 @@ func New(configPath string) *App {
 		MethodService:  methodService,
 		LimitService:   limitService,
 		PaymentService: paymentService,
+		ToolService:    toolService,
 	})
 	pbEngine.RegisterEngineServiceServer(grpcServer, srv)
 

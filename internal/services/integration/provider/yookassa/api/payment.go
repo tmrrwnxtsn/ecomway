@@ -30,6 +30,7 @@ type paymentMethodCard struct {
 	ExpiryYear  string `json:"expiry_year"`
 	ExpiryMonth string `json:"expiry_month"`
 	CardType    string `json:"card_type"`
+	IssuerName  string `json:"issuer_name"`
 }
 
 type paymentMethod struct {
@@ -233,6 +234,7 @@ func (c *Client) GetPayment(ctx context.Context, paymentID string) (data.GetPaym
 			ExpiryYear:  resp.PaymentMethod.Card.ExpiryYear,
 			ExpiryMonth: resp.PaymentMethod.Card.ExpiryMonth,
 			CardType:    resp.PaymentMethod.Card.CardType,
+			IssuerName:  resp.PaymentMethod.Card.IssuerName,
 		}
 	}
 

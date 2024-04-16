@@ -58,9 +58,14 @@ func (h *Handler) payoutMethods(c *fiber.Ctx) error {
 		return h.internalErrorResponse(c, err)
 	}
 
+	toolsGrouped, err := h.toolService.AvailableTools(ctx, req.UserID)
+	if err != nil {
+		return h.internalErrorResponse(c, err)
+	}
+
 	resp := &payoutMethodsResponse{
 		Success: true,
-		Methods: h.methods(methods, req.LangCode),
+		Methods: h.methods(methods, toolsGrouped, req.LangCode),
 	}
 
 	return c.JSON(resp)

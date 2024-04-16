@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion7
 const (
 	EngineService_AvailableMethods_FullMethodName = "/engine.EngineService/AvailableMethods"
 	EngineService_CreatePayment_FullMethodName    = "/engine.EngineService/CreatePayment"
+	EngineService_AvailableTools_FullMethodName   = "/engine.EngineService/AvailableTools"
 )
 
 // EngineServiceClient is the client API for EngineService service.
@@ -29,6 +30,7 @@ const (
 type EngineServiceClient interface {
 	AvailableMethods(ctx context.Context, in *AvailableMethodsRequest, opts ...grpc.CallOption) (*AvailableMethodsResponse, error)
 	CreatePayment(ctx context.Context, in *CreatePaymentRequest, opts ...grpc.CallOption) (*CreatePaymentResponse, error)
+	AvailableTools(ctx context.Context, in *AvailableToolsRequest, opts ...grpc.CallOption) (*AvailableToolsResponse, error)
 }
 
 type engineServiceClient struct {
@@ -57,12 +59,22 @@ func (c *engineServiceClient) CreatePayment(ctx context.Context, in *CreatePayme
 	return out, nil
 }
 
+func (c *engineServiceClient) AvailableTools(ctx context.Context, in *AvailableToolsRequest, opts ...grpc.CallOption) (*AvailableToolsResponse, error) {
+	out := new(AvailableToolsResponse)
+	err := c.cc.Invoke(ctx, EngineService_AvailableTools_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // EngineServiceServer is the server API for EngineService service.
 // All implementations must embed UnimplementedEngineServiceServer
 // for forward compatibility
 type EngineServiceServer interface {
 	AvailableMethods(context.Context, *AvailableMethodsRequest) (*AvailableMethodsResponse, error)
 	CreatePayment(context.Context, *CreatePaymentRequest) (*CreatePaymentResponse, error)
+	AvailableTools(context.Context, *AvailableToolsRequest) (*AvailableToolsResponse, error)
 	mustEmbedUnimplementedEngineServiceServer()
 }
 
@@ -75,6 +87,9 @@ func (UnimplementedEngineServiceServer) AvailableMethods(context.Context, *Avail
 }
 func (UnimplementedEngineServiceServer) CreatePayment(context.Context, *CreatePaymentRequest) (*CreatePaymentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreatePayment not implemented")
+}
+func (UnimplementedEngineServiceServer) AvailableTools(context.Context, *AvailableToolsRequest) (*AvailableToolsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AvailableTools not implemented")
 }
 func (UnimplementedEngineServiceServer) mustEmbedUnimplementedEngineServiceServer() {}
 
@@ -125,6 +140,24 @@ func _EngineService_CreatePayment_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _EngineService_AvailableTools_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AvailableToolsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EngineServiceServer).AvailableTools(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: EngineService_AvailableTools_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EngineServiceServer).AvailableTools(ctx, req.(*AvailableToolsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // EngineService_ServiceDesc is the grpc.ServiceDesc for EngineService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -139,6 +172,10 @@ var EngineService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreatePayment",
 			Handler:    _EngineService_CreatePayment_Handler,
+		},
+		{
+			MethodName: "AvailableTools",
+			Handler:    _EngineService_AvailableTools_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

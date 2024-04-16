@@ -23,12 +23,17 @@ type PaymentService interface {
 	Create(ctx context.Context, data model.CreatePaymentData) (model.CreatePaymentResult, error)
 }
 
+type ToolService interface {
+	All(ctx context.Context, userID int64) ([]*model.Tool, error)
+}
+
 type Server struct {
 	server         *grpc.Server
 	listener       net.Listener
 	methodService  MethodService
 	limitService   LimitService
 	paymentService PaymentService
+	toolService    ToolService
 	pb.UnimplementedEngineServiceServer
 }
 
@@ -38,6 +43,7 @@ type Options struct {
 	MethodService  MethodService
 	LimitService   LimitService
 	PaymentService PaymentService
+	ToolService    ToolService
 }
 
 func NewServer(opts Options) *Server {
@@ -47,6 +53,7 @@ func NewServer(opts Options) *Server {
 	s.methodService = opts.MethodService
 	s.limitService = opts.LimitService
 	s.paymentService = opts.PaymentService
+	s.toolService = opts.ToolService
 	return &s
 }
 

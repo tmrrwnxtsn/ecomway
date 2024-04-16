@@ -19,6 +19,7 @@ import (
 	"github.com/tmrrwnxtsn/ecomway/internal/services/gateway/config"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/gateway/service/method"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/gateway/service/payment"
+	"github.com/tmrrwnxtsn/ecomway/internal/services/gateway/service/tool"
 )
 
 type App struct {
@@ -45,10 +46,12 @@ func New(configPath string) *App {
 
 	methodService := method.NewService(engineClient)
 	paymentService := payment.NewService(engineClient)
+	toolService := tool.NewService(engineClient)
 
 	apiHandlerV1 := v1.NewHandler(v1.HandlerOptions{
 		MethodService:  methodService,
 		PaymentService: paymentService,
+		ToolService:    toolService,
 		APIKey:         cfg.Gateway.APIKey,
 	})
 	apiServer := api.NewServer(apiHandlerV1)

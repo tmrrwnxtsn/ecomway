@@ -41,6 +41,7 @@ func (c bankCardChannel) PaymentTool(d model.GetOperationStatusData, resp data.G
 			"expiry_year":  resp.PaymentMethod.Card.ExpiryYear,
 			"expiry_month": resp.PaymentMethod.Card.ExpiryMonth,
 			"card_type":    resp.PaymentMethod.Card.CardType,
+			"bank_name":    resp.PaymentMethod.Card.IssuerName,
 		},
 	}
 }

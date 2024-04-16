@@ -21,9 +21,14 @@ type PaymentService interface {
 	Create(ctx context.Context, data model.CreatePaymentData) (model.CreatePaymentResult, error)
 }
 
+type ToolService interface {
+	AvailableTools(ctx context.Context, userID int64) (map[string][]*model.Tool, error)
+}
+
 type Handler struct {
 	methodService  MethodService
 	paymentService PaymentService
+	toolService    ToolService
 	validate       *validator.Validate
 	apiKey         string
 }
@@ -31,6 +36,7 @@ type Handler struct {
 type HandlerOptions struct {
 	MethodService  MethodService
 	PaymentService PaymentService
+	ToolService    ToolService
 	APIKey         string
 }
 
@@ -61,6 +67,7 @@ func NewHandler(opts HandlerOptions) *Handler {
 	return &Handler{
 		methodService:  opts.MethodService,
 		paymentService: opts.PaymentService,
+		toolService:    opts.ToolService,
 		validate:       validate,
 		apiKey:         opts.APIKey,
 	}

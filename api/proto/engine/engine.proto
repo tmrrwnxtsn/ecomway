@@ -10,6 +10,7 @@ option go_package = "github.com/tmrrwnxtsn/ecomway/api/proto/engine";
 service EngineService {
   rpc AvailableMethods(AvailableMethodsRequest) returns (AvailableMethodsResponse);
   rpc CreatePayment(CreatePaymentRequest) returns (CreatePaymentResponse);
+  rpc AvailableTools(AvailableToolsRequest) returns (AvailableToolsResponse);
 }
 
 message AvailableMethodsRequest {
@@ -36,4 +37,12 @@ message CreatePaymentRequest {
 message CreatePaymentResponse {
   string redirect_url = 1;
   int64 operation_id = 2;
+}
+
+message AvailableToolsRequest {
+  int64 user_id = 1;
+}
+
+message AvailableToolsResponse {
+  repeated shared.Tool tools = 1;
 }

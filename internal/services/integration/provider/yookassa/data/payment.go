@@ -19,6 +19,7 @@ type PaymentMethodCard struct {
 	ExpiryYear  string
 	ExpiryMonth string
 	CardType    string
+	IssuerName  string
 }
 
 type PaymentMethod struct {
