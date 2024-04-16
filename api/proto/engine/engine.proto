@@ -38,6 +38,7 @@ message CreatePaymentRequest {
 message CreatePaymentResponse {
   string redirect_url = 1;
   int64 operation_id = 2;
+  string status = 3;
 }
 
 message AvailableToolsRequest {

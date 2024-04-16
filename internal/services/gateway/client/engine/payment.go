@@ -40,6 +40,7 @@ func (c *Client) CreatePayment(ctx context.Context, data model.CreatePaymentData
 
 	result.RedirectURL = response.GetRedirectUrl()
 	result.OperationID = response.GetOperationId()
+	result.Status = model.OperationStatus(response.GetStatus())
 
 	return result, nil
 }

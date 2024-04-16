@@ -23,10 +23,11 @@ type PaymentMethodCard struct {
 }
 
 type PaymentMethod struct {
-	Type  string
-	ID    string
-	Saved bool
-	Card  PaymentMethodCard
+	Type          string
+	ID            string
+	AccountNumber string
+	Card          PaymentMethodCard
+	Saved         bool
 }
 
 const (
@@ -53,6 +54,10 @@ type CreatePaymentResponse struct {
 	ID              string
 	ConfirmationURL string
 	Status          string
+	CapturedAt      time.Time
+	Cancellation    PaymentCancellation
+	IncomeAmount    PaymentAmount
+	PaymentMethod   PaymentMethod
 }
 
 type PaymentCancellation struct {

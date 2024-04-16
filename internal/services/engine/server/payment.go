@@ -38,5 +38,6 @@ func (s *Server) CreatePayment(ctx context.Context, request *pb.CreatePaymentReq
 	return &pb.CreatePaymentResponse{
 		RedirectUrl: result.RedirectURL,
 		OperationId: result.OperationID,
+		Status:      string(result.Status),
 	}, nil
 }

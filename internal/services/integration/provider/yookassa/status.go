@@ -75,7 +75,7 @@ func (i *Integration) GetOperationStatus(ctx context.Context, statusData model.G
 
 		result.ProcessedAt = response.CapturedAt.UTC()
 		result.NewAmount = convert.BaseToCents(response.IncomeAmount.Value)
-		result.Tool = ch.PaymentTool(statusData, response)
+		result.Tool = ch.PaymentTool(statusData.UserID, statusData.ExternalMethod, response.PaymentMethod)
 	case model.OperationExternalStatusFailed:
 		result.FailReason = fmt.Sprintf("%v: %v", response.Cancellation.Party, response.Cancellation.Reason)
 	}

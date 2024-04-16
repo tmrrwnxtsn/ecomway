@@ -101,13 +101,24 @@ type paymentCreateRequest struct {
 	AdditionalData map[string]any `json:"additional_data" swaggertype:"object,string" example:"ip:127.0.0.1,phone_number:+71234567890"`
 }
 
+const (
+	paymentCreateResponseTypeRedirect = "redirect"
+	paymentCreateResponseTypeMessage  = "message"
+)
+
 type paymentCreateResponse struct {
 	// Результат обработки запроса (всегда true)
 	Success bool `json:"success" example:"true" validate:"required"`
-	// URL платежной страницы, на которую необходимо перенаправить клиента
-	RedirectURL string `json:"redirect_url" example:"https://securepayments.example.com" validate:"required"`
 	// Идентификатор созданного платежа
 	OperationID int64 `json:"operation_id" example:"102492" validate:"required"`
+	// Тип ответа:
+	// * Перенаправление клиента на платежную страницу - "redirect"
+	// * Текстовое сообщение - "message"
+	Type string `json:"type" example:"redirect" validate:"required"`
+	// URL платежной страницы, на которую необходимо перенаправить клиента
+	RedirectURL string `json:"redirect_url,omitempty" example:"https://securepayments.example.com"`
+	// Сообщение, которое необходимо показать клиенту
+	Message string `json:"message,omitempty" example:"Заказ оплачен!"`
 }
 
 // paymentCreate godoc
@@ -155,8 +166,16 @@ func (h *Handler) paymentCreate(c *fiber.Ctx) error {
 
 	resp := &paymentCreateResponse{
 		Success:     true,
-		RedirectURL: result.RedirectURL,
 		OperationID: result.OperationID,
+	}
+
+	switch result.Status {
+	case model.OperationStatusSuccess, model.OperationStatusFailed:
+		resp.Type = paymentCreateResponseTypeMessage
+		resp.Message = messageFromResult(req.LangCode, result.Status)
+	default:
+		resp.Type = paymentCreateResponseTypeRedirect
+		resp.RedirectURL = result.RedirectURL
 	}
 
 	return c.JSON(resp)
@@ -176,4 +195,27 @@ func returnURLsModelFromRequest(returnURLs paymentReturnURLs) model.ReturnURLs {
 	}
 
 	return result
+}
+
+func messageFromResult(langCode string, resultStatus model.OperationStatus) string {
+	var messages map[string]string
+
+	switch resultStatus {
+	case model.OperationStatusSuccess:
+		messages = map[string]string{
+			"en": "Order captured!",
+			"ru": "Заказ оплачен!",
+		}
+	case model.OperationStatusFailed:
+		messages = map[string]string{
+			"en": "Payment failed",
+			"ru": "Оплата неуспешна",
+		}
+	}
+
+	message, ok := messages[langCode]
+	if !ok {
+		message = messages["ru"]
+	}
+	return message
 }

@@ -23,10 +23,15 @@ type CreatePaymentData struct {
 }
 
 type CreatePaymentResult struct {
+	ProcessedAt    time.Time
 	RedirectURL    string
 	ExternalID     string
 	ExternalStatus OperationExternalStatus
+	FailReason     string
+	Status         OperationStatus
 	OperationID    int64
+	NewAmount      int64
+	Tool           *Tool
 }
 
 type SuccessPaymentData struct {

@@ -60,6 +60,7 @@ message ReturnURLs {
 
 enum ToolType {
   BANK_CARD = 0;
+  WALLET = 1;
 }
 
 message Tool {

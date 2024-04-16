@@ -121,6 +121,8 @@ func ToolTypeToProto(toolType model.ToolType) pb.ToolType {
 	switch toolType {
 	case model.ToolTypeBankCard:
 		return pb.ToolType_BANK_CARD
+	case model.ToolTypeWallet:
+		return pb.ToolType_WALLET
 	default:
 		return -1
 	}

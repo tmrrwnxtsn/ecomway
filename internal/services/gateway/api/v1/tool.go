@@ -8,6 +8,7 @@ import (
 
 const (
 	toolTypeBankCard = "card"
+	toolTypeWallet   = "wallet"
 )
 
 type toolDetails struct {
@@ -21,6 +22,8 @@ type toolDetails struct {
 	ExpiryYear int64 `json:"expiry_year,omitempty" example:"2023"`
 	// Название банка, выпустившего банковскую карту
 	BankName string `json:"bank_name,omitempty" example:"Sberbank"`
+	// Номер электронного кошелька
+	WalletNumber string `json:"wallet_number,omitempty" example:"410011758831136"`
 }
 
 type tool struct {
@@ -28,6 +31,7 @@ type tool struct {
 	ID int64 `json:"id" example:"14124" validate:"required"`
 	// Тип платежного инструмента:
 	// * Банковская карта - "card"
+	// * Электронный кошелек - "wallet"
 	Type string `json:"type" example:"card" validate:"required"`
 	// Значение платежного инструмента, например:
 	// * Маскированная банковская карта
@@ -68,6 +72,17 @@ func (h *Handler) tool(item *model.Tool) tool {
 			ExpiryMonth: expiryMonth,
 			ExpiryYear:  expiryYear,
 			BankName:    bankName,
+		}
+	case model.ToolTypeWallet:
+		t.Type = toolTypeWallet
+
+		walletNumber, _ := item.Details["number"].(string)
+		if walletNumber == "" {
+			break
+		}
+
+		t.Details = &toolDetails{
+			WalletNumber: walletNumber,
 		}
 	}
 

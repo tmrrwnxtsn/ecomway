@@ -35,26 +35,26 @@ func (c bankCardChannel) CreatePaymentRequest(d model.CreatePaymentData) data.Cr
 	return request
 }
 
-func (c bankCardChannel) PaymentTool(d model.GetOperationStatusData, resp data.GetPaymentResponse) *model.Tool {
-	if resp.PaymentMethod.Type != c.paymentMethodType || !resp.PaymentMethod.Saved {
+func (c bankCardChannel) PaymentTool(userID int64, externalMethod string, method data.PaymentMethod) *model.Tool {
+	if method.Type != c.paymentMethodType || !method.Saved {
 		return nil
 	}
 
-	displayed := fmt.Sprintf("%v******%v", resp.PaymentMethod.Card.First6, resp.PaymentMethod.Card.Last4)
+	displayed := fmt.Sprintf("%v******%v", method.Card.First6, method.Card.Last4)
 
 	return &model.Tool{
-		UserID:         d.UserID,
-		ExternalMethod: d.ExternalMethod,
+		UserID:         userID,
+		ExternalMethod: externalMethod,
 		Displayed:      displayed,
 		Type:           model.ToolTypeBankCard,
 		Details: map[string]any{
-			"token":        resp.PaymentMethod.ID,
-			"first6":       resp.PaymentMethod.Card.First6,
-			"last4":        resp.PaymentMethod.Card.Last4,
-			"expiry_year":  resp.PaymentMethod.Card.ExpiryYear,
-			"expiry_month": resp.PaymentMethod.Card.ExpiryMonth,
-			"card_type":    resp.PaymentMethod.Card.CardType,
-			"bank_name":    resp.PaymentMethod.Card.IssuerName,
+			"token":        method.ID,
+			"first6":       method.Card.First6,
+			"last4":        method.Card.Last4,
+			"expiry_year":  method.Card.ExpiryYear,
+			"expiry_month": method.Card.ExpiryMonth,
+			"card_type":    method.Card.CardType,
+			"bank_name":    method.Card.IssuerName,
 		},
 	}
 }

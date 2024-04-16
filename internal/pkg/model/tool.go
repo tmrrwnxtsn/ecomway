@@ -6,6 +6,7 @@ type ToolType string
 
 const (
 	ToolTypeBankCard = "BANK_CARD"
+	ToolTypeWallet   = "WALLET"
 )
 
 type Tool struct {

@@ -50,12 +50,8 @@ func (c baseChannel) CreatePaymentRequest(d model.CreatePaymentData) data.Create
 	}
 }
 
-func (c baseChannel) PaymentTool(d model.GetOperationStatusData, _ data.GetPaymentResponse) *model.Tool {
-	return &model.Tool{
-		UserID:         d.UserID,
-		ExternalMethod: d.ExternalMethod,
-		Fake:           true,
-	}
+func (c baseChannel) PaymentTool(_ int64, _ string, _ data.PaymentMethod) *model.Tool {
+	return &model.Tool{}
 }
 
 func (c baseChannel) PaymentTimeoutToFailed() time.Duration {

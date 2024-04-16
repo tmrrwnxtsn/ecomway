@@ -54,13 +54,52 @@ func (s *Service) Create(ctx context.Context, data model.CreatePaymentData) (mod
 		return result, err
 	}
 
-	if err = s.operationRepository.AcquireOneLocked(ctx, model.OperationCriteria{ID: &op.ID},
-		func(ctx context.Context, op *model.Operation) error {
-			op.ExternalID = result.ExternalID
-			op.ExternalStatus = result.ExternalStatus
-			return nil
-		},
-	); err != nil {
+	switch result.ExternalStatus {
+	case model.OperationExternalStatusSuccess:
+		// новые инструменты создаём, а уже созданные - обновляем
+		if result.Tool != nil {
+			result.Tool.ID = data.ToolID
+		}
+
+		data := model.SuccessPaymentData{
+			ProcessedAt:    result.ProcessedAt,
+			ExternalID:     result.ExternalID,
+			ExternalStatus: result.ExternalStatus,
+			OperationID:    data.OperationID,
+			NewAmount:      result.NewAmount,
+			Tool:           result.Tool,
+		}
+
+		if err = s.Success(ctx, data); err != nil {
+			err = fmt.Errorf("failed to success payment: %w", err)
+		}
+
+		result.Status = model.OperationStatusSuccess
+	case model.OperationExternalStatusFailed:
+		data := model.FailPaymentData{
+			ExternalID:     result.ExternalID,
+			ExternalStatus: result.ExternalStatus,
+			FailReason:     result.FailReason,
+			OperationID:    data.OperationID,
+		}
+
+		if err = s.Fail(ctx, data); err != nil {
+			err = fmt.Errorf("failed to fail payment: %w", err)
+		}
+
+		result.Status = model.OperationStatusFailed
+	default:
+		err = s.operationRepository.AcquireOneLocked(ctx, model.OperationCriteria{ID: &data.OperationID},
+			func(ctx context.Context, op *model.Operation) error {
+				op.ExternalID = result.ExternalID
+				op.ExternalStatus = result.ExternalStatus
+				return nil
+			},
+		)
+
+		result.Status = model.OperationStatusNew
+	}
+	if err != nil {
 		return result, err
 	}
 

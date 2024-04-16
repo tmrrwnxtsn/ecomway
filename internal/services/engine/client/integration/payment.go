@@ -2,6 +2,7 @@ package integration
 
 import (
 	"context"
+	"time"
 
 	"google.golang.org/protobuf/types/known/structpb"
 
@@ -39,14 +40,30 @@ func (c *Client) CreatePayment(ctx context.Context, data model.CreatePaymentData
 		return result, err
 	}
 
-	result.RedirectURL = response.GetRedirectUrl()
+	result.ExternalStatus = convert.OperationExternalStatusFromProto(response.GetExternalStatus())
+
+	if response.RedirectUrl != nil {
+		result.RedirectURL = response.GetRedirectUrl()
+	}
 
 	if response.ExternalId != nil {
 		result.ExternalID = response.GetExternalId()
 	}
 
-	if response.ExternalStatus != nil {
-		result.ExternalStatus = convert.OperationExternalStatusFromProto(response.GetExternalStatus())
+	if response.ProcessedAt != nil {
+		result.ProcessedAt = time.Unix(response.GetProcessedAt(), 0).UTC()
+	}
+
+	if response.FailReason != nil {
+		result.FailReason = response.GetFailReason()
+	}
+
+	if response.NewAmount != nil {
+		result.NewAmount = response.GetNewAmount()
+	}
+
+	if response.Tool != nil {
+		result.Tool = convert.ToolFromProto(response.GetTool())
 	}
 
 	return result, nil

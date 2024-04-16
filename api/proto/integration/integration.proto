@@ -37,9 +37,13 @@ message CreatePaymentRequest {
 }
 
 message CreatePaymentResponse {
-  string redirect_url = 1;
-  optional string external_id = 2;
-  optional shared.OperationExternalStatus external_status = 3;
+  shared.OperationExternalStatus external_status = 1;
+  optional string redirect_url = 2;
+  optional string external_id = 3;
+  optional int64 processed_at = 4;
+  optional string fail_reason = 5;
+  optional int64 new_amount = 6;
+  optional shared.Tool tool = 7;
 }
 
 message GetOperationStatusRequest {

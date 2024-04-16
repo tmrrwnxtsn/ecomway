@@ -16,7 +16,6 @@ func (s *Server) GetOperationStatus(ctx context.Context, request *pb.GetOperatio
 		return nil, fmt.Errorf("unknown external system: %q", request.GetExternalSystem())
 	}
 
-	// TODO: Tool:           model.Tool{}, заполнить для использования существующих инструментов
 	data := model.GetOperationStatusData{
 		CreatedAt:      time.Unix(request.GetCreatedAt(), 0).UTC(),
 		ExternalID:     request.GetExternalId(),

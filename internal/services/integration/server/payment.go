@@ -38,16 +38,32 @@ func (s *Server) CreatePayment(ctx context.Context, request *pb.CreatePaymentReq
 	}
 
 	response := &pb.CreatePaymentResponse{
-		RedirectUrl: result.RedirectURL,
+		ExternalStatus: convert.OperationExternalStatusToProto(result.ExternalStatus),
+	}
+
+	if result.RedirectURL != "" {
+		response.RedirectUrl = &result.RedirectURL
 	}
 
 	if result.ExternalID != "" {
 		response.ExternalId = &result.ExternalID
 	}
 
-	if result.ExternalStatus != "" {
-		pbExternalStatus := convert.OperationExternalStatusToProto(result.ExternalStatus)
-		response.ExternalStatus = &pbExternalStatus
+	if !result.ProcessedAt.IsZero() {
+		processedAtUnix := result.ProcessedAt.UTC().Unix()
+		response.ProcessedAt = &processedAtUnix
+	}
+
+	if result.FailReason != "" {
+		response.FailReason = &result.FailReason
+	}
+
+	if result.NewAmount > 0 {
+		response.NewAmount = &result.NewAmount
+	}
+
+	if result.Tool != nil {
+		response.Tool = convert.ToolToProto(result.Tool)
 	}
 
 	return response, nil

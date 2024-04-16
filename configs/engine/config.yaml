@@ -6,16 +6,23 @@ engine:
     tasks:
       finalize_operations:
         is_enabled: true
-        interval: 60
+        interval: 5
         operation_batch_size: 100
         max_workers: 1
         actualize_status_intervals:
-          600: 120
-          900: 240
-          1500: 360
-          2400: 600
+          10: 10
+          15: 15
+          25: 25
+          40: 40
+          65: 65
+          105: 105
+          180: 180
+          285: 285
+          465: 465
+          750: 750
+          1215: 1215
         external_system_lifetime:
-          yookassa: 60
+          yookassa: 5
 
 services:
   integration:
