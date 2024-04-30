@@ -17,8 +17,6 @@ import (
 
 const paymentsEndpoint = "/payments"
 
-const datetimeLayout = "2006-01-02T15:04:05Z"
-
 type paymentAmount struct {
 	Value    string `json:"value"`
 	Currency string `json:"currency"`
@@ -116,7 +114,7 @@ func (c *Client) CreatePayment(ctx context.Context, request data.CreatePaymentRe
 		return response, fmt.Errorf("creating HTTP request with context: %w", err)
 	}
 
-	c.setRequiredHeaders(httpRequest)
+	c.setPaymentRequiredHeaders(httpRequest)
 
 	httpResponse, err := c.httpClient.Do(httpRequest)
 	if err != nil {
@@ -165,7 +163,7 @@ func (c *Client) CreatePayment(ctx context.Context, request data.CreatePaymentRe
 	response.ID = resp.ID
 	response.Status = resp.Status
 	response.ConfirmationURL = resp.Confirmation.ConfirmationURL
-	response.Cancellation = data.PaymentCancellation(resp.Cancellation)
+	response.Cancellation = data.Cancellation(resp.Cancellation)
 	response.PaymentMethod = data.PaymentMethod{
 		Type:          resp.PaymentMethod.Type,
 		ID:            resp.PaymentMethod.ID,
@@ -215,7 +213,7 @@ func (c *Client) GetPayment(ctx context.Context, paymentID string) (data.GetPaym
 		return response, fmt.Errorf("creating HTTP request with context: %w", err)
 	}
 
-	c.setRequiredHeaders(httpRequest)
+	c.setPaymentRequiredHeaders(httpRequest)
 
 	httpResponse, err := c.httpClient.Do(httpRequest)
 	if err != nil {
@@ -267,7 +265,7 @@ func (c *Client) GetPayment(ctx context.Context, paymentID string) (data.GetPaym
 
 	response.ID = resp.ID
 	response.Status = resp.Status
-	response.Cancellation = data.PaymentCancellation(resp.Cancellation)
+	response.Cancellation = data.Cancellation(resp.Cancellation)
 	response.PaymentMethod = data.PaymentMethod{
 		Type:          resp.PaymentMethod.Type,
 		ID:            resp.PaymentMethod.ID,

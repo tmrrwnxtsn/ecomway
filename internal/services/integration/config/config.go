@@ -41,5 +41,16 @@ func Load(configPath string) (Config, error) {
 		return cfg, err
 	}
 
+	cfg.loadFromEnv()
+
 	return cfg, nil
+}
+
+func (c *Config) loadFromEnv() {
+	if key, exists := os.LookupEnv(yooKassaPaymentsSecretKeyEnvKey); exists {
+		c.Integration.YooKassa.API.Payments.SecretKey = key
+	}
+	if key, exists := os.LookupEnv(yooKassaPayoutsSecretKeyEnvKey); exists {
+		c.Integration.YooKassa.API.Payouts.SecretKey = key
+	}
 }

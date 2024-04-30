@@ -34,6 +34,19 @@ func (c walletChannel) CreatePaymentRequest(d model.CreatePaymentData) data.Crea
 	return request
 }
 
+func (c walletChannel) CreatePayoutRequest(d model.CreatePayoutData) data.CreatePayoutRequest {
+	request := c.baseChannel.CreatePayoutRequest(d)
+
+	if d.ToolID != 0 && d.Tool != nil {
+		token, ok := d.Tool.Details["token"].(string)
+		if ok {
+			request.PaymentMethodID = token
+		}
+	}
+
+	return request
+}
+
 func (c walletChannel) PaymentTool(userID int64, externalMethod string, method data.PaymentMethod) *model.Tool {
 	if method.Type != c.paymentMethodType || !method.Saved {
 		return nil

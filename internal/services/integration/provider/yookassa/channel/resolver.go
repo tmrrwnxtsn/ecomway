@@ -11,6 +11,7 @@ import (
 
 type Channel interface {
 	CreatePaymentRequest(data model.CreatePaymentData) data.CreatePaymentRequest
+	CreatePayoutRequest(data model.CreatePayoutData) data.CreatePayoutRequest
 	PaymentTool(userID int64, externalMethod string, method data.PaymentMethod) *model.Tool
 	PaymentTimeoutToFailed() time.Duration
 }

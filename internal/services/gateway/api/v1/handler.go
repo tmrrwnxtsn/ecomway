@@ -25,10 +25,15 @@ type ToolService interface {
 	AvailableTools(ctx context.Context, userID int64) (map[string][]*model.Tool, error)
 }
 
+type PayoutService interface {
+	Create(ctx context.Context, data model.CreatePayoutData) (model.CreatePayoutResult, error)
+}
+
 type Handler struct {
 	methodService  MethodService
 	paymentService PaymentService
 	toolService    ToolService
+	payoutService  PayoutService
 	validate       *validator.Validate
 	apiKey         string
 }
@@ -37,22 +42,23 @@ type HandlerOptions struct {
 	MethodService  MethodService
 	PaymentService PaymentService
 	ToolService    ToolService
+	PayoutService  PayoutService
 	APIKey         string
 }
 
-//	@title						Платежный шлюз для E-commerce системы
-//	@version					1.0
+// @title						Платежный шлюз для E-commerce системы
+// @version					1.0
 //
-//	@contact.name				Курмыза Павел
-//	@contact.email				tmrrwnxtsn@gmail.com
+// @contact.name				Курмыза Павел
+// @contact.email				tmrrwnxtsn@gmail.com
 //
-//	@host						localhost:8080
-//	@BasePath					/api/v1
+// @host						localhost:8080
+// @BasePath					/api/v1
 //
-//	@securityDefinitions.apikey	ApiKeyAuth
-//	@in							header
-//	@name						Authorization
-//	@description				Секретный ключ
+// @securityDefinitions.apikey	ApiKeyAuth
+// @in							header
+// @name						Authorization
+// @description				Секретный ключ
 func NewHandler(opts HandlerOptions) *Handler {
 	validate := validator.New()
 	validate.RegisterTagNameFunc(func(fld reflect.StructField) string {
@@ -73,6 +79,7 @@ func NewHandler(opts HandlerOptions) *Handler {
 		methodService:  opts.MethodService,
 		paymentService: opts.PaymentService,
 		toolService:    opts.ToolService,
+		payoutService:  opts.PayoutService,
 		validate:       validate,
 		apiKey:         opts.APIKey,
 	}

@@ -27,6 +27,10 @@ type ToolService interface {
 	All(ctx context.Context, userID int64) ([]*model.Tool, error)
 }
 
+type PayoutService interface {
+	Create(ctx context.Context, data model.CreatePayoutData) (model.CreatePayoutResult, error)
+}
+
 type Server struct {
 	server         *grpc.Server
 	listener       net.Listener
@@ -34,6 +38,7 @@ type Server struct {
 	limitService   LimitService
 	paymentService PaymentService
 	toolService    ToolService
+	payoutService  PayoutService
 	pb.UnimplementedEngineServiceServer
 }
 
@@ -44,6 +49,7 @@ type Options struct {
 	LimitService   LimitService
 	PaymentService PaymentService
 	ToolService    ToolService
+	PayoutService  PayoutService
 }
 
 func NewServer(opts Options) *Server {
@@ -54,6 +60,7 @@ func NewServer(opts Options) *Server {
 	s.limitService = opts.LimitService
 	s.paymentService = opts.PaymentService
 	s.toolService = opts.ToolService
+	s.payoutService = opts.PayoutService
 	return &s
 }
 

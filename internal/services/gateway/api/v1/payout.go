@@ -10,7 +10,7 @@ import (
 
 type payoutMethodsRequest struct {
 	// Идентификатор клиента
-	UserID int64 `query:"user_id" example:"11431" validate:"required"`
+	UserID int64 `query:"user_id" example:"1" validate:"required"`
 	// Валюта платежа в соответствии со стандартом ISO 4217
 	Currency string `query:"currency" example:"RUB" validate:"required,iso4217"`
 	// Код языка, обозначение по RFC 5646
@@ -68,7 +68,9 @@ func (h *Handler) payoutMethods(c *fiber.Ctx) error {
 
 type payoutCreateRequest struct {
 	// Идентификатор клиента
-	UserID int64 `json:"user_id" example:"11431" validate:"required"`
+	UserID int64 `json:"user_id" example:"1" validate:"required"`
+	// Идентификатор сохраненного платежного средства
+	ToolID int64 `json:"tool_id" example:"1" validate:"required"`
 	// Сумма выплаты в минорных единицах валюты (копейки, центы и т.п.)
 	Amount int64 `json:"amount" example:"10000" validate:"required,gte=100"`
 	// Валюта выплаты в соответствии со стандартом ISO 4217
@@ -87,7 +89,7 @@ type payoutCreateResponse struct {
 	// Результат обработки запроса (всегда true)
 	Success bool `json:"success" example:"true" validate:"required"`
 	// Идентификатор созданной выплаты
-	OperationID int64 `json:"operation_id" example:"102492" validate:"required"`
+	OperationID int64 `json:"operation_id" example:"1" validate:"required"`
 }
 
 // payoutCreate godoc
@@ -102,7 +104,39 @@ type payoutCreateResponse struct {
 //	@Failure	default	{object}	errorResponse			"Ответ с ошибкой"
 //	@Router		/payout/create [post]
 func (h *Handler) payoutCreate(c *fiber.Ctx) error {
-	return c.SendString("Payout created")
+	ctx := context.Background()
+
+	var req payoutCreateRequest
+	if err := c.BodyParser(&req); err != nil {
+		return h.requestValidationErrorResponse(c, err)
+	}
+
+	if err := h.validate.Struct(req); err != nil {
+		return h.requestValidationErrorResponse(c, err)
+	}
+
+	data := model.CreatePayoutData{
+		AdditionalData: req.AdditionalData,
+		ExternalSystem: req.ExternalSystem,
+		ExternalMethod: req.ExternalMethod,
+		Currency:       req.Currency,
+		LangCode:       req.LangCode,
+		UserID:         req.UserID,
+		ToolID:         req.ToolID,
+		Amount:         req.Amount,
+	}
+
+	result, err := h.payoutService.Create(ctx, data)
+	if err != nil {
+		return h.internalErrorResponse(c, err)
+	}
+
+	resp := &payoutCreateResponse{
+		Success:     true,
+		OperationID: result.OperationID,
+	}
+
+	return c.JSON(resp)
 }
 
 func (h *Handler) payoutConfirm(c *fiber.Ctx) error {

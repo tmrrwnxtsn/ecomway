@@ -2,13 +2,7 @@ package data
 
 import "time"
 
-const (
-	PaymentStatusPending   = "pending"
-	PaymentStatusSucceeded = "succeeded"
-	PaymentStatusCanceled  = "canceled"
-)
-
-type PaymentAmount struct {
+type Amount struct {
 	Currency string
 	Value    float64
 }
@@ -43,7 +37,7 @@ type PaymentConfirmation struct {
 type CreatePaymentRequest struct {
 	Confirmation      PaymentConfirmation
 	PaymentMethodData PaymentMethod
-	Amount            PaymentAmount
+	Amount            Amount
 	Description       string
 	PaymentMethodID   string
 	Capture           bool
@@ -55,12 +49,12 @@ type CreatePaymentResponse struct {
 	ConfirmationURL string
 	Status          string
 	CapturedAt      time.Time
-	Cancellation    PaymentCancellation
-	IncomeAmount    PaymentAmount
+	Cancellation    Cancellation
+	IncomeAmount    Amount
 	PaymentMethod   PaymentMethod
 }
 
-type PaymentCancellation struct {
+type Cancellation struct {
 	Party  string
 	Reason string
 }
@@ -69,7 +63,7 @@ type GetPaymentResponse struct {
 	CapturedAt    time.Time
 	ID            string
 	Status        string
-	Cancellation  PaymentCancellation
-	IncomeAmount  PaymentAmount
+	Cancellation  Cancellation
+	IncomeAmount  Amount
 	PaymentMethod PaymentMethod
 }

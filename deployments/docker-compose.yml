@@ -5,6 +5,8 @@ services:
       dockerfile: build/integration/Dockerfile
     container_name: integration
     restart: on-failure
+    env_file:
+      - integration.env
 
   storage:
     image: postgres

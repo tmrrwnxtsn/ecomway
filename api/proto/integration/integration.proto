@@ -11,6 +11,7 @@ service IntegrationService {
   rpc AvailableMethods(AvailableMethodsRequest) returns (AvailableMethodsResponse);
   rpc CreatePayment(CreatePaymentRequest) returns (CreatePaymentResponse);
   rpc GetOperationStatus(GetOperationStatusRequest) returns (GetOperationStatusResponse);
+  rpc CreatePayout(CreatePayoutRequest) returns (CreatePayoutResponse);
 }
 
 message AvailableMethodsRequest {
@@ -65,4 +66,23 @@ message GetOperationStatusResponse {
   optional string fail_reason = 4;
   optional int64 new_amount = 5;
   optional shared.Tool tool = 6;
+}
+
+message CreatePayoutRequest {
+  int64 operation_id = 1;
+  int64 user_id = 2;
+  string lang_code = 3;
+  string external_system = 4;
+  string external_method = 5;
+  int64 amount = 6;
+  string currency = 7;
+  google.protobuf.Struct additional_data = 8;
+  shared.Tool tool = 9;
+}
+
+message CreatePayoutResponse {
+  shared.OperationExternalStatus external_status = 1;
+  optional string external_id = 2;
+  optional int64 processed_at = 3;
+  optional string fail_reason = 4;
 }

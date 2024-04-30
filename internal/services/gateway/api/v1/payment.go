@@ -10,7 +10,7 @@ import (
 
 type paymentMethodsRequest struct {
 	// Идентификатор клиента
-	UserID int64 `query:"user_id" example:"11431" validate:"required"`
+	UserID int64 `query:"user_id" example:"1" validate:"required"`
 	// Валюта платежа в соответствии со стандартом ISO 4217
 	Currency string `query:"currency" example:"RUB" validate:"required,iso4217"`
 	// Код языка, обозначение по RFC 5646
@@ -77,9 +77,9 @@ type paymentReturnURLs struct {
 
 type paymentCreateRequest struct {
 	// Идентификатор клиента
-	UserID int64 `json:"user_id" example:"11431" validate:"required"`
+	UserID int64 `json:"user_id" example:"1" validate:"required"`
 	// Идентификатор сохраненного платежного средства
-	ToolID int64 `json:"tool_id" example:"1024125"`
+	ToolID int64 `json:"tool_id" example:"1"`
 	// Сумма платежа в минорных единицах валюты (копейки, центы и т.п.)
 	Amount int64 `json:"amount" example:"10000" validate:"required,gte=100"`
 	// Валюта платежа в соответствии со стандартом ISO 4217
@@ -105,7 +105,7 @@ type paymentCreateResponse struct {
 	// Результат обработки запроса (всегда true)
 	Success bool `json:"success" example:"true" validate:"required"`
 	// Идентификатор созданного платежа
-	OperationID int64 `json:"operation_id" example:"102492" validate:"required"`
+	OperationID int64 `json:"operation_id" example:"1" validate:"required"`
 	// Тип ответа:
 	// * Перенаправление клиента на платежную страницу - "redirect"
 	// * Текстовое сообщение - "message"
@@ -113,7 +113,7 @@ type paymentCreateResponse struct {
 	// URL платежной страницы, на которую необходимо перенаправить клиента
 	RedirectURL string `json:"redirect_url,omitempty" example:"https://securepayments.example.com"`
 	// Сообщение, которое необходимо показать клиенту
-	Message string `json:"message,omitempty" example:"Заказ оплачен!"`
+	Message string `json:"message,omitempty" example:"Баланс пополнен!"`
 }
 
 // paymentCreate godoc
@@ -164,7 +164,7 @@ func (h *Handler) paymentCreate(c *fiber.Ctx) error {
 	switch result.Status {
 	case model.OperationStatusSuccess, model.OperationStatusFailed:
 		resp.Type = paymentCreateResponseTypeMessage
-		resp.Message = messageFromResult(req.LangCode, result.Status)
+		resp.Message = paymentMessageFromResult(req.LangCode, result.Status)
 	default:
 		resp.Type = paymentCreateResponseTypeRedirect
 		resp.RedirectURL = result.RedirectURL
@@ -189,18 +189,18 @@ func returnURLsModelFromRequest(returnURLs paymentReturnURLs) model.ReturnURLs {
 	return result
 }
 
-func messageFromResult(langCode string, resultStatus model.OperationStatus) string {
+func paymentMessageFromResult(langCode string, resultStatus model.OperationStatus) string {
 	var messages map[string]string
 
 	switch resultStatus {
 	case model.OperationStatusSuccess:
 		messages = map[string]string{
-			"en": "Order captured!",
-			"ru": "Заказ оплачен!",
+			"en": "Balance replenished!",
+			"ru": "Баланс пополнен!",
 		}
 	case model.OperationStatusFailed:
 		messages = map[string]string{
-			"en": "Payment failed",
+			"en": "Payment rejected",
 			"ru": "Оплата неуспешна",
 		}
 	}

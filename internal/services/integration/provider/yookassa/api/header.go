@@ -12,8 +12,17 @@ const (
 	headerContentType    = "Content-Type"
 )
 
-func (c *Client) setRequiredHeaders(req *http.Request) {
-	req.SetBasicAuth(c.shopID, c.secretKey)
+func (c *Client) setPaymentRequiredHeaders(req *http.Request) {
+	req.SetBasicAuth(c.shopID, c.paymentsSecretKey)
+
+	if req.Method == http.MethodPost {
+		req.Header.Set(headerIdempotenceKey, generateXRequestID())
+		req.Header.Set(headerContentType, "application/json")
+	}
+}
+
+func (c *Client) setPayoutRequiredHeaders(req *http.Request) {
+	req.SetBasicAuth(c.agentID, c.payoutsSecretKey)
 
 	if req.Method == http.MethodPost {
 		req.Header.Set(headerIdempotenceKey, generateXRequestID())

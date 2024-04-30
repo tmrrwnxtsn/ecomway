@@ -439,12 +439,12 @@ const docTemplate = `{
                 "tool_id": {
                     "description": "Идентификатор сохраненного платежного средства",
                     "type": "integer",
-                    "example": 1024125
+                    "example": 1
                 },
                 "user_id": {
                     "description": "Идентификатор клиента",
                     "type": "integer",
-                    "example": 11431
+                    "example": 1
                 }
             }
         },
@@ -459,12 +459,12 @@ const docTemplate = `{
                 "message": {
                     "description": "Сообщение, которое необходимо показать клиенту",
                     "type": "string",
-                    "example": "Заказ оплачен!"
+                    "example": "Баланс пополнен!"
                 },
                 "operation_id": {
                     "description": "Идентификатор созданного платежа",
                     "type": "integer",
-                    "example": 102492
+                    "example": 1
                 },
                 "redirect_url": {
                     "description": "URL платежной страницы, на которую необходимо перенаправить клиента",
@@ -535,6 +535,7 @@ const docTemplate = `{
                 "external_method",
                 "external_system",
                 "lang_code",
+                "tool_id",
                 "user_id"
             ],
             "properties": {
@@ -575,10 +576,15 @@ const docTemplate = `{
                     "type": "string",
                     "example": "en"
                 },
+                "tool_id": {
+                    "description": "Идентификатор сохраненного платежного средства",
+                    "type": "integer",
+                    "example": 1
+                },
                 "user_id": {
                     "description": "Идентификатор клиента",
                     "type": "integer",
-                    "example": 11431
+                    "example": 1
                 }
             }
         },
@@ -592,7 +598,7 @@ const docTemplate = `{
                 "operation_id": {
                     "description": "Идентификатор созданной выплаты",
                     "type": "integer",
-                    "example": 102492
+                    "example": 1
                 },
                 "success": {
                     "description": "Результат обработки запроса (всегда true)",

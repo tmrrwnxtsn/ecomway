@@ -22,6 +22,7 @@ const (
 	IntegrationService_AvailableMethods_FullMethodName   = "/integration.IntegrationService/AvailableMethods"
 	IntegrationService_CreatePayment_FullMethodName      = "/integration.IntegrationService/CreatePayment"
 	IntegrationService_GetOperationStatus_FullMethodName = "/integration.IntegrationService/GetOperationStatus"
+	IntegrationService_CreatePayout_FullMethodName       = "/integration.IntegrationService/CreatePayout"
 )
 
 // IntegrationServiceClient is the client API for IntegrationService service.
@@ -31,6 +32,7 @@ type IntegrationServiceClient interface {
 	AvailableMethods(ctx context.Context, in *AvailableMethodsRequest, opts ...grpc.CallOption) (*AvailableMethodsResponse, error)
 	CreatePayment(ctx context.Context, in *CreatePaymentRequest, opts ...grpc.CallOption) (*CreatePaymentResponse, error)
 	GetOperationStatus(ctx context.Context, in *GetOperationStatusRequest, opts ...grpc.CallOption) (*GetOperationStatusResponse, error)
+	CreatePayout(ctx context.Context, in *CreatePayoutRequest, opts ...grpc.CallOption) (*CreatePayoutResponse, error)
 }
 
 type integrationServiceClient struct {
@@ -68,6 +70,15 @@ func (c *integrationServiceClient) GetOperationStatus(ctx context.Context, in *G
 	return out, nil
 }
 
+func (c *integrationServiceClient) CreatePayout(ctx context.Context, in *CreatePayoutRequest, opts ...grpc.CallOption) (*CreatePayoutResponse, error) {
+	out := new(CreatePayoutResponse)
+	err := c.cc.Invoke(ctx, IntegrationService_CreatePayout_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // IntegrationServiceServer is the server API for IntegrationService service.
 // All implementations must embed UnimplementedIntegrationServiceServer
 // for forward compatibility
@@ -75,6 +86,7 @@ type IntegrationServiceServer interface {
 	AvailableMethods(context.Context, *AvailableMethodsRequest) (*AvailableMethodsResponse, error)
 	CreatePayment(context.Context, *CreatePaymentRequest) (*CreatePaymentResponse, error)
 	GetOperationStatus(context.Context, *GetOperationStatusRequest) (*GetOperationStatusResponse, error)
+	CreatePayout(context.Context, *CreatePayoutRequest) (*CreatePayoutResponse, error)
 	mustEmbedUnimplementedIntegrationServiceServer()
 }
 
@@ -90,6 +102,9 @@ func (UnimplementedIntegrationServiceServer) CreatePayment(context.Context, *Cre
 }
 func (UnimplementedIntegrationServiceServer) GetOperationStatus(context.Context, *GetOperationStatusRequest) (*GetOperationStatusResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetOperationStatus not implemented")
+}
+func (UnimplementedIntegrationServiceServer) CreatePayout(context.Context, *CreatePayoutRequest) (*CreatePayoutResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreatePayout not implemented")
 }
 func (UnimplementedIntegrationServiceServer) mustEmbedUnimplementedIntegrationServiceServer() {}
 
@@ -158,6 +173,24 @@ func _IntegrationService_GetOperationStatus_Handler(srv interface{}, ctx context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _IntegrationService_CreatePayout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreatePayoutRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IntegrationServiceServer).CreatePayout(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: IntegrationService_CreatePayout_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IntegrationServiceServer).CreatePayout(ctx, req.(*CreatePayoutRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // IntegrationService_ServiceDesc is the grpc.ServiceDesc for IntegrationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -176,6 +209,10 @@ var IntegrationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetOperationStatus",
 			Handler:    _IntegrationService_GetOperationStatus_Handler,
+		},
+		{
+			MethodName: "CreatePayout",
+			Handler:    _IntegrationService_CreatePayout_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

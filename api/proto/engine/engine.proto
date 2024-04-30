@@ -11,6 +11,7 @@ service EngineService {
   rpc AvailableMethods(AvailableMethodsRequest) returns (AvailableMethodsResponse);
   rpc CreatePayment(CreatePaymentRequest) returns (CreatePaymentResponse);
   rpc AvailableTools(AvailableToolsRequest) returns (AvailableToolsResponse);
+  rpc CreatePayout(CreatePayoutRequest) returns (CreatePayoutResponse);
 }
 
 message AvailableMethodsRequest {
@@ -47,4 +48,20 @@ message AvailableToolsRequest {
 
 message AvailableToolsResponse {
   repeated shared.Tool tools = 1;
+}
+
+message CreatePayoutRequest {
+  int64 user_id = 1;
+  int64 tool_id = 2;
+  string lang_code = 3;
+  string external_system = 4;
+  string external_method = 5;
+  int64 amount = 6;
+  string currency = 7;
+  google.protobuf.Struct additional_data = 8;
+}
+
+message CreatePayoutResponse {
+  int64 operation_id = 1;
+  string status = 2;
 }

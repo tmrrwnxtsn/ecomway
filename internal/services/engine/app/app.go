@@ -25,6 +25,7 @@ import (
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/service/limit"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/service/method"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/service/payment"
+	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/service/payout"
 	toolservice "github.com/tmrrwnxtsn/ecomway/internal/services/engine/service/tool"
 )
 
@@ -80,6 +81,7 @@ func New(configPath string) *App {
 	limitService := limit.NewService()
 	paymentService := payment.NewService(operationRepository, integrationClient, toolRepository)
 	toolService := toolservice.NewService(toolRepository)
+	payoutService := payout.NewService(operationRepository, integrationClient, toolRepository)
 
 	if cfg.Engine.Scheduler.IsEnabled {
 		var tasks []scheduler.BackgroundTask
@@ -104,6 +106,7 @@ func New(configPath string) *App {
 		LimitService:   limitService,
 		PaymentService: paymentService,
 		ToolService:    toolService,
+		PayoutService:  payoutService,
 	})
 	pbEngine.RegisterEngineServiceServer(grpcServer, srv)
 

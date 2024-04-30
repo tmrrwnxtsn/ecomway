@@ -16,6 +16,7 @@ const ExternalSystem = "yookassa"
 type APIClient interface {
 	CreatePayment(ctx context.Context, request data.CreatePaymentRequest) (data.CreatePaymentResponse, error)
 	GetPayment(ctx context.Context, paymentID string) (data.GetPaymentResponse, error)
+	CreatePayout(ctx context.Context, request data.CreatePayoutRequest) (data.CreatePayoutResponse, error)
 }
 
 type ChannelResolver interface {
@@ -35,9 +36,11 @@ func NewIntegration(cfg *config.YooKassaConfig) *Integration {
 	}
 
 	apiClient := api.NewClient(api.ClientOptions{
-		BaseURL:   cfg.API.BaseURL,
-		ShopID:    cfg.API.ShopID,
-		SecretKey: cfg.API.SecretKey,
+		BaseURL:           cfg.API.BaseURL,
+		ShopID:            cfg.API.Payments.ShopID,
+		AgentID:           cfg.API.Payouts.AgentID,
+		PaymentsSecretKey: cfg.API.Payments.SecretKey,
+		PayoutsSecretKey:  cfg.API.Payouts.SecretKey,
 	})
 
 	channelResolver := channel.NewResolver(cfg.Channels)

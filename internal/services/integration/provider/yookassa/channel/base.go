@@ -10,7 +10,7 @@ import (
 	"github.com/tmrrwnxtsn/ecomway/internal/services/integration/provider/yookassa/data"
 )
 
-const defaultPaymentTimeoutToFailed = 90 * time.Minute
+const defaultPaymentTimeoutToFailed = 45 * time.Minute
 
 type baseChannel struct {
 	code                   string
@@ -35,18 +35,28 @@ func (c baseChannel) CreatePaymentRequest(d model.CreatePaymentData) data.Create
 		Confirmation: data.PaymentConfirmation{
 			Type:      data.PaymentConfirmationTypeRedirect,
 			ReturnURL: d.ReturnURLs.Common,
-			Locale:    getLocale(d.LangCode),
+			Locale:    locale(d.LangCode),
 		},
 		PaymentMethodData: data.PaymentMethod{
 			Type: c.paymentMethodType,
 		},
-		Amount: data.PaymentAmount{
+		Amount: data.Amount{
 			Currency: d.Currency,
 			Value:    convert.CentsToBase(d.Amount),
 		},
-		Description:       getDescription(d.LangCode, d.OperationID),
+		Description:       description(model.OperationTypePayment, d.LangCode, d.OperationID),
 		Capture:           true,
 		SavePaymentMethod: true,
+	}
+}
+
+func (c baseChannel) CreatePayoutRequest(d model.CreatePayoutData) data.CreatePayoutRequest {
+	return data.CreatePayoutRequest{
+		Amount: data.Amount{
+			Currency: d.Currency,
+			Value:    convert.CentsToBase(d.Amount),
+		},
+		Description: description(model.OperationTypePayout, d.LangCode, d.OperationID),
 	}
 }
 
@@ -58,10 +68,19 @@ func (c baseChannel) PaymentTimeoutToFailed() time.Duration {
 	return c.paymentTimeoutToFailed
 }
 
-func getDescription(langCode string, operationID int64) string {
-	descriptionsFmt := map[string]string{
-		"en": "Order payment №%v",
-		"ru": "Оплата заказа №%v",
+func description(opType model.OperationType, langCode string, operationID int64) string {
+	var descriptionsFmt map[string]string
+	switch opType {
+	case model.OperationTypePayment:
+		descriptionsFmt = map[string]string{
+			"en": "Replenishment of balance №%v",
+			"ru": "Пополнение баланса №%v",
+		}
+	case model.OperationTypePayout:
+		descriptionsFmt = map[string]string{
+			"en": "Withdrawal of funds №%v",
+			"ru": "Вывод средств №%v",
+		}
 	}
 	descriptionFmt, ok := descriptionsFmt[langCode]
 	if !ok {
@@ -70,14 +89,14 @@ func getDescription(langCode string, operationID int64) string {
 	return fmt.Sprintf(descriptionFmt, operationID)
 }
 
-func getLocale(langCode string) string {
+func locale(langCode string) string {
 	locales := map[string]string{
 		"en": "en_US",
 		"ru": "ru_RU",
 	}
-	locale, ok := locales[langCode]
+	loc, ok := locales[langCode]
 	if !ok {
-		locale = locales["ru"]
+		loc = locales["ru"]
 	}
-	return locale
+	return loc
 }
