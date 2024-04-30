@@ -46,7 +46,7 @@ type method struct {
 	Limits []limits `json:"limits" validate:"required"`
 	// Объект, содержащий данные о комиссии
 	Commission commission `json:"commission" validate:"required"`
-	// Массив объектов, содержащих данные о сохраненных платежных инструментах
+	// Массив объектов, содержащих данные о сохраненных платежных средствах
 	Tools []tool `json:"tools,omitempty"`
 }
 

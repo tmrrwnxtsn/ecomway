@@ -2,6 +2,7 @@ package channel
 
 import (
 	"fmt"
+	"log/slog"
 	"time"
 
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/convert"
@@ -10,7 +11,7 @@ import (
 	"github.com/tmrrwnxtsn/ecomway/internal/services/integration/provider/yookassa/data"
 )
 
-const defaultPaymentTimeoutToFailed = 45 * time.Minute
+const defaultPaymentTimeoutToFailed = 20 * time.Minute
 
 type baseChannel struct {
 	code                   string
@@ -31,6 +32,22 @@ func newBaseChannel(cfg config.YooKassaChannelConfig) baseChannel {
 }
 
 func (c baseChannel) CreatePaymentRequest(d model.CreatePaymentData) data.CreatePaymentRequest {
+	var paymentMethodID string
+	if d.Tool != nil {
+		token, ok := d.Tool.Details["token"].(string)
+		if ok {
+			paymentMethodID = token
+		} else {
+			slog.Warn(
+				"token not found for given tool",
+				"tool_id", d.Tool.ID,
+				"user_id", d.UserID,
+				"external_method", d.ExternalMethod,
+				"operation_id", d.OperationID,
+			)
+		}
+	}
+
 	return data.CreatePaymentRequest{
 		Confirmation: data.PaymentConfirmation{
 			Type:      data.PaymentConfirmationTypeRedirect,
@@ -45,18 +62,36 @@ func (c baseChannel) CreatePaymentRequest(d model.CreatePaymentData) data.Create
 			Value:    convert.CentsToBase(d.Amount),
 		},
 		Description:       description(model.OperationTypePayment, d.LangCode, d.OperationID),
+		PaymentMethodID:   paymentMethodID,
 		Capture:           true,
 		SavePaymentMethod: true,
 	}
 }
 
 func (c baseChannel) CreatePayoutRequest(d model.CreatePayoutData) data.CreatePayoutRequest {
+	var paymentMethodID string
+	if d.Tool != nil {
+		token, ok := d.Tool.Details["token"].(string)
+		if ok {
+			paymentMethodID = token
+		} else {
+			slog.Warn(
+				"token not found for given tool",
+				"tool_id", d.Tool.ID,
+				"user_id", d.UserID,
+				"external_method", d.ExternalMethod,
+				"operation_id", d.OperationID,
+			)
+		}
+	}
+
 	return data.CreatePayoutRequest{
 		Amount: data.Amount{
 			Currency: d.Currency,
 			Value:    convert.CentsToBase(d.Amount),
 		},
-		Description: description(model.OperationTypePayout, d.LangCode, d.OperationID),
+		Description:     description(model.OperationTypePayout, d.LangCode, d.OperationID),
+		PaymentMethodID: paymentMethodID,
 	}
 }
 

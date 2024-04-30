@@ -79,7 +79,7 @@ type paymentCreateRequest struct {
 	// Идентификатор клиента
 	UserID int64 `json:"user_id" example:"1" validate:"required"`
 	// Идентификатор сохраненного платежного средства
-	ToolID int64 `json:"tool_id" example:"1"`
+	ToolID string `json:"tool_id" example:"2dc32aa0-000f-5000-8000-16d7bc6cd09f"`
 	// Сумма платежа в минорных единицах валюты (копейки, центы и т.п.)
 	Amount int64 `json:"amount" example:"10000" validate:"required,gte=100"`
 	// Валюта платежа в соответствии со стандартом ISO 4217

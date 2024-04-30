@@ -43,7 +43,7 @@ type Operation struct {
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
 
-	ToolID           int64
+	ToolID           string
 	Additional       map[string]any
 	FailReason       string
 	ConfirmationCode string

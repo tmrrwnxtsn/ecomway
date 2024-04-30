@@ -371,7 +371,7 @@ const docTemplate = `{
                     "example": "Банковская карта"
                 },
                 "tools": {
-                    "description": "Массив объектов, содержащих данные о сохраненных платежных инструментах",
+                    "description": "Массив объектов, содержащих данные о сохраненных платежных средствах",
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/v1.tool"
@@ -438,8 +438,8 @@ const docTemplate = `{
                 },
                 "tool_id": {
                     "description": "Идентификатор сохраненного платежного средства",
-                    "type": "integer",
-                    "example": 1
+                    "type": "string",
+                    "example": "2dc32aa0-000f-5000-8000-16d7bc6cd09f"
                 },
                 "user_id": {
                     "description": "Идентификатор клиента",
@@ -578,8 +578,8 @@ const docTemplate = `{
                 },
                 "tool_id": {
                     "description": "Идентификатор сохраненного платежного средства",
-                    "type": "integer",
-                    "example": 1
+                    "type": "string",
+                    "example": "2dc32aa0-000f-5000-8000-16d7bc6cd09f"
                 },
                 "user_id": {
                     "description": "Идентификатор клиента",
@@ -633,16 +633,17 @@ const docTemplate = `{
             "required": [
                 "caption",
                 "id",
+                "name",
                 "type"
             ],
             "properties": {
                 "caption": {
-                    "description": "Значение платежного инструмента, например:\n* Маскированная банковская карта\n* Номер электронного кошелька\n* Адрес электронной почты\n* и т.д.",
+                    "description": "Значение платежного средства, например:\n* Маскированная банковская карта\n* Номер электронного кошелька\n* Адрес электронной почты\n* и т.д.",
                     "type": "string",
                     "example": "444444******4444"
                 },
                 "details": {
-                    "description": "Дополнительная информация о платежном инструменте",
+                    "description": "Дополнительная информация о платежном средстве",
                     "allOf": [
                         {
                             "$ref": "#/definitions/v1.toolDetails"
@@ -650,12 +651,17 @@ const docTemplate = `{
                     ]
                 },
                 "id": {
-                    "description": "Идентификатор платежного инструмента",
-                    "type": "integer",
-                    "example": 14124
+                    "description": "Идентификатор платежного средства",
+                    "type": "string",
+                    "example": "2dc32aa0-000f-5000-8000-16d7bc6cd09f"
+                },
+                "name": {
+                    "description": "Название платежного средства",
+                    "type": "string",
+                    "example": "Карта брата"
                 },
                 "type": {
-                    "description": "Тип платежного инструмента:\n* Банковская карта - \"card\"\n* Электронный кошелек - \"wallet\"",
+                    "description": "Тип платежного средства:\n* Банковская карта - \"card\"\n* Электронный кошелек - \"wallet\"",
                     "type": "string",
                     "example": "card"
                 }

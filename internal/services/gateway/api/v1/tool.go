@@ -27,19 +27,21 @@ type toolDetails struct {
 }
 
 type tool struct {
-	// Идентификатор платежного инструмента
-	ID int64 `json:"id" example:"14124" validate:"required"`
-	// Тип платежного инструмента:
+	// Идентификатор платежного средства
+	ID string `json:"id" example:"2dc32aa0-000f-5000-8000-16d7bc6cd09f" validate:"required"`
+	// Название платежного средства
+	Name string `json:"name" example:"Карта брата" validate:"required"`
+	// Тип платежного средства:
 	// * Банковская карта - "card"
 	// * Электронный кошелек - "wallet"
 	Type string `json:"type" example:"card" validate:"required"`
-	// Значение платежного инструмента, например:
+	// Значение платежного средства, например:
 	// * Маскированная банковская карта
 	// * Номер электронного кошелька
 	// * Адрес электронной почты
 	// * и т.д.
 	Caption string `json:"caption" example:"444444******4444" validate:"required"`
-	// Дополнительная информация о платежном инструменте
+	// Дополнительная информация о платежном средстве
 	Details *toolDetails `json:"details,omitempty"`
 }
 
@@ -47,6 +49,7 @@ func (h *Handler) tool(item *model.Tool) tool {
 	t := tool{
 		ID:      item.ID,
 		Caption: item.Displayed,
+		Name:    item.Name,
 	}
 
 	switch item.Type {

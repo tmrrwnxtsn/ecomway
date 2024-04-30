@@ -8,9 +8,7 @@ import (
 	"github.com/tmrrwnxtsn/ecomway/internal/services/integration/provider/yookassa/data"
 )
 
-const (
-	channelCodeBankCard = "card"
-)
+const channelCodeBankCard = "card"
 
 type bankCardChannel struct {
 	baseChannel
@@ -22,32 +20,6 @@ func newBankCardChannel(cfg config.YooKassaChannelConfig) bankCardChannel {
 	}
 }
 
-func (c bankCardChannel) CreatePaymentRequest(d model.CreatePaymentData) data.CreatePaymentRequest {
-	request := c.baseChannel.CreatePaymentRequest(d)
-
-	if d.ToolID != 0 && d.Tool != nil {
-		token, ok := d.Tool.Details["token"].(string)
-		if ok {
-			request.PaymentMethodID = token
-		}
-	}
-
-	return request
-}
-
-func (c bankCardChannel) CreatePayoutRequest(d model.CreatePayoutData) data.CreatePayoutRequest {
-	request := c.baseChannel.CreatePayoutRequest(d)
-
-	if d.ToolID != 0 && d.Tool != nil {
-		token, ok := d.Tool.Details["token"].(string)
-		if ok {
-			request.PaymentMethodID = token
-		}
-	}
-
-	return request
-}
-
 func (c bankCardChannel) PaymentTool(userID int64, externalMethod string, method data.PaymentMethod) *model.Tool {
 	if method.Type != c.paymentMethodType || !method.Saved {
 		return nil
@@ -56,9 +28,11 @@ func (c bankCardChannel) PaymentTool(userID int64, externalMethod string, method
 	displayed := fmt.Sprintf("%v******%v", method.Card.First6, method.Card.Last4)
 
 	return &model.Tool{
+		ID:             method.ID,
 		UserID:         userID,
 		ExternalMethod: externalMethod,
 		Displayed:      displayed,
+		Name:           "Bank card", // TODO: можно сохранять локаль в additional и сюда писать название по локали
 		Type:           model.ToolTypeBankCard,
 		Details: map[string]any{
 			"token":        method.ID,

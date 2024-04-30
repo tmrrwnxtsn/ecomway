@@ -26,7 +26,7 @@ message AvailableMethodsResponse {
 
 message CreatePaymentRequest {
   int64 user_id = 1;
-  optional int64 tool_id = 2;
+  optional string tool_id = 2;
   string lang_code = 3;
   string external_system = 4;
   string external_method = 5;
@@ -52,7 +52,7 @@ message AvailableToolsResponse {
 
 message CreatePayoutRequest {
   int64 user_id = 1;
-  int64 tool_id = 2;
+  string tool_id = 2;
   string lang_code = 3;
   string external_system = 4;
   string external_method = 5;

@@ -21,7 +21,7 @@ type dbOperation struct {
 	CreatedAt      time.Time `db:"created_at"`
 	UpdatedAt      time.Time `db:"updated_at"`
 
-	ToolID           *int64         `db:"tool_id"`
+	ToolID           *string        `db:"tool_id"`
 	Additional       map[string]any `db:"additional"`
 	FailReason       *string        `db:"fail_reason"`
 	ConfirmationCode *string        `db:"confirmation_code"`
@@ -54,7 +54,7 @@ func operationToDB(op *model.Operation) dbOperation {
 		dbOp.Additional = op.Additional
 	}
 
-	if op.ToolID != 0 {
+	if op.ToolID != "" {
 		dbOp.ToolID = &op.ToolID
 	}
 

@@ -23,7 +23,7 @@ func (r *Repository) All(ctx context.Context, userID int64) ([]*model.Tool, erro
 	return tools, nil
 }
 
-func (r *Repository) GetOne(ctx context.Context, id, userID int64, externalMethod string) (*model.Tool, error) {
+func (r *Repository) GetOne(ctx context.Context, id string, userID int64, externalMethod string) (*model.Tool, error) {
 	dbT, err := r.dbGetOne(ctx, id, userID, externalMethod)
 	if err != nil {
 		return nil, err
@@ -31,7 +31,7 @@ func (r *Repository) GetOne(ctx context.Context, id, userID int64, externalMetho
 	return toolFromDB(dbT), nil
 }
 
-func (r *Repository) dbGetOne(ctx context.Context, id, userID int64, externalMethod string) (dbTool, error) {
+func (r *Repository) dbGetOne(ctx context.Context, id string, userID int64, externalMethod string) (dbTool, error) {
 	var dbT dbTool
 
 	err := pgxscan.Get(ctx, r.conn, &dbT, fmt.Sprintf(`
@@ -41,6 +41,8 @@ SELECT id,
        type,
        details,
        displayed,
+       name,
+       status,
        fake,
        created_at,
        updated_at
@@ -66,6 +68,8 @@ SELECT id,
        type,
        details,
        displayed,
+       name,
+       status,
        fake,
        created_at,
        updated_at

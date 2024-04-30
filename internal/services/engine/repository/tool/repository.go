@@ -2,10 +2,7 @@ package tool
 
 import "github.com/jackc/pgx/v4/pgxpool"
 
-const (
-	toolTable     = "tool"
-	toolTableAbbr = "t"
-)
+const toolTable = "tool"
 
 type Repository struct {
 	conn *pgxpool.Pool

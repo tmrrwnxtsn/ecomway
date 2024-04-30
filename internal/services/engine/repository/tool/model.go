@@ -7,12 +7,14 @@ import (
 )
 
 type dbTool struct {
-	ID             int64          `db:"id"`
+	ID             string         `db:"id"`
 	UserID         int64          `db:"user_id"`
 	ExternalMethod string         `db:"external_method"`
 	Type           *string        `db:"type"`
 	Details        map[string]any `db:"details"`
 	Displayed      string         `db:"displayed"`
+	Name           string         `db:"name"`
+	Status         string         `db:"status"`
 	Fake           bool           `db:"fake"`
 	CreatedAt      time.Time      `db:"created_at"`
 	UpdatedAt      time.Time      `db:"updated_at"`
@@ -24,6 +26,8 @@ func toolToDB(t *model.Tool) dbTool {
 		UserID:         t.UserID,
 		ExternalMethod: t.ExternalMethod,
 		Displayed:      t.Displayed,
+		Name:           t.Name,
+		Status:         string(t.Status),
 		Fake:           t.Fake,
 		CreatedAt:      t.CreatedAt,
 		UpdatedAt:      t.UpdatedAt,
@@ -46,6 +50,8 @@ func toolFromDB(dbT dbTool) *model.Tool {
 		UserID:         dbT.UserID,
 		ExternalMethod: dbT.ExternalMethod,
 		Displayed:      dbT.Displayed,
+		Name:           dbT.Name,
+		Status:         model.ToolStatus(dbT.Status),
 		Fake:           dbT.Fake,
 		CreatedAt:      dbT.CreatedAt,
 		UpdatedAt:      dbT.UpdatedAt,

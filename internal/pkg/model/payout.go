@@ -9,8 +9,8 @@ type CreatePayoutData struct {
 	ExternalMethod string
 	Currency       string
 	LangCode       string
+	ToolID         string
 	UserID         int64
-	ToolID         int64
 	Amount         int64
 	OperationID    int64
 }

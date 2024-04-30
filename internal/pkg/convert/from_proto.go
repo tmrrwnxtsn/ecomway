@@ -118,12 +118,23 @@ func ToolTypeFromProto(toolType pb.ToolType) model.ToolType {
 	}
 }
 
+func ToolStatusFromProto(toolStatus pb.ToolStatus) model.ToolStatus {
+	switch toolStatus {
+	case pb.ToolStatus_ACTIVE:
+		return model.ToolStatusActive
+	default:
+		return ""
+	}
+}
+
 func ToolFromProto(tool *pb.Tool) *model.Tool {
 	result := &model.Tool{
 		ID:             tool.GetId(),
 		UserID:         tool.GetUserId(),
 		ExternalMethod: tool.GetExternalMethod(),
 		Displayed:      tool.GetDisplayed(),
+		Name:           tool.GetName(),
+		Status:         ToolStatusFromProto(tool.GetStatus()),
 		Fake:           tool.GetFake(),
 		CreatedAt:      time.Unix(tool.GetCreatedAt(), 0).UTC(),
 		UpdatedAt:      time.Unix(tool.GetUpdatedAt(), 0).UTC(),

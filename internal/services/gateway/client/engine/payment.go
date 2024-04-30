@@ -29,7 +29,7 @@ func (c *Client) CreatePayment(ctx context.Context, data model.CreatePaymentData
 		ReturnUrls:     convert.ReturnURLsToProto(data.ReturnURLs),
 	}
 
-	if data.ToolID != 0 {
+	if data.ToolID != "" {
 		request.ToolId = &data.ToolID
 	}
 

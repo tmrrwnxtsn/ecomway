@@ -128,12 +128,23 @@ func ToolTypeToProto(toolType model.ToolType) pb.ToolType {
 	}
 }
 
+func ToolStatusToProto(toolStatus model.ToolStatus) pb.ToolStatus {
+	switch toolStatus {
+	case model.ToolStatusActive:
+		return pb.ToolStatus_ACTIVE
+	default:
+		return -1
+	}
+}
+
 func ToolToProto(tool *model.Tool) *pb.Tool {
 	result := &pb.Tool{
 		Id:             tool.ID,
 		UserId:         tool.UserID,
 		ExternalMethod: tool.ExternalMethod,
 		Displayed:      tool.Displayed,
+		Name:           tool.Name,
+		Status:         ToolStatusToProto(tool.Status),
 		Fake:           tool.Fake,
 		CreatedAt:      tool.CreatedAt.UTC().Unix(),
 		UpdatedAt:      tool.UpdatedAt.UTC().Unix(),
