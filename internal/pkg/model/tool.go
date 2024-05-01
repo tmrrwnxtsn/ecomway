@@ -12,7 +12,10 @@ const (
 type ToolStatus string
 
 const (
-	ToolStatusActive ToolStatus = "ACTIVE"
+	ToolStatusActive                 ToolStatus = "ACTIVE"
+	ToolStatusRemovedByUser          ToolStatus = "REMOVED_BY_USER"
+	ToolStatusPendingRecovery        ToolStatus = "PENDING_RECOVERY"
+	ToolStatusRemovedByAdministrator ToolStatus = "REMOVED_BY_ADMINISTRATOR"
 )
 
 type Tool struct {
@@ -27,4 +30,8 @@ type Tool struct {
 	Fake           bool
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
+}
+
+func (t Tool) CanBeUpdated() bool {
+	return t.Status != ToolStatusRemovedByUser && t.Status != ToolStatusRemovedByAdministrator
 }

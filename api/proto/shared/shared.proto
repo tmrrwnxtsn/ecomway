@@ -65,6 +65,9 @@ enum ToolType {
 
 enum ToolStatus {
   ACTIVE = 0;
+  REMOVED_BY_USER = 1;
+  PENDING_RECOVERY = 2;
+  REMOVED_BY_ADMINISTRATOR = 3;
 }
 
 message Tool {

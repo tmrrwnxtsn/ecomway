@@ -11,8 +11,8 @@ import (
 )
 
 func (r *Repository) Save(ctx context.Context, tool *model.Tool) error {
-	if tool.ID == "" {
-		return errors.New("saving tool with empty ID")
+	if tool == nil || tool.ID == "" {
+		return errors.New("saving nil tool or tool with empty ID")
 	}
 
 	dbT := toolToDB(tool)

@@ -22,7 +22,8 @@ type PaymentService interface {
 }
 
 type ToolService interface {
-	AvailableTools(ctx context.Context, userID int64) (map[string][]*model.Tool, error)
+	AvailableTools(ctx context.Context, userID int64) ([]*model.Tool, error)
+	AvailableToolsGroupedByMethod(ctx context.Context, userID int64) (map[string][]*model.Tool, error)
 }
 
 type PayoutService interface {
@@ -103,6 +104,13 @@ func (h *Handler) Init(router fiber.Router) {
 			payout.Post("/create", h.payoutCreate)
 			payout.Put("/confirm", h.payoutConfirm)
 			payout.Put("/resendCode", h.payoutResendCode)
+		}
+
+		tools := apiV1.Group("/tool")
+		{
+			tools.Get("/list", h.toolList)
+			tools.Put("/edit", h.toolEdit)
+			tools.Delete("/remove", h.toolRemove)
 		}
 	}
 }

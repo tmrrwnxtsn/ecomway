@@ -3,6 +3,8 @@ package v1
 import (
 	"strconv"
 
+	"github.com/gofiber/fiber/v2"
+
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/model"
 )
 
@@ -29,6 +31,8 @@ type toolDetails struct {
 type tool struct {
 	// Идентификатор платежного средства
 	ID string `json:"id" example:"2dc32aa0-000f-5000-8000-16d7bc6cd09f" validate:"required"`
+	// Внутренний код платежного метода платежной системы, к которой относится платежное средство
+	ExternalMethod string `json:"external_method" example:"yookassa_bank_card" validate:"required"`
 	// Название платежного средства
 	Name string `json:"name" example:"Карта брата" validate:"required"`
 	// Тип платежного средства:
@@ -45,11 +49,66 @@ type tool struct {
 	Details *toolDetails `json:"details,omitempty"`
 }
 
+type toolListRequest struct {
+	// Идентификатор клиента
+	UserID int64 `query:"user_id" example:"1" validate:"required"`
+	// Код языка, обозначение по RFC 5646
+	LangCode string `query:"lang_code" example:"en" validate:"required"`
+}
+
+type toolListResponse struct {
+	// Результат обработки запроса (всегда true)
+	Success bool `json:"success" example:"true" validate:"required"`
+	// Массив сохраненных платежных средств клиента
+	Tools []tool `json:"tools" validate:"required"`
+}
+
+// toolList godoc
+//
+//	@Summary	Получить список сохраненных платежных средств клиента
+//	@Tags		Платежные средства
+//	@Produce	json
+//	@Security	ApiKeyAuth
+//	@Param		user_id		query		int					true	"Идентификатор клиента"
+//	@Param		lang_code	query		string				true	"Код языка, обозначение по RFC 5646"
+//	@Success	200			{object}	toolListResponse	"Успешный ответ"
+//	@Failure	default		{object}	errorResponse		"Ответ с ошибкой"
+//	@Router		/tool/list [get]
+func (h *Handler) toolList(c *fiber.Ctx) error {
+	ctx := c.Context()
+
+	var req toolListRequest
+	if err := c.QueryParser(&req); err != nil {
+		return h.requestValidationErrorResponse(c, err)
+	}
+
+	tools, err := h.toolService.AvailableTools(ctx, req.UserID)
+	if err != nil {
+		return h.internalErrorResponse(c, err)
+	}
+
+	resp := &toolListResponse{
+		Success: true,
+		Tools:   h.tools(tools),
+	}
+
+	return c.JSON(resp)
+}
+
+func (h *Handler) toolEdit(c *fiber.Ctx) error {
+	return c.SendString("Payout code resend")
+}
+
+func (h *Handler) toolRemove(c *fiber.Ctx) error {
+	return c.SendString("Payout code resend")
+}
+
 func (h *Handler) tool(item *model.Tool) tool {
 	t := tool{
-		ID:      item.ID,
-		Caption: item.Displayed,
-		Name:    item.Name,
+		ID:             item.ID,
+		ExternalMethod: item.ExternalMethod,
+		Caption:        item.Displayed,
+		Name:           item.Name,
 	}
 
 	switch item.Type {

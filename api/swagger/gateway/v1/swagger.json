@@ -204,6 +204,52 @@
                     }
                 }
             }
+        },
+        "/tool": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Платежные средства"
+                ],
+                "summary": "Получить список сохраненных платежных средств клиента",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Идентификатор клиента",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Код языка, обозначение по RFC 5646",
+                        "name": "lang_code",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "schema": {
+                            "$ref": "#/definitions/v1.toolListResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "Ответ с ошибкой",
+                        "schema": {
+                            "$ref": "#/definitions/v1.errorResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -422,7 +468,7 @@
                     "example": "en"
                 },
                 "return_urls": {
-                    "description": "Объект, содержащий ссылки для возврата пользователя для каждого из возможных результатов проведения платежа",
+                    "description": "Объект, содержащий ссылки для возврата клиента для каждого из возможных результатов проведения платежа",
                     "allOf": [
                         {
                             "$ref": "#/definitions/v1.paymentReturnURLs"
@@ -504,17 +550,17 @@
             ],
             "properties": {
                 "common": {
-                    "description": "URL для возврата пользователя, используемый когда результат платежа неизвестен или по умолчанию",
+                    "description": "URL для возврата клиента, используемый когда результат платежа неизвестен или по умолчанию",
                     "type": "string",
                     "example": "https://example.com"
                 },
                 "fail": {
-                    "description": "URL для возврата пользователя, используемый при неуспешном осуществлении платежа",
+                    "description": "URL для возврата клиента, используемый при неуспешном осуществлении платежа",
                     "type": "string",
                     "example": "https://example.com/failed"
                 },
                 "success": {
-                    "description": "URL для возврата пользователя, используемый при успешном осуществлении платежа",
+                    "description": "URL для возврата клиента, используемый при успешном осуществлении платежа",
                     "type": "string",
                     "example": "https://example.com/success"
                 }
@@ -692,6 +738,27 @@
                     "description": "Номер электронного кошелька",
                     "type": "string",
                     "example": "410011758831136"
+                }
+            }
+        },
+        "v1.toolListResponse": {
+            "type": "object",
+            "required": [
+                "success",
+                "tools"
+            ],
+            "properties": {
+                "success": {
+                    "description": "Результат обработки запроса (всегда true)",
+                    "type": "boolean",
+                    "example": true
+                },
+                "tools": {
+                    "description": "Массив сохраненных платежных средств клиента",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.tool"
+                    }
                 }
             }
         }

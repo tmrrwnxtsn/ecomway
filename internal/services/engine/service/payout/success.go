@@ -30,8 +30,19 @@ func (s *Service) Success(ctx context.Context, data model.SuccessPayoutData) err
 			}
 
 			if data.Tool != nil {
-				if err := s.toolRepository.Save(ctx, data.Tool); err != nil {
-					return fmt.Errorf("save tool: %w", err)
+				if data.Tool.ID != op.ToolID {
+					return fmt.Errorf("operation tool %q differs from payout tool %q", op.ToolID, data.Tool.ID)
+				}
+
+				tool, err := s.toolRepository.GetOne(ctx, data.Tool.ID, data.Tool.UserID, data.Tool.ExternalMethod)
+				if err != nil {
+					return fmt.Errorf("get tool from db: %w", err)
+				}
+
+				if tool.CanBeUpdated() {
+					if err = s.toolRepository.Save(ctx, data.Tool); err != nil {
+						return fmt.Errorf("save tool into db: %w", err)
+					}
 				}
 			}
 

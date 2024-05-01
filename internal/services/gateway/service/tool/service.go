@@ -2,6 +2,7 @@ package tool
 
 import (
 	"context"
+	"slices"
 
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/model"
 )
@@ -20,7 +21,20 @@ func NewService(engineClient EngineClient) *Service {
 	}
 }
 
-func (s *Service) AvailableTools(ctx context.Context, userID int64) (map[string][]*model.Tool, error) {
+func (s *Service) AvailableTools(ctx context.Context, userID int64) ([]*model.Tool, error) {
+	tools, err := s.engineClient.AvailableTools(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	tools = slices.DeleteFunc(tools, func(t *model.Tool) bool {
+		return t.Fake
+	})
+
+	return tools, nil
+}
+
+func (s *Service) AvailableToolsGroupedByMethod(ctx context.Context, userID int64) (map[string][]*model.Tool, error) {
 	tools, err := s.engineClient.AvailableTools(ctx, userID)
 	if err != nil {
 		return nil, err

@@ -42,8 +42,8 @@ type paymentMethod struct {
 type paymentConfirmation struct {
 	Type            string `json:"type"`
 	Locale          string `json:"locale,omitempty"`
-	ReturnURL       string `json:"return_url"`                 // URL для возврата пользователя после оплаты
-	ConfirmationURL string `json:"confirmation_url,omitempty"` // URL для перенаправления пользователя на страницу оплаты
+	ReturnURL       string `json:"return_url"`                 // URL для возврата клиента после оплаты
+	ConfirmationURL string `json:"confirmation_url,omitempty"` // URL для перенаправления клиента на страницу оплаты
 }
 
 type createPaymentRequest struct {

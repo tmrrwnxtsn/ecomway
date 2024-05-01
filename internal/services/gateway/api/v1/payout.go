@@ -1,8 +1,6 @@
 package v1
 
 import (
-	"context"
-
 	"github.com/gofiber/fiber/v2"
 
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/model"
@@ -37,7 +35,7 @@ type payoutMethodsResponse struct {
 //	@Failure	default		{object}	errorResponse			"Ответ с ошибкой"
 //	@Router		/payout/methods [get]
 func (h *Handler) payoutMethods(c *fiber.Ctx) error {
-	ctx := context.Background()
+	ctx := c.Context()
 
 	var req payoutMethodsRequest
 	if err := c.QueryParser(&req); err != nil {
@@ -53,7 +51,7 @@ func (h *Handler) payoutMethods(c *fiber.Ctx) error {
 		return h.internalErrorResponse(c, err)
 	}
 
-	toolsGrouped, err := h.toolService.AvailableTools(ctx, req.UserID)
+	toolsGrouped, err := h.toolService.AvailableToolsGroupedByMethod(ctx, req.UserID)
 	if err != nil {
 		return h.internalErrorResponse(c, err)
 	}
@@ -104,7 +102,7 @@ type payoutCreateResponse struct {
 //	@Failure	default	{object}	errorResponse			"Ответ с ошибкой"
 //	@Router		/payout/create [post]
 func (h *Handler) payoutCreate(c *fiber.Ctx) error {
-	ctx := context.Background()
+	ctx := c.Context()
 
 	var req payoutCreateRequest
 	if err := c.BodyParser(&req); err != nil {
