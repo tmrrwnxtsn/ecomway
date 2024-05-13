@@ -25,6 +25,7 @@ type PaymentService interface {
 
 type ToolService interface {
 	All(ctx context.Context, userID int64) ([]*model.Tool, error)
+	EditOne(ctx context.Context, id string, userID int64, externalMethod, name string) (*model.Tool, error)
 }
 
 type PayoutService interface {

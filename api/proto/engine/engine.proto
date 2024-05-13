@@ -12,6 +12,7 @@ service EngineService {
   rpc CreatePayment(CreatePaymentRequest) returns (CreatePaymentResponse);
   rpc AvailableTools(AvailableToolsRequest) returns (AvailableToolsResponse);
   rpc CreatePayout(CreatePayoutRequest) returns (CreatePayoutResponse);
+  rpc EditTool(EditToolRequest) returns (EditToolResponse);
 }
 
 message AvailableMethodsRequest {
@@ -64,4 +65,15 @@ message CreatePayoutRequest {
 message CreatePayoutResponse {
   int64 operation_id = 1;
   string status = 2;
+}
+
+message EditToolRequest {
+  string id = 1;
+  int64 user_id = 2;
+  string external_method = 3;
+  string name = 4;
+}
+
+message EditToolResponse {
+  shared.Tool tool = 1;
 }

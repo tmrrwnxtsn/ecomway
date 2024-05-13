@@ -212,7 +212,51 @@ const docTemplate = `{
                 }
             }
         },
-        "/tool": {
+        "/tool/edit": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Платежные средства"
+                ],
+                "summary": "Изменить информацию о платежном средстве",
+                "parameters": [
+                    {
+                        "description": "Тело запроса",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.toolEditRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "schema": {
+                            "$ref": "#/definitions/v1.toolEditResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "Ответ с ошибкой",
+                        "schema": {
+                            "$ref": "#/definitions/v1.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/tool/list": {
             "get": {
                 "security": [
                     {
@@ -678,6 +722,7 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "caption",
+                "external_method",
                 "id",
                 "name",
                 "type"
@@ -695,6 +740,11 @@ const docTemplate = `{
                             "$ref": "#/definitions/v1.toolDetails"
                         }
                     ]
+                },
+                "external_method": {
+                    "description": "Внутренний код платежного метода платежной системы, к которой относится платежное средство",
+                    "type": "string",
+                    "example": "yookassa_bank_card"
                 },
                 "id": {
                     "description": "Идентификатор платежного средства",
@@ -745,6 +795,65 @@ const docTemplate = `{
                     "description": "Номер электронного кошелька",
                     "type": "string",
                     "example": "410011758831136"
+                }
+            }
+        },
+        "v1.toolEditRequest": {
+            "type": "object",
+            "required": [
+                "external_method",
+                "id",
+                "lang_code",
+                "name",
+                "user_id"
+            ],
+            "properties": {
+                "external_method": {
+                    "description": "Внутренний код платежного метода платежной системы, к которой относится платежное средство",
+                    "type": "string",
+                    "example": "yookassa_bank_card"
+                },
+                "id": {
+                    "description": "Идентификатор платежного средства",
+                    "type": "string",
+                    "example": "2dc32aa0-000f-5000-8000-16d7bc6cd09f"
+                },
+                "lang_code": {
+                    "description": "Код языка, обозначение по RFC 5646",
+                    "type": "string",
+                    "example": "en"
+                },
+                "name": {
+                    "description": "Новое название платежного инструмента, выбранное клиентом",
+                    "type": "string",
+                    "example": "Карта брата"
+                },
+                "user_id": {
+                    "description": "Идентификатор клиента",
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "v1.toolEditResponse": {
+            "type": "object",
+            "required": [
+                "success",
+                "tool"
+            ],
+            "properties": {
+                "success": {
+                    "description": "Результат обработки запроса (всегда true)",
+                    "type": "boolean",
+                    "example": true
+                },
+                "tool": {
+                    "description": "Информация об измененном платежном средстве",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/v1.tool"
+                        }
+                    ]
                 }
             }
         },

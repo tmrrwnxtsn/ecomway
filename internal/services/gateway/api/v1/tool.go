@@ -1,10 +1,12 @@
 package v1
 
 import (
+	"errors"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 
+	perror "github.com/tmrrwnxtsn/ecomway/internal/pkg/error"
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/model"
 )
 
@@ -95,8 +97,66 @@ func (h *Handler) toolList(c *fiber.Ctx) error {
 	return c.JSON(resp)
 }
 
+type toolEditRequest struct {
+	// Идентификатор платежного средства
+	ID string `json:"id" example:"2dc32aa0-000f-5000-8000-16d7bc6cd09f" validate:"required"`
+	// Идентификатор клиента
+	UserID int64 `json:"user_id" example:"1" validate:"required"`
+	// Внутренний код платежного метода платежной системы, к которой относится платежное средство
+	ExternalMethod string `json:"external_method" example:"yookassa_bank_card" validate:"required"`
+	// Код языка, обозначение по RFC 5646
+	LangCode string `json:"lang_code" example:"en" validate:"required"`
+	// Новое название платежного инструмента, выбранное клиентом
+	Name string `json:"name" example:"Карта брата" validate:"required"`
+}
+
+type toolEditResponse struct {
+	// Результат обработки запроса (всегда true)
+	Success bool `json:"success" example:"true" validate:"required"`
+	// Информация об измененном платежном средстве
+	Tool tool `json:"tool" validate:"required"`
+}
+
+// toolEdit godoc
+//
+//	@Summary	Изменить информацию о платежном средстве
+//	@Tags		Платежные средства
+//	@Accept		json
+//	@Produce	json
+//	@Security	ApiKeyAuth
+//	@Param		input	body		toolEditRequest	true	"Тело запроса"
+//	@Success	200		{object}	toolEditResponse	"Успешный ответ"
+//	@Failure	default	{object}	errorResponse			"Ответ с ошибкой"
+//	@Router		/tool/edit [put]
 func (h *Handler) toolEdit(c *fiber.Ctx) error {
-	return c.SendString("Payout code resend")
+	ctx := c.Context()
+
+	var req toolEditRequest
+	if err := c.BodyParser(&req); err != nil {
+		return h.requestValidationErrorResponse(c, err)
+	}
+
+	if err := h.validate.Struct(req); err != nil {
+		return h.requestValidationErrorResponse(c, err)
+	}
+
+	edited, err := h.toolService.EditTool(ctx, req.ID, req.UserID, req.ExternalMethod, req.Name)
+	if err != nil {
+		var perr *perror.Error
+		if errors.As(err, &perr) {
+			if perr.Group == perror.GroupInternal && perr.Code == perror.CodeObjectNotFound {
+				return h.objectNotFoundErrorResponse(c, perr)
+			}
+		}
+		return h.internalErrorResponse(c, err)
+	}
+
+	resp := &toolEditResponse{
+		Success: true,
+		Tool:    h.tool(edited),
+	}
+
+	return c.JSON(resp)
 }
 
 func (h *Handler) toolRemove(c *fiber.Ctx) error {

@@ -10,36 +10,41 @@ import (
 	pb "github.com/tmrrwnxtsn/ecomway/api/proto/shared"
 )
 
+type Group string
+
 const (
-	// ExternalGroup представляет внешние ошибки от ПС или других внешних сервисов.
-	ExternalGroup = "external"
-	// InternalGroup представляет внутренние ошибки наших сервисов.
-	InternalGroup = "internal"
+	// GroupExternal представляет внешние ошибки от ПС или других внешних сервисов.
+	GroupExternal Group = "external"
+	// GroupInternal представляет внутренние ошибки наших сервисов.
+	GroupInternal Group = "internal"
+)
+
+type Code string
+
+const (
+	// CodeObjectNotFound используется, когда искомый объект, для изменения или удаления, не найден.
+	CodeObjectNotFound Code = "object not found"
 )
 
 type Error struct {
-	// Group внешняя или внутренняя ошибка
-	Group string
-	// Code унифицированный код ошибки в рамках всего сервиса
-	Code string
-	// Description описание ошибки
+	Group       Group
+	Code        Code
 	Description string
 
-	//internalCode внутренний код для работы с gRPC
-	internalCode codes.Code
+	grpcCode codes.Code
 }
 
-func NewExternal() Error {
-	return Error{
-		Group:        ExternalGroup,
-		internalCode: codes.Unavailable,
+func NewExternal() *Error {
+	return &Error{
+		Group:    GroupExternal,
+		grpcCode: codes.Unavailable,
 	}
 }
 
-func NewInternal() Error {
-	return Error{
-		Group:        InternalGroup,
-		internalCode: codes.Internal,
+func NewInternal() *Error {
+	return &Error{
+		Group:    GroupInternal,
+		grpcCode: codes.Internal,
 	}
 }
 
@@ -59,10 +64,10 @@ func FromProto(err error) *Error {
 	switch detail := details[0].(type) { // ожидаем только один элемент в массиве
 	case *pb.Error:
 		return &Error{
-			Group:        detail.GetGroup(),
-			Code:         detail.GetCode(),
-			Description:  st.Message(),
-			internalCode: code,
+			Group:       Group(detail.GetGroup()),
+			Code:        Code(detail.GetCode()),
+			Description: st.Message(),
+			grpcCode:    code,
 		}
 	default:
 		return nil
@@ -75,7 +80,7 @@ func (e *Error) WithDescription(desc string) *Error {
 	return e
 }
 
-func (e *Error) WithCode(code string) *Error {
+func (e *Error) WithCode(code Code) *Error {
 	e.Code = code
 
 	return e
@@ -87,11 +92,11 @@ func (e *Error) Error() string {
 
 func (e *Error) GRPCStatus() *status.Status {
 	details := pb.Error{
-		Group: e.Group,
-		Code:  e.Code,
+		Group: string(e.Group),
+		Code:  string(e.Code),
 	}
 
-	st, err := status.New(e.internalCode, e.Description).WithDetails(&details)
+	st, err := status.New(e.grpcCode, e.Description).WithDetails(&details)
 	if err != nil {
 		return status.New(codes.Unknown, fmt.Sprintf("failed to pack details for error code %q", e.Code))
 	}

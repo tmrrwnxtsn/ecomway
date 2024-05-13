@@ -24,6 +24,7 @@ type PaymentService interface {
 type ToolService interface {
 	AvailableTools(ctx context.Context, userID int64) ([]*model.Tool, error)
 	AvailableToolsGroupedByMethod(ctx context.Context, userID int64) (map[string][]*model.Tool, error)
+	EditTool(ctx context.Context, id string, userID int64, externalMethod, name string) (*model.Tool, error)
 }
 
 type PayoutService interface {
@@ -47,6 +48,8 @@ type HandlerOptions struct {
 	APIKey         string
 }
 
+// NewHandler godoc
+//
 // @title						Платежный шлюз для E-commerce системы
 // @version					1.0
 //

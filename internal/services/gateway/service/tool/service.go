@@ -9,6 +9,7 @@ import (
 
 type EngineClient interface {
 	AvailableTools(ctx context.Context, userID int64) ([]*model.Tool, error)
+	EditTool(ctx context.Context, id string, userID int64, externalMethod, name string) (*model.Tool, error)
 }
 
 type Service struct {
@@ -35,20 +36,18 @@ func (s *Service) AvailableTools(ctx context.Context, userID int64) ([]*model.To
 }
 
 func (s *Service) AvailableToolsGroupedByMethod(ctx context.Context, userID int64) (map[string][]*model.Tool, error) {
-	tools, err := s.engineClient.AvailableTools(ctx, userID)
+	tools, err := s.AvailableTools(ctx, userID)
 	if err != nil {
 		return nil, err
 	}
 
-	toolsGroupedByExternalMethod := make(map[string][]*model.Tool)
-
+	toolsGrouped := make(map[string][]*model.Tool, len(tools))
 	for _, tool := range tools {
-		if tool.Fake {
-			continue
-		}
-
-		toolsGroupedByExternalMethod[tool.ExternalMethod] = append(toolsGroupedByExternalMethod[tool.ExternalMethod], tool)
+		toolsGrouped[tool.ExternalMethod] = append(toolsGrouped[tool.ExternalMethod], tool)
 	}
+	return toolsGrouped, nil
+}
 
-	return toolsGroupedByExternalMethod, nil
+func (s *Service) EditTool(ctx context.Context, id string, userID int64, externalMethod, name string) (*model.Tool, error) {
+	return s.engineClient.EditTool(ctx, id, userID, externalMethod, name)
 }
