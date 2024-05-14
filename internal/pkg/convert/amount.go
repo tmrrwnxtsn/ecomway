@@ -20,5 +20,5 @@ func FloatWithoutTrailingZeroes(input float64, precision int) string {
 	multiplexed := input * output
 	roundedPrecisionFloat := float64(int(multiplexed+math.Copysign(0.5, multiplexed))) / output
 
-	return strconv.FormatFloat(roundedPrecisionFloat, 'f', -1, 64)
+	return strconv.FormatFloat(roundedPrecisionFloat, 'f', precision, 64)
 }

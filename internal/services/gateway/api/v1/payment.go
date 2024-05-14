@@ -4,6 +4,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/model"
+	"github.com/tmrrwnxtsn/ecomway/internal/pkg/translate"
 )
 
 type paymentMethodsRequest struct {
@@ -39,21 +40,21 @@ func (h *Handler) paymentMethods(c *fiber.Ctx) error {
 
 	var req paymentMethodsRequest
 	if err := c.QueryParser(&req); err != nil {
-		return h.requestValidationErrorResponse(c, err)
+		return h.requestValidationErrorResponse(c, req.LangCode, err)
 	}
 
 	if err := h.validate.Struct(req); err != nil {
-		return h.requestValidationErrorResponse(c, err)
+		return h.requestValidationErrorResponse(c, req.LangCode, err)
 	}
 
 	methods, err := h.methodService.AvailableMethods(ctx, model.OperationTypePayment, req.UserID, req.Currency)
 	if err != nil {
-		return h.internalErrorResponse(c, err)
+		return h.internalErrorResponse(c, req.LangCode, err)
 	}
 
 	toolsGrouped, err := h.toolService.AvailableToolsGroupedByMethod(ctx, req.UserID)
 	if err != nil {
-		return h.internalErrorResponse(c, err)
+		return h.internalErrorResponse(c, req.LangCode, err)
 	}
 
 	resp := &paymentMethodsResponse{
@@ -130,11 +131,11 @@ func (h *Handler) paymentCreate(c *fiber.Ctx) error {
 
 	var req paymentCreateRequest
 	if err := c.BodyParser(&req); err != nil {
-		return h.requestValidationErrorResponse(c, err)
+		return h.requestValidationErrorResponse(c, req.LangCode, err)
 	}
 
 	if err := h.validate.Struct(req); err != nil {
-		return h.requestValidationErrorResponse(c, err)
+		return h.requestValidationErrorResponse(c, req.LangCode, err)
 	}
 
 	data := model.CreatePaymentData{
@@ -151,7 +152,7 @@ func (h *Handler) paymentCreate(c *fiber.Ctx) error {
 
 	result, err := h.paymentService.Create(ctx, data)
 	if err != nil {
-		return h.internalErrorResponse(c, err)
+		return h.internalErrorResponse(c, req.LangCode, err)
 	}
 
 	resp := &paymentCreateResponse{
@@ -162,7 +163,7 @@ func (h *Handler) paymentCreate(c *fiber.Ctx) error {
 	switch result.Status {
 	case model.OperationStatusSuccess, model.OperationStatusFailed:
 		resp.Type = paymentCreateResponseTypeMessage
-		resp.Message = paymentMessageFromResult(req.LangCode, result.Status)
+		resp.Message = h.paymentMessageFromResult(req.LangCode, result.Status)
 	default:
 		resp.Type = paymentCreateResponseTypeRedirect
 		resp.RedirectURL = result.RedirectURL
@@ -187,25 +188,15 @@ func returnURLsModelFromRequest(returnURLs paymentReturnURLs) model.ReturnURLs {
 	return result
 }
 
-func paymentMessageFromResult(langCode string, resultStatus model.OperationStatus) string {
-	var messages map[string]string
+func (h *Handler) paymentMessageFromResult(langCode string, resultStatus model.OperationStatus) string {
+	var translateKey string
 
 	switch resultStatus {
 	case model.OperationStatusSuccess:
-		messages = map[string]string{
-			"en": "Balance replenished!",
-			"ru": "Баланс пополнен!",
-		}
+		translateKey = translate.KeyPaymentSuccessful
 	case model.OperationStatusFailed:
-		messages = map[string]string{
-			"en": "Payment rejected.",
-			"ru": "Оплата неуспешна.",
-		}
+		translateKey = translate.KeyPaymentRejected
 	}
 
-	message, ok := messages[langCode]
-	if !ok {
-		message = messages["ru"]
-	}
-	return message
+	return h.translator.Translate(langCode, translateKey)
 }

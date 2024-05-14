@@ -8,6 +8,7 @@ import (
 
 	perror "github.com/tmrrwnxtsn/ecomway/internal/pkg/error"
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/model"
+	"github.com/tmrrwnxtsn/ecomway/internal/pkg/translate"
 )
 
 const (
@@ -81,12 +82,12 @@ func (h *Handler) toolList(c *fiber.Ctx) error {
 
 	var req toolListRequest
 	if err := c.QueryParser(&req); err != nil {
-		return h.requestValidationErrorResponse(c, err)
+		return h.requestValidationErrorResponse(c, req.LangCode, err)
 	}
 
 	tools, err := h.toolService.AvailableTools(ctx, req.UserID)
 	if err != nil {
-		return h.internalErrorResponse(c, err)
+		return h.internalErrorResponse(c, req.LangCode, err)
 	}
 
 	resp := &toolListResponse{
@@ -133,11 +134,11 @@ func (h *Handler) toolEdit(c *fiber.Ctx) error {
 
 	var req toolEditRequest
 	if err := c.BodyParser(&req); err != nil {
-		return h.requestValidationErrorResponse(c, err)
+		return h.requestValidationErrorResponse(c, req.LangCode, err)
 	}
 
 	if err := h.validate.Struct(req); err != nil {
-		return h.requestValidationErrorResponse(c, err)
+		return h.requestValidationErrorResponse(c, req.LangCode, err)
 	}
 
 	edited, err := h.toolService.EditTool(ctx, req.ID, req.UserID, req.ExternalMethod, req.Name)
@@ -145,10 +146,10 @@ func (h *Handler) toolEdit(c *fiber.Ctx) error {
 		var perr *perror.Error
 		if errors.As(err, &perr) {
 			if perr.Group == perror.GroupInternal && perr.Code == perror.CodeObjectNotFound {
-				return h.objectNotFoundErrorResponse(c, perr)
+				return h.objectNotFoundErrorResponse(c, req.LangCode, perr)
 			}
 		}
-		return h.internalErrorResponse(c, err)
+		return h.internalErrorResponse(c, req.LangCode, err)
 	}
 
 	resp := &toolEditResponse{
@@ -193,11 +194,11 @@ func (h *Handler) toolRemove(c *fiber.Ctx) error {
 
 	var req toolRemoveRequest
 	if err := c.BodyParser(&req); err != nil {
-		return h.requestValidationErrorResponse(c, err)
+		return h.requestValidationErrorResponse(c, req.LangCode, err)
 	}
 
 	if err := h.validate.Struct(req); err != nil {
-		return h.requestValidationErrorResponse(c, err)
+		return h.requestValidationErrorResponse(c, req.LangCode, err)
 	}
 
 	if err := h.toolService.RemoveTool(ctx, req.ID, req.UserID, req.ExternalMethod); err != nil {
@@ -207,16 +208,16 @@ func (h *Handler) toolRemove(c *fiber.Ctx) error {
 			if perr.Group == perror.GroupInternal {
 				switch perr.Code {
 				case perror.CodeObjectNotFound:
-					return h.objectNotFoundErrorResponse(c, perr)
+					return h.objectNotFoundErrorResponse(c, req.LangCode, perr)
 				}
 			}
 		}
-		return h.internalErrorResponse(c, err)
+		return h.internalErrorResponse(c, req.LangCode, err)
 	}
 
 	resp := &toolRemoveResponse{
 		Success: true,
-		Message: toolMessageFromResult(req.LangCode),
+		Message: h.translator.Translate(req.LangCode, translate.KeyToolRemoved),
 	}
 
 	return c.JSON(resp)
@@ -279,17 +280,4 @@ func (h *Handler) tools(items []*model.Tool) []tool {
 		}
 	}
 	return tools
-}
-
-// TODO: использовать пакет i18
-func toolMessageFromResult(langCode string) string {
-	messages := map[string]string{
-		"en": "Payment tool has been removed.",
-		"ru": "Платежное средство удалено.",
-	}
-	message, ok := messages[langCode]
-	if !ok {
-		message = messages["ru"]
-	}
-	return message
 }

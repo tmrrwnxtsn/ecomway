@@ -6,6 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 
 	perror "github.com/tmrrwnxtsn/ecomway/internal/pkg/error"
+	"github.com/tmrrwnxtsn/ecomway/internal/pkg/translate"
 )
 
 const (
@@ -31,32 +32,35 @@ type errorResponse struct {
 	Error errorContent `json:"error" validate:"required"`
 }
 
-func (h *Handler) requestValidationErrorResponse(c *fiber.Ctx, err error) error {
+func (h *Handler) requestValidationErrorResponse(c *fiber.Ctx, langCode string, err error) error {
 	return c.Status(http.StatusBadRequest).JSON(&errorResponse{
 		Success: false,
 		Error: errorContent{
 			Code:        errorCodeInvalidRequest,
 			Description: err.Error(),
+			Message:     h.translator.Translate(langCode, translate.KeyUnexpectedError),
 		},
 	})
 }
 
-func (h *Handler) internalErrorResponse(c *fiber.Ctx, err error) error {
+func (h *Handler) internalErrorResponse(c *fiber.Ctx, langCode string, err error) error {
 	return c.Status(http.StatusInternalServerError).JSON(&errorResponse{
 		Success: false,
 		Error: errorContent{
 			Code:        errorCodeInternalError,
 			Description: err.Error(),
+			Message:     h.translator.Translate(langCode, translate.KeyUnexpectedError),
 		},
 	})
 }
 
-func (h *Handler) objectNotFoundErrorResponse(c *fiber.Ctx, perr *perror.Error) error {
+func (h *Handler) objectNotFoundErrorResponse(c *fiber.Ctx, langCode string, perr *perror.Error) error {
 	return c.Status(http.StatusNotFound).JSON(&errorResponse{
 		Success: false,
 		Error: errorContent{
 			Code:        errorCodeObjectNotFound,
 			Description: perr.Description,
+			Message:     h.translator.Translate(langCode, translate.KeyObjectNotFound),
 		},
 	})
 }

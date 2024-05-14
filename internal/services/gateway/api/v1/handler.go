@@ -34,11 +34,16 @@ type PayoutService interface {
 	Create(ctx context.Context, data model.CreatePayoutData) (model.CreatePayoutResult, error)
 }
 
+type Translator interface {
+	Translate(lang, key string, args ...any) string
+}
+
 type Handler struct {
 	methodService  MethodService
 	paymentService PaymentService
 	toolService    ToolService
 	payoutService  PayoutService
+	translator     Translator
 	validate       *validator.Validate
 	apiKey         string
 }
@@ -48,6 +53,7 @@ type HandlerOptions struct {
 	PaymentService PaymentService
 	ToolService    ToolService
 	PayoutService  PayoutService
+	Translator     Translator
 	APIKey         string
 }
 
@@ -87,6 +93,7 @@ func NewHandler(opts HandlerOptions) *Handler {
 		paymentService: opts.PaymentService,
 		toolService:    opts.ToolService,
 		payoutService:  opts.PayoutService,
+		translator:     opts.Translator,
 		validate:       validate,
 		apiKey:         opts.APIKey,
 	}

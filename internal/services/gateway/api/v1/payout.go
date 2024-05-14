@@ -39,21 +39,21 @@ func (h *Handler) payoutMethods(c *fiber.Ctx) error {
 
 	var req payoutMethodsRequest
 	if err := c.QueryParser(&req); err != nil {
-		return h.requestValidationErrorResponse(c, err)
+		return h.requestValidationErrorResponse(c, req.LangCode, err)
 	}
 
 	if err := h.validate.Struct(req); err != nil {
-		return h.requestValidationErrorResponse(c, err)
+		return h.requestValidationErrorResponse(c, req.LangCode, err)
 	}
 
 	methods, err := h.methodService.AvailableMethods(ctx, model.OperationTypePayout, req.UserID, req.Currency)
 	if err != nil {
-		return h.internalErrorResponse(c, err)
+		return h.internalErrorResponse(c, req.LangCode, err)
 	}
 
 	toolsGrouped, err := h.toolService.AvailableToolsGroupedByMethod(ctx, req.UserID)
 	if err != nil {
-		return h.internalErrorResponse(c, err)
+		return h.internalErrorResponse(c, req.LangCode, err)
 	}
 
 	resp := &payoutMethodsResponse{
@@ -106,11 +106,11 @@ func (h *Handler) payoutCreate(c *fiber.Ctx) error {
 
 	var req payoutCreateRequest
 	if err := c.BodyParser(&req); err != nil {
-		return h.requestValidationErrorResponse(c, err)
+		return h.requestValidationErrorResponse(c, req.LangCode, err)
 	}
 
 	if err := h.validate.Struct(req); err != nil {
-		return h.requestValidationErrorResponse(c, err)
+		return h.requestValidationErrorResponse(c, req.LangCode, err)
 	}
 
 	data := model.CreatePayoutData{
@@ -126,7 +126,7 @@ func (h *Handler) payoutCreate(c *fiber.Ctx) error {
 
 	result, err := h.payoutService.Create(ctx, data)
 	if err != nil {
-		return h.internalErrorResponse(c, err)
+		return h.internalErrorResponse(c, req.LangCode, err)
 	}
 
 	resp := &payoutCreateResponse{

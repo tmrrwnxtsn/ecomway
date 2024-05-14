@@ -13,6 +13,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 
 	pbEngine "github.com/tmrrwnxtsn/ecomway/api/proto/engine"
+	"github.com/tmrrwnxtsn/ecomway/internal/pkg/translate"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/gateway/api"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/gateway/api/v1"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/gateway/client/engine"
@@ -49,12 +50,14 @@ func New(configPath string) *App {
 	paymentService := payment.NewService(engineClient)
 	toolService := tool.NewService(engineClient)
 	payoutService := payout.NewService(engineClient)
+	translator := translate.NewTranslator("en", "ru")
 
 	apiHandlerV1 := v1.NewHandler(v1.HandlerOptions{
 		MethodService:  methodService,
 		PaymentService: paymentService,
 		ToolService:    toolService,
 		PayoutService:  payoutService,
+		Translator:     translator,
 		APIKey:         cfg.Gateway.APIKey,
 	})
 	apiServer := api.NewServer(apiHandlerV1)
