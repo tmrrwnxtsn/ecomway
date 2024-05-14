@@ -14,7 +14,7 @@ import (
 type Repository interface {
 	All(ctx context.Context, userID int64) ([]*model.Tool, error)
 	GetOne(ctx context.Context, id string, userID int64, externalMethod string) (*model.Tool, error)
-	Save(ctx context.Context, tool *model.Tool) error
+	Update(ctx context.Context, tool *model.Tool) error
 }
 
 type Service struct {
@@ -55,11 +55,38 @@ func (s *Service) EditOne(ctx context.Context, id string, userID int64, external
 		return nil, err
 	}
 
+	if tool.Name == name {
+		return tool, nil
+	}
+
 	tool.Name = name
 
-	if err = s.repository.Save(ctx, tool); err != nil {
+	if err = s.repository.Update(ctx, tool); err != nil {
 		return nil, err
 	}
 
 	return tool, nil
+}
+
+func (s *Service) RemoveOne(ctx context.Context, id string, userID int64, externalMethod string) error {
+	tool, err := s.repository.GetOne(ctx, id, userID, externalMethod)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return perror.NewInternal().WithCode(
+				perror.CodeObjectNotFound,
+			).WithDescription(
+				fmt.Sprintf("tool with id %q, userID %v and external method %q not found", id, userID, externalMethod),
+			)
+		}
+		return err
+	}
+
+	if tool.Removed() {
+		return nil
+	}
+
+	// TODO: добавить обработку ActionSource, чтобы различать удаление администратора и юзера
+	tool.Status = model.ToolStatusRemovedByUser
+
+	return s.repository.Update(ctx, tool)
 }

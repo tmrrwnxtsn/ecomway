@@ -124,9 +124,9 @@ type toolEditResponse struct {
 //	@Accept		json
 //	@Produce	json
 //	@Security	ApiKeyAuth
-//	@Param		input	body		toolEditRequest	true	"Тело запроса"
+//	@Param		input	body		toolEditRequest		true	"Тело запроса"
 //	@Success	200		{object}	toolEditResponse	"Успешный ответ"
-//	@Failure	default	{object}	errorResponse			"Ответ с ошибкой"
+//	@Failure	default	{object}	errorResponse		"Ответ с ошибкой"
 //	@Router		/tool/edit [put]
 func (h *Handler) toolEdit(c *fiber.Ctx) error {
 	ctx := c.Context()
@@ -159,8 +159,67 @@ func (h *Handler) toolEdit(c *fiber.Ctx) error {
 	return c.JSON(resp)
 }
 
+type toolRemoveRequest struct {
+	// Идентификатор платежного средства
+	ID string `json:"id" example:"2dc32aa0-000f-5000-8000-16d7bc6cd09f" validate:"required"`
+	// Идентификатор клиента
+	UserID int64 `json:"user_id" example:"1" validate:"required"`
+	// Внутренний код платежного метода платежной системы, к которой относится платежное средство
+	ExternalMethod string `json:"external_method" example:"yookassa_bank_card" validate:"required"`
+	// Код языка, обозначение по RFC 5646
+	LangCode string `json:"lang_code" example:"en" validate:"required"`
+}
+
+type toolRemoveResponse struct {
+	// Результат обработки запроса (всегда true)
+	Success bool `json:"success" example:"true" validate:"required"`
+	// Сообщение, которое необходимо показать клиенту
+	Message string `json:"message" example:"Платежное средство удалено."`
+}
+
+// toolRemove godoc
+//
+//	@Summary	Удалить платежное средство
+//	@Tags		Платежные средства
+//	@Accept		json
+//	@Produce	json
+//	@Security	ApiKeyAuth
+//	@Param		input	body		toolRemoveRequest	true	"Тело запроса"
+//	@Success	200		{object}	toolRemoveResponse	"Успешный ответ"
+//	@Failure	default	{object}	errorResponse		"Ответ с ошибкой"
+//	@Router		/tool/remove [delete]
 func (h *Handler) toolRemove(c *fiber.Ctx) error {
-	return c.SendString("Payout code resend")
+	ctx := c.Context()
+
+	var req toolRemoveRequest
+	if err := c.BodyParser(&req); err != nil {
+		return h.requestValidationErrorResponse(c, err)
+	}
+
+	if err := h.validate.Struct(req); err != nil {
+		return h.requestValidationErrorResponse(c, err)
+	}
+
+	if err := h.toolService.RemoveTool(ctx, req.ID, req.UserID, req.ExternalMethod); err != nil {
+		var perr *perror.Error
+		if errors.As(err, &perr) {
+			// TODO: обработать кейс INSTRUMENT_IN_USE_BY_TRANSACTION
+			if perr.Group == perror.GroupInternal {
+				switch perr.Code {
+				case perror.CodeObjectNotFound:
+					return h.objectNotFoundErrorResponse(c, perr)
+				}
+			}
+		}
+		return h.internalErrorResponse(c, err)
+	}
+
+	resp := &toolRemoveResponse{
+		Success: true,
+		Message: toolMessageFromResult(req.LangCode),
+	}
+
+	return c.JSON(resp)
 }
 
 func (h *Handler) tool(item *model.Tool) tool {
@@ -220,4 +279,17 @@ func (h *Handler) tools(items []*model.Tool) []tool {
 		}
 	}
 	return tools
+}
+
+// TODO: использовать пакет i18
+func toolMessageFromResult(langCode string) string {
+	messages := map[string]string{
+		"en": "Payment tool has been removed.",
+		"ru": "Платежное средство удалено.",
+	}
+	message, ok := messages[langCode]
+	if !ok {
+		message = messages["ru"]
+	}
+	return message
 }

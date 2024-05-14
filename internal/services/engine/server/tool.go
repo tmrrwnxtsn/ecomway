@@ -3,6 +3,8 @@ package server
 import (
 	"context"
 
+	"google.golang.org/protobuf/types/known/emptypb"
+
 	pbEngine "github.com/tmrrwnxtsn/ecomway/api/proto/engine"
 	pb "github.com/tmrrwnxtsn/ecomway/api/proto/shared"
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/convert"
@@ -40,4 +42,16 @@ func (s *Server) EditTool(ctx context.Context, request *pbEngine.EditToolRequest
 	return &pbEngine.EditToolResponse{
 		Tool: convert.ToolToProto(edited),
 	}, nil
+}
+
+func (s *Server) RemoveTool(ctx context.Context, request *pbEngine.RemoveToolRequest) (*emptypb.Empty, error) {
+	id := request.GetId()
+	userID := request.GetUserId()
+	externalMethod := request.GetExternalMethod()
+
+	if err := s.toolService.RemoveOne(ctx, id, userID, externalMethod); err != nil {
+		return nil, err
+	}
+
+	return &emptypb.Empty{}, nil
 }

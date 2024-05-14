@@ -2,6 +2,7 @@ package payment
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -35,15 +36,27 @@ func (s *Service) Success(ctx context.Context, data model.SuccessPaymentData) er
 				}
 
 				tool, err := s.toolRepository.GetOne(ctx, data.Tool.ID, data.Tool.UserID, data.Tool.ExternalMethod)
-				if err != nil {
-					return fmt.Errorf("get tool from db: %w", err)
-				}
-
-				if tool.CanBeUpdated() {
-					if err = s.toolRepository.Save(ctx, data.Tool); err != nil {
-						return fmt.Errorf("save tool into db: %w", err)
+				switch {
+				case errors.Is(err, sql.ErrNoRows):
+					if err = s.toolRepository.Create(ctx, data.Tool); err != nil {
+						return fmt.Errorf("create tool into db: %w", err)
 					}
 					op.ToolID = data.Tool.ID
+				case err != nil:
+					return fmt.Errorf("get tool from db: %w", err)
+				case tool.CanBeRecovered():
+					tool.Status = model.ToolStatusActive
+
+					if err = s.toolRepository.Update(ctx, tool); err != nil {
+						return fmt.Errorf("update tool into db: %w", err)
+					}
+					op.ToolID = data.Tool.ID
+
+					slog.Info(
+						"payment tool has been recovered",
+						"operation_id", op.ID,
+						"tool_id", op.ToolID,
+					)
 				}
 			}
 

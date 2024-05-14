@@ -10,6 +10,7 @@ import (
 type EngineClient interface {
 	AvailableTools(ctx context.Context, userID int64) ([]*model.Tool, error)
 	EditTool(ctx context.Context, id string, userID int64, externalMethod, name string) (*model.Tool, error)
+	RemoveTool(ctx context.Context, id string, userID int64, externalMethod string) error
 }
 
 type Service struct {
@@ -29,7 +30,7 @@ func (s *Service) AvailableTools(ctx context.Context, userID int64) ([]*model.To
 	}
 
 	tools = slices.DeleteFunc(tools, func(t *model.Tool) bool {
-		return t.Fake
+		return t.Fake || t.Removed()
 	})
 
 	return tools, nil
@@ -50,4 +51,8 @@ func (s *Service) AvailableToolsGroupedByMethod(ctx context.Context, userID int6
 
 func (s *Service) EditTool(ctx context.Context, id string, userID int64, externalMethod, name string) (*model.Tool, error) {
 	return s.engineClient.EditTool(ctx, id, userID, externalMethod, name)
+}
+
+func (s *Service) RemoveTool(ctx context.Context, id string, userID int64, externalMethod string) error {
+	return s.engineClient.RemoveTool(ctx, id, userID, externalMethod)
 }

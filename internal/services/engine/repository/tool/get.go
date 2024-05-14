@@ -3,7 +3,6 @@ package tool
 import (
 	"context"
 	"database/sql"
-	"fmt"
 
 	"github.com/georgysavva/scany/pgxscan"
 
@@ -34,7 +33,7 @@ func (r *Repository) GetOne(ctx context.Context, id string, userID int64, extern
 func (r *Repository) dbGetOne(ctx context.Context, id string, userID int64, externalMethod string) (dbTool, error) {
 	var dbT dbTool
 
-	err := pgxscan.Get(ctx, r.conn, &dbT, fmt.Sprintf(`
+	err := pgxscan.Get(ctx, r.conn, &dbT, `
 SELECT id,
        user_id,
        external_method,
@@ -46,9 +45,9 @@ SELECT id,
        fake,
        created_at,
        updated_at
-FROM %v 
+FROM tool 
 WHERE id = $1 AND user_id = $2 AND external_method = $3
-`, toolTable), id, userID, externalMethod)
+`, id, userID, externalMethod)
 	if err != nil {
 		if pgxscan.NotFound(err) {
 			return dbT, sql.ErrNoRows
@@ -61,7 +60,7 @@ WHERE id = $1 AND user_id = $2 AND external_method = $3
 
 func (r *Repository) dbGetAll(ctx context.Context, userID int64) ([]dbTool, error) {
 	var dbTools []dbTool
-	err := pgxscan.Select(ctx, r.conn, &dbTools, fmt.Sprintf(`
+	err := pgxscan.Select(ctx, r.conn, &dbTools, `
 SELECT id,
        user_id,
        external_method,
@@ -73,9 +72,9 @@ SELECT id,
        fake,
        created_at,
        updated_at
-FROM %v 
+FROM tool
 WHERE user_id = $1
-`, toolTable), userID)
+`, userID)
 	if err != nil {
 		return nil, err
 	}

@@ -46,3 +46,21 @@ func (c *Client) EditTool(ctx context.Context, id string, userID int64, external
 
 	return tool, nil
 }
+
+func (c *Client) RemoveTool(ctx context.Context, id string, userID int64, externalMethod string) error {
+	request := &pb.RemoveToolRequest{
+		Id:             id,
+		UserId:         userID,
+		ExternalMethod: externalMethod,
+	}
+
+	_, err := c.client.RemoveTool(ctx, request)
+	if err != nil {
+		if perr := perror.FromProto(err); perr != nil {
+			return perr
+		}
+		return err
+	}
+
+	return nil
+}

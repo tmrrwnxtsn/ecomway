@@ -4,6 +4,7 @@ package engine;
 
 import "api/proto/shared/shared.proto";
 import "google/protobuf/struct.proto";
+import "google/protobuf/empty.proto";
 
 option go_package = "github.com/tmrrwnxtsn/ecomway/api/proto/engine";
 
@@ -13,6 +14,7 @@ service EngineService {
   rpc AvailableTools(AvailableToolsRequest) returns (AvailableToolsResponse);
   rpc CreatePayout(CreatePayoutRequest) returns (CreatePayoutResponse);
   rpc EditTool(EditToolRequest) returns (EditToolResponse);
+  rpc RemoveTool(RemoveToolRequest) returns (google.protobuf.Empty);
 }
 
 message AvailableMethodsRequest {
@@ -76,4 +78,10 @@ message EditToolRequest {
 
 message EditToolResponse {
   shared.Tool tool = 1;
+}
+
+message RemoveToolRequest {
+  string id = 1;
+  int64 user_id = 2;
+  string external_method = 3;
 }

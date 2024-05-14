@@ -198,8 +198,8 @@ func paymentMessageFromResult(langCode string, resultStatus model.OperationStatu
 		}
 	case model.OperationStatusFailed:
 		messages = map[string]string{
-			"en": "Payment rejected",
-			"ru": "Оплата неуспешна",
+			"en": "Payment rejected.",
+			"ru": "Оплата неуспешна.",
 		}
 	}
 

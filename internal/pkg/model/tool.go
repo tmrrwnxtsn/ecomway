@@ -32,6 +32,12 @@ type Tool struct {
 	UpdatedAt      time.Time
 }
 
-func (t Tool) CanBeUpdated() bool {
-	return t.Status != ToolStatusRemovedByUser && t.Status != ToolStatusRemovedByAdministrator
+func (t Tool) CanBeRecovered() bool {
+	return t.Status != ToolStatusRemovedByAdministrator
+}
+
+func (t Tool) Removed() bool {
+	return t.Status == ToolStatusRemovedByUser ||
+		t.Status == ToolStatusRemovedByAdministrator ||
+		t.Status == ToolStatusPendingRecovery
 }

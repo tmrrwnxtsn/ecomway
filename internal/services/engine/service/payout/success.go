@@ -29,21 +29,21 @@ func (s *Service) Success(ctx context.Context, data model.SuccessPayoutData) err
 				return errors.New("payout FAILED to SUCCESS not allowed")
 			}
 
-			if data.Tool != nil {
-				if data.Tool.ID != op.ToolID {
-					return fmt.Errorf("operation tool %q differs from payout tool %q", op.ToolID, data.Tool.ID)
-				}
+			if data.Tool == nil {
+				return errors.New("got nil payout tool for SUCCESS operation")
+			}
 
-				tool, err := s.toolRepository.GetOne(ctx, data.Tool.ID, data.Tool.UserID, data.Tool.ExternalMethod)
-				if err != nil {
-					return fmt.Errorf("get tool from db: %w", err)
-				}
+			if data.Tool.ID != op.ToolID {
+				return fmt.Errorf("operation tool %q differs from payout tool %q", op.ToolID, data.Tool.ID)
+			}
 
-				if tool.CanBeUpdated() {
-					if err = s.toolRepository.Save(ctx, data.Tool); err != nil {
-						return fmt.Errorf("save tool into db: %w", err)
-					}
-				}
+			tool, err := s.toolRepository.GetOne(ctx, data.Tool.ID, data.Tool.UserID, data.Tool.ExternalMethod)
+			if err != nil {
+				return fmt.Errorf("get tool from db: %w", err)
+			}
+
+			if err = s.toolRepository.Update(ctx, tool); err != nil {
+				return fmt.Errorf("update tool into db: %w", err)
 			}
 
 			op.Status = model.OperationStatusSuccess

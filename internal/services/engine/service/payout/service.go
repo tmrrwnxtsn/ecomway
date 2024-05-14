@@ -16,7 +16,7 @@ type IntegrationClient interface {
 }
 
 type ToolRepository interface {
-	Save(ctx context.Context, tool *model.Tool) error
+	Update(ctx context.Context, tool *model.Tool) error
 	GetOne(ctx context.Context, id string, userID int64, externalMethod string) (*model.Tool, error)
 }
 

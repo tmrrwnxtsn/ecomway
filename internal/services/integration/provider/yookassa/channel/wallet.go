@@ -34,7 +34,7 @@ func (c walletChannel) PaymentTool(userID int64, externalMethod string, method d
 	}
 
 	return &model.Tool{
-		ID:             method.ID,
+		ID:             method.AccountNumber,
 		UserID:         userID,
 		ExternalMethod: externalMethod,
 		Displayed:      method.AccountNumber,

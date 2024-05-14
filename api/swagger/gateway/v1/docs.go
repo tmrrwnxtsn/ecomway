@@ -301,6 +301,50 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/tool/remove": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Платежные средства"
+                ],
+                "summary": "Удалить платежное средство",
+                "parameters": [
+                    {
+                        "description": "Тело запроса",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.toolRemoveRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "schema": {
+                            "$ref": "#/definitions/v1.toolRemoveResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "Ответ с ошибкой",
+                        "schema": {
+                            "$ref": "#/definitions/v1.errorResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -875,6 +919,55 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/v1.tool"
                     }
+                }
+            }
+        },
+        "v1.toolRemoveRequest": {
+            "type": "object",
+            "required": [
+                "external_method",
+                "id",
+                "lang_code",
+                "user_id"
+            ],
+            "properties": {
+                "external_method": {
+                    "description": "Внутренний код платежного метода платежной системы, к которой относится платежное средство",
+                    "type": "string",
+                    "example": "yookassa_bank_card"
+                },
+                "id": {
+                    "description": "Идентификатор платежного средства",
+                    "type": "string",
+                    "example": "2dc32aa0-000f-5000-8000-16d7bc6cd09f"
+                },
+                "lang_code": {
+                    "description": "Код языка, обозначение по RFC 5646",
+                    "type": "string",
+                    "example": "en"
+                },
+                "user_id": {
+                    "description": "Идентификатор клиента",
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "v1.toolRemoveResponse": {
+            "type": "object",
+            "required": [
+                "success"
+            ],
+            "properties": {
+                "message": {
+                    "description": "Сообщение, которое необходимо показать клиенту",
+                    "type": "string",
+                    "example": "Платежное средство удалено."
+                },
+                "success": {
+                    "description": "Результат обработки запроса (всегда true)",
+                    "type": "boolean",
+                    "example": true
                 }
             }
         }

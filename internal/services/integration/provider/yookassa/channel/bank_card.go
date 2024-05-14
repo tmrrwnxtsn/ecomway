@@ -28,7 +28,7 @@ func (c bankCardChannel) PaymentTool(userID int64, externalMethod string, method
 	displayed := fmt.Sprintf("%v******%v", method.Card.First6, method.Card.Last4)
 
 	return &model.Tool{
-		ID:             method.ID,
+		ID:             displayed,
 		UserID:         userID,
 		ExternalMethod: externalMethod,
 		Displayed:      displayed,

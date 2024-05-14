@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -24,6 +25,7 @@ const (
 	EngineService_AvailableTools_FullMethodName   = "/engine.EngineService/AvailableTools"
 	EngineService_CreatePayout_FullMethodName     = "/engine.EngineService/CreatePayout"
 	EngineService_EditTool_FullMethodName         = "/engine.EngineService/EditTool"
+	EngineService_RemoveTool_FullMethodName       = "/engine.EngineService/RemoveTool"
 )
 
 // EngineServiceClient is the client API for EngineService service.
@@ -35,6 +37,7 @@ type EngineServiceClient interface {
 	AvailableTools(ctx context.Context, in *AvailableToolsRequest, opts ...grpc.CallOption) (*AvailableToolsResponse, error)
 	CreatePayout(ctx context.Context, in *CreatePayoutRequest, opts ...grpc.CallOption) (*CreatePayoutResponse, error)
 	EditTool(ctx context.Context, in *EditToolRequest, opts ...grpc.CallOption) (*EditToolResponse, error)
+	RemoveTool(ctx context.Context, in *RemoveToolRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type engineServiceClient struct {
@@ -90,6 +93,15 @@ func (c *engineServiceClient) EditTool(ctx context.Context, in *EditToolRequest,
 	return out, nil
 }
 
+func (c *engineServiceClient) RemoveTool(ctx context.Context, in *RemoveToolRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, EngineService_RemoveTool_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // EngineServiceServer is the server API for EngineService service.
 // All implementations must embed UnimplementedEngineServiceServer
 // for forward compatibility
@@ -99,6 +111,7 @@ type EngineServiceServer interface {
 	AvailableTools(context.Context, *AvailableToolsRequest) (*AvailableToolsResponse, error)
 	CreatePayout(context.Context, *CreatePayoutRequest) (*CreatePayoutResponse, error)
 	EditTool(context.Context, *EditToolRequest) (*EditToolResponse, error)
+	RemoveTool(context.Context, *RemoveToolRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedEngineServiceServer()
 }
 
@@ -120,6 +133,9 @@ func (UnimplementedEngineServiceServer) CreatePayout(context.Context, *CreatePay
 }
 func (UnimplementedEngineServiceServer) EditTool(context.Context, *EditToolRequest) (*EditToolResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EditTool not implemented")
+}
+func (UnimplementedEngineServiceServer) RemoveTool(context.Context, *RemoveToolRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveTool not implemented")
 }
 func (UnimplementedEngineServiceServer) mustEmbedUnimplementedEngineServiceServer() {}
 
@@ -224,6 +240,24 @@ func _EngineService_EditTool_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _EngineService_RemoveTool_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemoveToolRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EngineServiceServer).RemoveTool(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: EngineService_RemoveTool_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EngineServiceServer).RemoveTool(ctx, req.(*RemoveToolRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // EngineService_ServiceDesc is the grpc.ServiceDesc for EngineService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -250,6 +284,10 @@ var EngineService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "EditTool",
 			Handler:    _EngineService_EditTool_Handler,
+		},
+		{
+			MethodName: "RemoveTool",
+			Handler:    _EngineService_RemoveTool_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
