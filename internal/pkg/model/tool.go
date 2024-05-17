@@ -13,7 +13,7 @@ type ToolStatus string
 
 const (
 	ToolStatusActive                 ToolStatus = "ACTIVE"
-	ToolStatusRemovedByUser          ToolStatus = "REMOVED_BY_USER"
+	ToolStatusRemovedByClient        ToolStatus = "REMOVED_BY_CLIENT"
 	ToolStatusPendingRecovery        ToolStatus = "PENDING_RECOVERY"
 	ToolStatusRemovedByAdministrator ToolStatus = "REMOVED_BY_ADMINISTRATOR"
 )
@@ -37,7 +37,7 @@ func (t Tool) CanBeRecovered() bool {
 }
 
 func (t Tool) Removed() bool {
-	return t.Status == ToolStatusRemovedByUser ||
+	return t.Status == ToolStatusRemovedByClient ||
 		t.Status == ToolStatusRemovedByAdministrator ||
 		t.Status == ToolStatusPendingRecovery
 }

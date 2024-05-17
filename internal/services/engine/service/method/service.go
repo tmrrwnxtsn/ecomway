@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"slices"
 
+	perror "github.com/tmrrwnxtsn/ecomway/internal/pkg/error"
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/model"
 )
 
@@ -29,14 +30,13 @@ func (s *Service) All(ctx context.Context, opType model.OperationType, currency 
 		return nil, err
 	}
 
-	var result []model.Method
-	for _, method := range methods {
-		if _, found := method.Limits[currency]; !found {
-			continue
-		}
+	result := slices.DeleteFunc(methods, func(method model.Method) bool {
+		_, found := method.Limits[currency]
+		return !found
+	})
 
-		result = append(result, method)
-	}
+	// TODO: сортировка по часто используемым методам пользователя и избранным
+
 	return result, nil
 }
 
@@ -50,9 +50,13 @@ func (s *Service) GetOne(ctx context.Context, opType model.OperationType, curren
 		return m.ExternalSystem == externalSystem && m.ExternalMethod == externalMethod
 	})
 	if methodIdx == -1 {
-		return nil, fmt.Errorf(
-			"%v method not found for external system %q, external method %q",
-			opType, externalSystem, externalMethod,
+		return nil, perror.NewInternal().WithCode(
+			perror.CodeObjectNotFound,
+		).WithDescription(
+			fmt.Sprintf(
+				"%v method not found for external system %q, external method %q",
+				opType, externalSystem, externalMethod,
+			),
 		)
 	}
 

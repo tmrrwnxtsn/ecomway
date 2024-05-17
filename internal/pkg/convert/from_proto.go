@@ -123,7 +123,7 @@ func ToolStatusFromProto(toolStatus pb.ToolStatus) model.ToolStatus {
 	case pb.ToolStatus_ACTIVE:
 		return model.ToolStatusActive
 	case pb.ToolStatus_REMOVED_BY_USER:
-		return model.ToolStatusRemovedByUser
+		return model.ToolStatusRemovedByClient
 	case pb.ToolStatus_PENDING_RECOVERY:
 		return model.ToolStatusPendingRecovery
 	case pb.ToolStatus_REMOVED_BY_ADMINISTRATOR:

@@ -7,6 +7,7 @@ import (
 
 	pb "github.com/tmrrwnxtsn/ecomway/api/proto/engine"
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/convert"
+	perror "github.com/tmrrwnxtsn/ecomway/internal/pkg/error"
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/model"
 )
 
@@ -35,6 +36,9 @@ func (c *Client) CreatePayment(ctx context.Context, data model.CreatePaymentData
 
 	response, err := c.client.CreatePayment(ctx, request)
 	if err != nil {
+		if perr := perror.FromProto(err); perr != nil {
+			return result, perr
+		}
 		return result, err
 	}
 

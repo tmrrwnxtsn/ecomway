@@ -1,8 +1,11 @@
 package v1
 
 import (
+	"errors"
+
 	"github.com/gofiber/fiber/v2"
 
+	perror "github.com/tmrrwnxtsn/ecomway/internal/pkg/error"
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/model"
 )
 
@@ -126,6 +129,13 @@ func (h *Handler) payoutCreate(c *fiber.Ctx) error {
 
 	result, err := h.payoutService.Create(ctx, data)
 	if err != nil {
+		// TODO: нельзя создать выплату на удаленный инструмент
+		var perr *perror.Error
+		if errors.As(err, &perr) {
+			if perr.Group == perror.GroupInternal && perr.Code == perror.CodeObjectNotFound {
+				return h.objectNotFoundErrorResponse(c, req.LangCode, perr)
+			}
+		}
 		return h.internalErrorResponse(c, req.LangCode, err)
 	}
 

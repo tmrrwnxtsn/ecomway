@@ -6,6 +6,7 @@ import (
 	"google.golang.org/protobuf/types/known/structpb"
 
 	pb "github.com/tmrrwnxtsn/ecomway/api/proto/engine"
+	perror "github.com/tmrrwnxtsn/ecomway/internal/pkg/error"
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/model"
 )
 
@@ -30,6 +31,9 @@ func (c *Client) CreatePayout(ctx context.Context, data model.CreatePayoutData) 
 
 	response, err := c.client.CreatePayout(ctx, request)
 	if err != nil {
+		if perr := perror.FromProto(err); perr != nil {
+			return result, perr
+		}
 		return result, err
 	}
 

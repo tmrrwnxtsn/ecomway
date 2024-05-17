@@ -20,26 +20,6 @@ CREATE INDEX ix_operation_external_id ON operation (external_id);
 CREATE INDEX ix_operation_status ON operation (status);
 CREATE INDEX ix_operation_created_at ON operation (created_at);
 
-CREATE TABLE IF NOT EXISTS tool
-(
-    id              VARCHAR(255)             NOT NULL,
-    user_id         BIGINT                   NOT NULL,
-    external_method VARCHAR(255)             NOT NULL,
-    type            VARCHAR(255),
-    details         JSONB,
-    displayed       VARCHAR(255)             NOT NULL,
-    name            VARCHAR(255)             NOT NULL,
-    status          VARCHAR(255)             NOT NULL DEFAULT 'ACTIVE',
-    fake            BOOLEAN                  NOT NULL DEFAULT FALSE,
-    created_at      TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-    updated_at      TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-    UNIQUE (id, user_id, external_method)
-);
-
-CREATE INDEX ix_tool_id ON tool (id);
-CREATE INDEX ix_tool_user_id ON tool (user_id);
-CREATE INDEX ix_tool_external_method ON tool (external_method);
-
 CREATE TABLE IF NOT EXISTS operation_metadata
 (
     operation_id      BIGINT NOT NULL REFERENCES operation ON DELETE CASCADE,
@@ -50,4 +30,18 @@ CREATE TABLE IF NOT EXISTS operation_metadata
     processed_at      TIMESTAMP WITH TIME ZONE
 );
 
-CREATE INDEX ix_operation_metadata_tool_id ON operation_metadata (tool_id);
+CREATE TABLE IF NOT EXISTS tool
+(
+    id              VARCHAR(255),
+    user_id         BIGINT,
+    external_method VARCHAR(255),
+    type            VARCHAR(255),
+    details         JSONB,
+    displayed       VARCHAR(255)             NOT NULL,
+    name            VARCHAR(255)             NOT NULL,
+    status          VARCHAR(255)             NOT NULL DEFAULT 'ACTIVE',
+    fake            BOOLEAN                  NOT NULL DEFAULT FALSE,
+    created_at      TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    updated_at      TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (id, user_id, external_method)
+);

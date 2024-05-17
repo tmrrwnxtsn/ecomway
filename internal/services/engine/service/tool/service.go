@@ -86,7 +86,7 @@ func (s *Service) RemoveOne(ctx context.Context, id string, userID int64, extern
 	}
 
 	// TODO: добавить обработку ActionSource, чтобы различать удаление администратора и юзера
-	tool.Status = model.ToolStatusRemovedByUser
+	tool.Status = model.ToolStatusRemovedByClient
 
 	return s.repository.Update(ctx, tool)
 }
