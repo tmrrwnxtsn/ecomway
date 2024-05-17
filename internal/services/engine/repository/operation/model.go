@@ -117,3 +117,58 @@ func operationFromDB(dbOp dbOperation) *model.Operation {
 
 	return op
 }
+
+type dbReportOperation struct {
+	ID             int64      `db:"id"`
+	UserID         int64      `db:"user_id"`
+	Type           string     `db:"type"`
+	Currency       string     `db:"currency"`
+	Amount         float64    `db:"amount"`
+	Status         string     `db:"status"`
+	ExternalID     *string    `db:"external_id"`
+	ExternalSystem string     `db:"external_system"`
+	ExternalMethod string     `db:"external_method"`
+	ExternalStatus *string    `db:"external_status"`
+	ToolDisplayed  *string    `db:"tool_displayed"`
+	FailReason     *string    `db:"fail_reason"`
+	CreatedAt      time.Time  `db:"created_at"`
+	UpdatedAt      time.Time  `db:"updated_at"`
+	ProcessedAt    *time.Time `db:"processed_at"`
+}
+
+func reportOperationFromDB(dbOp dbReportOperation) model.ReportOperation {
+	op := model.ReportOperation{
+		ID:             dbOp.ID,
+		UserID:         dbOp.UserID,
+		Type:           model.OperationType(dbOp.Type),
+		Currency:       dbOp.Currency,
+		Amount:         convert.BaseToCents(dbOp.Amount),
+		Status:         model.OperationStatus(dbOp.Status),
+		ExternalSystem: dbOp.ExternalSystem,
+		ExternalMethod: dbOp.ExternalMethod,
+		CreatedAt:      dbOp.CreatedAt,
+		UpdatedAt:      dbOp.UpdatedAt,
+	}
+
+	if dbOp.ExternalID != nil {
+		op.ExternalID = *dbOp.ExternalID
+	}
+
+	if dbOp.ExternalStatus != nil {
+		op.ExternalStatus = model.OperationExternalStatus(*dbOp.ExternalStatus)
+	}
+
+	if dbOp.ToolDisplayed != nil {
+		op.ToolDisplayed = *dbOp.ToolDisplayed
+	}
+
+	if dbOp.FailReason != nil {
+		op.FailReason = *dbOp.FailReason
+	}
+
+	if dbOp.ProcessedAt != nil {
+		op.ProcessedAt = *dbOp.ProcessedAt
+	}
+
+	return op
+}

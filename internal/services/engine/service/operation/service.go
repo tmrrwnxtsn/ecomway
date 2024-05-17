@@ -8,6 +8,7 @@ import (
 
 type Repository interface {
 	All(ctx context.Context, criteria model.OperationCriteria) ([]*model.Operation, error)
+	AllForReport(ctx context.Context, criteria model.OperationCriteria) ([]model.ReportOperation, error)
 }
 
 type Service struct {
@@ -22,4 +23,8 @@ func NewService(repository Repository) *Service {
 
 func (s *Service) All(ctx context.Context, criteria model.OperationCriteria) ([]*model.Operation, error) {
 	return s.repository.All(ctx, criteria)
+}
+
+func (s *Service) AllForReport(ctx context.Context, criteria model.OperationCriteria) ([]model.ReportOperation, error) {
+	return s.repository.AllForReport(ctx, criteria)
 }

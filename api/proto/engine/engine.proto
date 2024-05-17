@@ -16,7 +16,7 @@ service EngineService {
   rpc EditTool(EditToolRequest) returns (EditToolResponse);
   rpc RemoveTool(RemoveToolRequest) returns (google.protobuf.Empty);
 
-  rpc GetOperations(GetOperationsRequest) returns (GetOperationsResponse);
+  rpc ReportOperations(ReportOperationsRequest) returns (ReportOperationsResponse);
 }
 
 message AvailableMethodsRequest {
@@ -88,10 +88,28 @@ message RemoveToolRequest {
   string external_method = 3;
 }
 
-message GetOperationsRequest {
+message ReportOperationsRequest {
   int64 user_id = 1;
 }
 
-message GetOperationsResponse {
-  repeated shared.Operation operations = 1;
+message ReportOperation {
+  int64 id = 1;
+  int64 user_id = 2;
+  shared.OperationType type = 3;
+  string currency = 4;
+  int64 amount = 5;
+  shared.OperationStatus status = 6;
+  optional string external_id = 7;
+  string external_system = 8;
+  string external_method = 9;
+  optional shared.OperationExternalStatus external_status = 10;
+  optional string tool_displayed = 11;
+  optional string fail_reason = 12;
+  int64 created_at = 13;
+  int64 updated_at = 14;
+  optional int64 processed_at = 15;
+}
+
+message ReportOperationsResponse {
+  repeated ReportOperation operations = 1;
 }

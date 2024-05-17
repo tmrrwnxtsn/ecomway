@@ -50,6 +50,24 @@ type Operation struct {
 	ProcessedAt      time.Time
 }
 
+type ReportOperation struct {
+	ID             int64
+	UserID         int64
+	Type           OperationType
+	Currency       string
+	Amount         int64
+	Status         OperationStatus
+	ExternalID     string
+	ExternalSystem string
+	ExternalMethod string
+	ExternalStatus OperationExternalStatus
+	ToolDisplayed  string
+	FailReason     string
+	CreatedAt      time.Time
+	UpdatedAt      time.Time
+	ProcessedAt    time.Time
+}
+
 type ScriptAcquiredFor func(ctx context.Context, op *Operation) error
 
 type OperationCriteria struct {

@@ -46,23 +46,6 @@ func OperationExternalStatusFromProto(opExternalStatus pb.OperationExternalStatu
 	}
 }
 
-func OperationFromProto(op *pb.Operation) model.Operation {
-	return model.Operation{
-		ID:             op.GetId(),
-		UserID:         op.GetUserId(),
-		Type:           OperationTypeFromProto(op.GetType()),
-		Currency:       op.GetCurrency(),
-		Amount:         op.GetAmount(),
-		Status:         OperationStatusFromProto(op.GetStatus()),
-		ExternalID:     op.GetExternalId(),
-		ExternalSystem: op.GetExternalSystem(),
-		ExternalMethod: op.GetExternalMethod(),
-		ExternalStatus: OperationExternalStatusFromProto(op.GetExternalStatus()),
-		CreatedAt:      time.Unix(op.GetCreatedAt(), 0).UTC(),
-		UpdatedAt:      time.Unix(op.GetUpdatedAt(), 0).UTC(),
-	}
-}
-
 func MethodsFromProto(methods []*pb.Method) []model.Method {
 	result := make([]model.Method, 0, len(methods))
 

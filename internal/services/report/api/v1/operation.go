@@ -24,10 +24,16 @@ type operation struct {
 	ExternalID string `json:"external_id,omitempty" example:"ew01r01w0gfw1fw1"`
 	// Статус операции на стороне платежной системы
 	ExternalStatus string `json:"external_status,omitempty" example:"PENDING"`
+	// Платежное средство, используемое в операции
+	ToolDisplayed string `json:"tool,omitempty" example:"5748********4124"`
+	// Причина отклонения операции
+	FailReason string `json:"fail_reason,omitempty" example:"Technical error"`
 	// Время создания операции в формате UNIX Timestamp
 	CreatedAt int64 `json:"created_at" example:"1715974447" validate:"required"`
 	// Время последнего обновления операции в формате UNIX Timestamp
 	UpdatedAt int64 `json:"updated_at" example:"1715974447" validate:"required"`
+	// Время завершения операции на стороне платежной системы в формате UNIX Timestamp
+	ProcessedAt int64 `json:"processed_at,omitempty" example:"1715974447"`
 }
 
 type operationListRequest struct {
@@ -67,7 +73,7 @@ func (h *Handler) operationList(c *fiber.Ctx) error {
 		return h.requestValidationErrorResponse(c, req.LangCode, err)
 	}
 
-	operations, err := h.operationService.Operations(ctx, req.UserID)
+	operations, err := h.operationService.ReportOperations(ctx, req.UserID)
 	if err != nil {
 		return h.internalErrorResponse(c, req.LangCode, err)
 	}
@@ -80,8 +86,8 @@ func (h *Handler) operationList(c *fiber.Ctx) error {
 	return c.JSON(resp)
 }
 
-func (h *Handler) operation(item model.Operation) operation {
-	return operation{
+func (h *Handler) operation(item model.ReportOperation) operation {
+	result := operation{
 		ID:             item.ID,
 		UserID:         item.UserID,
 		Type:           string(item.Type),
@@ -90,12 +96,20 @@ func (h *Handler) operation(item model.Operation) operation {
 		Status:         string(item.Status),
 		ExternalID:     item.ExternalID,
 		ExternalStatus: string(item.ExternalStatus),
+		ToolDisplayed:  item.ToolDisplayed,
+		FailReason:     item.FailReason,
 		CreatedAt:      item.CreatedAt.Unix(),
 		UpdatedAt:      item.UpdatedAt.Unix(),
 	}
+
+	if !item.ProcessedAt.IsZero() {
+		result.ProcessedAt = item.ProcessedAt.Unix()
+	}
+
+	return result
 }
 
-func (h *Handler) operations(items []model.Operation) []operation {
+func (h *Handler) operations(items []model.ReportOperation) []operation {
 	var operations []operation
 	if itemNum := len(items); itemNum > 0 {
 		operations = make([]operation, 0, itemNum)

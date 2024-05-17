@@ -46,32 +46,6 @@ func OperationExternalStatusToProto(opExternalStatus model.OperationExternalStat
 	}
 }
 
-func OperationToProto(op *model.Operation) *pb.Operation {
-	result := &pb.Operation{
-		Id:             op.ID,
-		UserId:         op.UserID,
-		Type:           OperationTypeToProto(op.Type),
-		Currency:       op.Currency,
-		Amount:         op.Amount,
-		Status:         OperationStatusToProto(op.Status),
-		ExternalSystem: op.ExternalSystem,
-		ExternalMethod: op.ExternalMethod,
-		CreatedAt:      op.CreatedAt.UTC().Unix(),
-		UpdatedAt:      op.UpdatedAt.UTC().Unix(),
-	}
-
-	if op.ExternalID != "" {
-		result.ExternalId = &op.ExternalID
-	}
-
-	if op.ExternalStatus != "" {
-		pbExternalStatus := OperationExternalStatusToProto(op.ExternalStatus)
-		result.ExternalStatus = &pbExternalStatus
-	}
-
-	return result
-}
-
 func MethodsToProto(methods []model.Method) []*pb.Method {
 	result := make([]*pb.Method, 0, len(methods))
 

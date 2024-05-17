@@ -15,7 +15,7 @@ import (
 )
 
 type OperationService interface {
-	Operations(ctx context.Context, userID int64) ([]model.Operation, error)
+	ReportOperations(ctx context.Context, userID int64) ([]model.ReportOperation, error)
 }
 
 type Translator interface {

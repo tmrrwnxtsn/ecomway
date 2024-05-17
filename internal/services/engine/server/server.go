@@ -34,7 +34,7 @@ type PayoutService interface {
 }
 
 type OperationService interface {
-	All(ctx context.Context, criteria model.OperationCriteria) ([]*model.Operation, error)
+	AllForReport(ctx context.Context, criteria model.OperationCriteria) ([]model.ReportOperation, error)
 }
 
 type Server struct {

@@ -72,6 +72,19 @@ func (r *Repository) All(ctx context.Context, criteria model.OperationCriteria) 
 	return ops, nil
 }
 
+func (r *Repository) AllForReport(ctx context.Context, criteria model.OperationCriteria) ([]model.ReportOperation, error) {
+	dbOps, err := r.dbGetAllForReport(ctx, criteria)
+	if err != nil {
+		return nil, err
+	}
+
+	ops := make([]model.ReportOperation, 0, len(dbOps))
+	for _, dbOp := range dbOps {
+		ops = append(ops, reportOperationFromDB(dbOp))
+	}
+	return ops, nil
+}
+
 func (r *Repository) dbGetOne(ctx context.Context, dbTX pgx.Tx, criteria model.OperationCriteria, withLock bool) (dbOperation, error) {
 	var dbOp dbOperation
 
@@ -123,10 +136,13 @@ func (r *Repository) dbGetAll(ctx context.Context, criteria model.OperationCrite
 		criteria.MaxCount = defaultOperationMaxCount
 	}
 
-	whereStmt, args, _ := r.whereStmt(criteria)
+	whereStmt, args, err := r.whereStmt(criteria)
+	if err != nil {
+		return nil, err
+	}
 
 	var dbOps []dbOperation
-	err := pgxscan.Select(ctx, r.conn, &dbOps, fmt.Sprintf(`
+	err = pgxscan.Select(ctx, r.conn, &dbOps, fmt.Sprintf(`
 SELECT %[3]v.id,
        %[3]v.user_id,
        %[3]v.type,
@@ -148,6 +164,44 @@ FROM %[1]v %[3]v
          JOIN %[2]v %[4]v on %[3]v.id = %[4]v.operation_id
 %v ORDER BY random() LIMIT %v
 `, operationTable, operationMetadataTable, operationTableAbbr, operationMetadataTableAbbr, whereStmt, criteria.MaxCount),
+		args...)
+	if err != nil {
+		return nil, err
+	}
+
+	return dbOps, nil
+}
+
+func (r *Repository) dbGetAllForReport(ctx context.Context, criteria model.OperationCriteria) ([]dbReportOperation, error) {
+	if criteria.MaxCount == 0 {
+		criteria.MaxCount = defaultOperationMaxCount
+	}
+
+	whereStmt, args, _ := r.whereStmt(criteria)
+
+	var dbOps []dbReportOperation
+	err := pgxscan.Select(ctx, r.conn, &dbOps, fmt.Sprintf(`
+SELECT %[3]v.id,
+       %[3]v.user_id,
+       %[3]v.type,
+       %[3]v.currency,
+       %[3]v.amount,
+       %[3]v.status,
+       %[3]v.external_id,
+       %[3]v.external_system,
+       %[3]v.external_method,
+       %[3]v.external_status,
+       %[6]v.displayed tool_displayed,
+       %[4]v.fail_reason,
+       %[3]v.created_at,
+       %[3]v.updated_at,
+       %[4]v.processed_at
+FROM %[1]v %[3]v
+         JOIN %[2]v %[4]v on %[3]v.id = %[4]v.operation_id
+         LEFT JOIN %[5]v %[6]v on %[4]v.tool_id = %[6]v.id AND %[3]v.user_id = %[6]v.user_id AND %[3]v.external_method = %[6]v.external_method
+%v LIMIT %v
+`, operationTable, operationMetadataTable, operationTableAbbr, operationMetadataTableAbbr, toolTable, toolTableAbbr,
+		whereStmt, criteria.MaxCount),
 		args...)
 	if err != nil {
 		return nil, err

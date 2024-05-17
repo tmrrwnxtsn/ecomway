@@ -148,15 +148,30 @@
                     "type": "string",
                     "example": "PENDING"
                 },
+                "fail_reason": {
+                    "description": "Причина отклонения операции",
+                    "type": "string",
+                    "example": "Technical error"
+                },
                 "id": {
                     "description": "Идентификатор операции",
                     "type": "integer",
                     "example": 1
                 },
+                "processed_at": {
+                    "description": "Время завершения операции на стороне платежной системы в формате UNIX Timestamp",
+                    "type": "integer",
+                    "example": 1715974447
+                },
                 "status": {
                     "description": "Внутренний статус операции",
                     "type": "string",
                     "example": "SUCCESS"
+                },
+                "tool": {
+                    "description": "Платежное средство, используемое в операции",
+                    "type": "string",
+                    "example": "5748********4124"
                 },
                 "type": {
                     "description": "Тип операции",

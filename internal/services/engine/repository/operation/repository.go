@@ -8,6 +8,9 @@ const (
 
 	operationMetadataTable     = "operation_metadata"
 	operationMetadataTableAbbr = "op_meta"
+
+	toolTable     = "tool"
+	toolTableAbbr = "tl"
 )
 
 type Repository struct {
