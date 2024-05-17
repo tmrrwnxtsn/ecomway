@@ -11,11 +11,32 @@ enum OperationType {
   PAYOUT = 1;
 }
 
+enum OperationStatus {
+  OPERATION_STATUS_NEW = 0;
+  OPERATION_STATUS_SUCCESS = 1;
+  OPERATION_STATUS_FAILED = 2;
+}
+
 enum OperationExternalStatus {
-  UNKNOWN = 0;
-  PENDING = 1;
-  SUCCESS = 2;
-  FAILED = 3;
+  OPERATION_EXTERNAL_STATUS_UNKNOWN = 0;
+  OPERATION_EXTERNAL_STATUS_PENDING = 1;
+  OPERATION_EXTERNAL_STATUS_SUCCESS = 2;
+  OPERATION_EXTERNAL_STATUS_FAILED = 3;
+}
+
+message Operation {
+  int64 id = 1;
+  int64 user_id = 2;
+  OperationType type = 3;
+  string currency = 4;
+  int64 amount = 5;
+  OperationStatus status = 6;
+  optional string external_id = 7;
+  string external_system = 8;
+  string external_method = 9;
+  optional OperationExternalStatus external_status = 10;
+  int64 created_at = 11;
+  int64 updated_at = 12;
 }
 
 message Limits {

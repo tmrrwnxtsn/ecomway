@@ -33,25 +33,31 @@ type PayoutService interface {
 	Create(ctx context.Context, data model.CreatePayoutData) (model.CreatePayoutResult, error)
 }
 
+type OperationService interface {
+	All(ctx context.Context, criteria model.OperationCriteria) ([]*model.Operation, error)
+}
+
 type Server struct {
-	server         *grpc.Server
-	listener       net.Listener
-	methodService  MethodService
-	limitService   LimitService
-	paymentService PaymentService
-	toolService    ToolService
-	payoutService  PayoutService
+	server           *grpc.Server
+	listener         net.Listener
+	methodService    MethodService
+	limitService     LimitService
+	paymentService   PaymentService
+	toolService      ToolService
+	payoutService    PayoutService
+	operationService OperationService
 	pb.UnimplementedEngineServiceServer
 }
 
 type Options struct {
-	Server         *grpc.Server
-	Listener       net.Listener
-	MethodService  MethodService
-	LimitService   LimitService
-	PaymentService PaymentService
-	ToolService    ToolService
-	PayoutService  PayoutService
+	Server           *grpc.Server
+	Listener         net.Listener
+	MethodService    MethodService
+	LimitService     LimitService
+	PaymentService   PaymentService
+	ToolService      ToolService
+	PayoutService    PayoutService
+	OperationService OperationService
 }
 
 func NewServer(opts Options) *Server {
@@ -63,6 +69,7 @@ func NewServer(opts Options) *Server {
 	s.paymentService = opts.PaymentService
 	s.toolService = opts.ToolService
 	s.payoutService = opts.PayoutService
+	s.operationService = opts.OperationService
 	return &s
 }
 

@@ -18,12 +18,13 @@ import (
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/client/integration"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/config"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/migrator"
-	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/repository/operation"
+	oprepo "github.com/tmrrwnxtsn/ecomway/internal/services/engine/repository/operation"
 	toolrepo "github.com/tmrrwnxtsn/ecomway/internal/services/engine/repository/tool"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/scheduler"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/server"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/service/limit"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/service/method"
+	opservice "github.com/tmrrwnxtsn/ecomway/internal/services/engine/service/operation"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/service/payment"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/service/payout"
 	toolservice "github.com/tmrrwnxtsn/ecomway/internal/services/engine/service/tool"
@@ -72,7 +73,7 @@ func New(configPath string) *App {
 		log.Fatalf("connecting integration service: %v", err)
 	}
 
-	operationRepository := operation.NewRepository(postgresConn)
+	operationRepository := oprepo.NewRepository(postgresConn)
 	toolRepository := toolrepo.NewRepository(postgresConn)
 
 	integrationClient := integration.NewClient(pbIntegration.NewIntegrationServiceClient(integrationConn))
@@ -82,6 +83,7 @@ func New(configPath string) *App {
 	paymentService := payment.NewService(operationRepository, integrationClient, toolRepository)
 	toolService := toolservice.NewService(toolRepository)
 	payoutService := payout.NewService(operationRepository, integrationClient, toolRepository)
+	operationService := opservice.NewService(operationRepository)
 
 	if cfg.Engine.Scheduler.IsEnabled {
 		var tasks []scheduler.BackgroundTask
@@ -89,7 +91,7 @@ func New(configPath string) *App {
 		if cfg.Engine.Scheduler.Tasks.FinalizeOperations.IsEnabled {
 			tasks = append(tasks, scheduler.NewFinalizeOperationsTask(
 				cfg.Engine.Scheduler.Tasks.FinalizeOperations,
-				operationRepository,
+				operationService,
 				integrationClient,
 				paymentService,
 			))
@@ -100,13 +102,14 @@ func New(configPath string) *App {
 
 	grpcServer := grpc.NewServer()
 	srv := server.NewServer(server.Options{
-		Server:         grpcServer,
-		Listener:       grpcListener,
-		MethodService:  methodService,
-		LimitService:   limitService,
-		PaymentService: paymentService,
-		ToolService:    toolService,
-		PayoutService:  payoutService,
+		Server:           grpcServer,
+		Listener:         grpcListener,
+		MethodService:    methodService,
+		LimitService:     limitService,
+		PaymentService:   paymentService,
+		ToolService:      toolService,
+		PayoutService:    payoutService,
+		OperationService: operationService,
 	})
 	pbEngine.RegisterEngineServiceServer(grpcServer, srv)
 

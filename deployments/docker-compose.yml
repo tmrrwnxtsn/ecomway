@@ -44,5 +44,18 @@ services:
     depends_on:
       - engine
 
+  report:
+    build:
+      context: ..
+      dockerfile: build/report/Dockerfile
+    container_name: report
+    restart: on-failure
+    env_file:
+      - report.env
+    ports:
+      - "8081:8081"
+    depends_on:
+      - engine
+
 volumes:
   storage_volume:

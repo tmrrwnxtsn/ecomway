@@ -105,7 +105,7 @@ func (r *Repository) whereStmt(c model.OperationCriteria) (string, []any, error)
 	}
 
 	whereStmt := strings.Join(whereValues, " AND ")
-	return whereStmt, args, nil
+	return "WHERE " + whereStmt, args, nil
 }
 
 func (r *Repository) nonNilCriteriaArgs(c model.OperationCriteria) (int, int) {

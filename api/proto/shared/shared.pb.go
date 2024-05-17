@@ -67,28 +67,77 @@ func (OperationType) EnumDescriptor() ([]byte, []int) {
 	return file_api_proto_shared_shared_proto_rawDescGZIP(), []int{0}
 }
 
+type OperationStatus int32
+
+const (
+	OperationStatus_OPERATION_STATUS_NEW     OperationStatus = 0
+	OperationStatus_OPERATION_STATUS_SUCCESS OperationStatus = 1
+	OperationStatus_OPERATION_STATUS_FAILED  OperationStatus = 2
+)
+
+// Enum value maps for OperationStatus.
+var (
+	OperationStatus_name = map[int32]string{
+		0: "OPERATION_STATUS_NEW",
+		1: "OPERATION_STATUS_SUCCESS",
+		2: "OPERATION_STATUS_FAILED",
+	}
+	OperationStatus_value = map[string]int32{
+		"OPERATION_STATUS_NEW":     0,
+		"OPERATION_STATUS_SUCCESS": 1,
+		"OPERATION_STATUS_FAILED":  2,
+	}
+)
+
+func (x OperationStatus) Enum() *OperationStatus {
+	p := new(OperationStatus)
+	*p = x
+	return p
+}
+
+func (x OperationStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (OperationStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_api_proto_shared_shared_proto_enumTypes[1].Descriptor()
+}
+
+func (OperationStatus) Type() protoreflect.EnumType {
+	return &file_api_proto_shared_shared_proto_enumTypes[1]
+}
+
+func (x OperationStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use OperationStatus.Descriptor instead.
+func (OperationStatus) EnumDescriptor() ([]byte, []int) {
+	return file_api_proto_shared_shared_proto_rawDescGZIP(), []int{1}
+}
+
 type OperationExternalStatus int32
 
 const (
-	OperationExternalStatus_UNKNOWN OperationExternalStatus = 0
-	OperationExternalStatus_PENDING OperationExternalStatus = 1
-	OperationExternalStatus_SUCCESS OperationExternalStatus = 2
-	OperationExternalStatus_FAILED  OperationExternalStatus = 3
+	OperationExternalStatus_OPERATION_EXTERNAL_STATUS_UNKNOWN OperationExternalStatus = 0
+	OperationExternalStatus_OPERATION_EXTERNAL_STATUS_PENDING OperationExternalStatus = 1
+	OperationExternalStatus_OPERATION_EXTERNAL_STATUS_SUCCESS OperationExternalStatus = 2
+	OperationExternalStatus_OPERATION_EXTERNAL_STATUS_FAILED  OperationExternalStatus = 3
 )
 
 // Enum value maps for OperationExternalStatus.
 var (
 	OperationExternalStatus_name = map[int32]string{
-		0: "UNKNOWN",
-		1: "PENDING",
-		2: "SUCCESS",
-		3: "FAILED",
+		0: "OPERATION_EXTERNAL_STATUS_UNKNOWN",
+		1: "OPERATION_EXTERNAL_STATUS_PENDING",
+		2: "OPERATION_EXTERNAL_STATUS_SUCCESS",
+		3: "OPERATION_EXTERNAL_STATUS_FAILED",
 	}
 	OperationExternalStatus_value = map[string]int32{
-		"UNKNOWN": 0,
-		"PENDING": 1,
-		"SUCCESS": 2,
-		"FAILED":  3,
+		"OPERATION_EXTERNAL_STATUS_UNKNOWN": 0,
+		"OPERATION_EXTERNAL_STATUS_PENDING": 1,
+		"OPERATION_EXTERNAL_STATUS_SUCCESS": 2,
+		"OPERATION_EXTERNAL_STATUS_FAILED":  3,
 	}
 )
 
@@ -103,11 +152,11 @@ func (x OperationExternalStatus) String() string {
 }
 
 func (OperationExternalStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_api_proto_shared_shared_proto_enumTypes[1].Descriptor()
+	return file_api_proto_shared_shared_proto_enumTypes[2].Descriptor()
 }
 
 func (OperationExternalStatus) Type() protoreflect.EnumType {
-	return &file_api_proto_shared_shared_proto_enumTypes[1]
+	return &file_api_proto_shared_shared_proto_enumTypes[2]
 }
 
 func (x OperationExternalStatus) Number() protoreflect.EnumNumber {
@@ -116,7 +165,7 @@ func (x OperationExternalStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use OperationExternalStatus.Descriptor instead.
 func (OperationExternalStatus) EnumDescriptor() ([]byte, []int) {
-	return file_api_proto_shared_shared_proto_rawDescGZIP(), []int{1}
+	return file_api_proto_shared_shared_proto_rawDescGZIP(), []int{2}
 }
 
 type CommissionType int32
@@ -155,11 +204,11 @@ func (x CommissionType) String() string {
 }
 
 func (CommissionType) Descriptor() protoreflect.EnumDescriptor {
-	return file_api_proto_shared_shared_proto_enumTypes[2].Descriptor()
+	return file_api_proto_shared_shared_proto_enumTypes[3].Descriptor()
 }
 
 func (CommissionType) Type() protoreflect.EnumType {
-	return &file_api_proto_shared_shared_proto_enumTypes[2]
+	return &file_api_proto_shared_shared_proto_enumTypes[3]
 }
 
 func (x CommissionType) Number() protoreflect.EnumNumber {
@@ -168,7 +217,7 @@ func (x CommissionType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use CommissionType.Descriptor instead.
 func (CommissionType) EnumDescriptor() ([]byte, []int) {
-	return file_api_proto_shared_shared_proto_rawDescGZIP(), []int{2}
+	return file_api_proto_shared_shared_proto_rawDescGZIP(), []int{3}
 }
 
 type ToolType int32
@@ -201,11 +250,11 @@ func (x ToolType) String() string {
 }
 
 func (ToolType) Descriptor() protoreflect.EnumDescriptor {
-	return file_api_proto_shared_shared_proto_enumTypes[3].Descriptor()
+	return file_api_proto_shared_shared_proto_enumTypes[4].Descriptor()
 }
 
 func (ToolType) Type() protoreflect.EnumType {
-	return &file_api_proto_shared_shared_proto_enumTypes[3]
+	return &file_api_proto_shared_shared_proto_enumTypes[4]
 }
 
 func (x ToolType) Number() protoreflect.EnumNumber {
@@ -214,7 +263,7 @@ func (x ToolType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ToolType.Descriptor instead.
 func (ToolType) EnumDescriptor() ([]byte, []int) {
-	return file_api_proto_shared_shared_proto_rawDescGZIP(), []int{3}
+	return file_api_proto_shared_shared_proto_rawDescGZIP(), []int{4}
 }
 
 type ToolStatus int32
@@ -253,11 +302,11 @@ func (x ToolStatus) String() string {
 }
 
 func (ToolStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_api_proto_shared_shared_proto_enumTypes[4].Descriptor()
+	return file_api_proto_shared_shared_proto_enumTypes[5].Descriptor()
 }
 
 func (ToolStatus) Type() protoreflect.EnumType {
-	return &file_api_proto_shared_shared_proto_enumTypes[4]
+	return &file_api_proto_shared_shared_proto_enumTypes[5]
 }
 
 func (x ToolStatus) Number() protoreflect.EnumNumber {
@@ -266,7 +315,142 @@ func (x ToolStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ToolStatus.Descriptor instead.
 func (ToolStatus) EnumDescriptor() ([]byte, []int) {
-	return file_api_proto_shared_shared_proto_rawDescGZIP(), []int{4}
+	return file_api_proto_shared_shared_proto_rawDescGZIP(), []int{5}
+}
+
+type Operation struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id             int64                    `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	UserId         int64                    `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Type           OperationType            `protobuf:"varint,3,opt,name=type,proto3,enum=shared.OperationType" json:"type,omitempty"`
+	Currency       string                   `protobuf:"bytes,4,opt,name=currency,proto3" json:"currency,omitempty"`
+	Amount         int64                    `protobuf:"varint,5,opt,name=amount,proto3" json:"amount,omitempty"`
+	Status         OperationStatus          `protobuf:"varint,6,opt,name=status,proto3,enum=shared.OperationStatus" json:"status,omitempty"`
+	ExternalId     *string                  `protobuf:"bytes,7,opt,name=external_id,json=externalId,proto3,oneof" json:"external_id,omitempty"`
+	ExternalSystem string                   `protobuf:"bytes,8,opt,name=external_system,json=externalSystem,proto3" json:"external_system,omitempty"`
+	ExternalMethod string                   `protobuf:"bytes,9,opt,name=external_method,json=externalMethod,proto3" json:"external_method,omitempty"`
+	ExternalStatus *OperationExternalStatus `protobuf:"varint,10,opt,name=external_status,json=externalStatus,proto3,enum=shared.OperationExternalStatus,oneof" json:"external_status,omitempty"`
+	CreatedAt      int64                    `protobuf:"varint,11,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt      int64                    `protobuf:"varint,12,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+}
+
+func (x *Operation) Reset() {
+	*x = Operation{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_proto_shared_shared_proto_msgTypes[0]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Operation) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Operation) ProtoMessage() {}
+
+func (x *Operation) ProtoReflect() protoreflect.Message {
+	mi := &file_api_proto_shared_shared_proto_msgTypes[0]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Operation.ProtoReflect.Descriptor instead.
+func (*Operation) Descriptor() ([]byte, []int) {
+	return file_api_proto_shared_shared_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *Operation) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *Operation) GetUserId() int64 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *Operation) GetType() OperationType {
+	if x != nil {
+		return x.Type
+	}
+	return OperationType_PAYMENT
+}
+
+func (x *Operation) GetCurrency() string {
+	if x != nil {
+		return x.Currency
+	}
+	return ""
+}
+
+func (x *Operation) GetAmount() int64 {
+	if x != nil {
+		return x.Amount
+	}
+	return 0
+}
+
+func (x *Operation) GetStatus() OperationStatus {
+	if x != nil {
+		return x.Status
+	}
+	return OperationStatus_OPERATION_STATUS_NEW
+}
+
+func (x *Operation) GetExternalId() string {
+	if x != nil && x.ExternalId != nil {
+		return *x.ExternalId
+	}
+	return ""
+}
+
+func (x *Operation) GetExternalSystem() string {
+	if x != nil {
+		return x.ExternalSystem
+	}
+	return ""
+}
+
+func (x *Operation) GetExternalMethod() string {
+	if x != nil {
+		return x.ExternalMethod
+	}
+	return ""
+}
+
+func (x *Operation) GetExternalStatus() OperationExternalStatus {
+	if x != nil && x.ExternalStatus != nil {
+		return *x.ExternalStatus
+	}
+	return OperationExternalStatus_OPERATION_EXTERNAL_STATUS_UNKNOWN
+}
+
+func (x *Operation) GetCreatedAt() int64 {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return 0
+}
+
+func (x *Operation) GetUpdatedAt() int64 {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return 0
 }
 
 type Limits struct {
@@ -281,7 +465,7 @@ type Limits struct {
 func (x *Limits) Reset() {
 	*x = Limits{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_proto_shared_shared_proto_msgTypes[0]
+		mi := &file_api_proto_shared_shared_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -294,7 +478,7 @@ func (x *Limits) String() string {
 func (*Limits) ProtoMessage() {}
 
 func (x *Limits) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_shared_shared_proto_msgTypes[0]
+	mi := &file_api_proto_shared_shared_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -307,7 +491,7 @@ func (x *Limits) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Limits.ProtoReflect.Descriptor instead.
 func (*Limits) Descriptor() ([]byte, []int) {
-	return file_api_proto_shared_shared_proto_rawDescGZIP(), []int{0}
+	return file_api_proto_shared_shared_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *Limits) GetMinAmount() int64 {
@@ -339,7 +523,7 @@ type Commission struct {
 func (x *Commission) Reset() {
 	*x = Commission{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_proto_shared_shared_proto_msgTypes[1]
+		mi := &file_api_proto_shared_shared_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -352,7 +536,7 @@ func (x *Commission) String() string {
 func (*Commission) ProtoMessage() {}
 
 func (x *Commission) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_shared_shared_proto_msgTypes[1]
+	mi := &file_api_proto_shared_shared_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -365,7 +549,7 @@ func (x *Commission) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Commission.ProtoReflect.Descriptor instead.
 func (*Commission) Descriptor() ([]byte, []int) {
-	return file_api_proto_shared_shared_proto_rawDescGZIP(), []int{1}
+	return file_api_proto_shared_shared_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *Commission) GetType() CommissionType {
@@ -419,7 +603,7 @@ type Method struct {
 func (x *Method) Reset() {
 	*x = Method{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_proto_shared_shared_proto_msgTypes[2]
+		mi := &file_api_proto_shared_shared_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -432,7 +616,7 @@ func (x *Method) String() string {
 func (*Method) ProtoMessage() {}
 
 func (x *Method) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_shared_shared_proto_msgTypes[2]
+	mi := &file_api_proto_shared_shared_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -445,7 +629,7 @@ func (x *Method) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Method.ProtoReflect.Descriptor instead.
 func (*Method) Descriptor() ([]byte, []int) {
-	return file_api_proto_shared_shared_proto_rawDescGZIP(), []int{2}
+	return file_api_proto_shared_shared_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *Method) GetId() string {
@@ -502,7 +686,7 @@ type Error struct {
 func (x *Error) Reset() {
 	*x = Error{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_proto_shared_shared_proto_msgTypes[3]
+		mi := &file_api_proto_shared_shared_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -515,7 +699,7 @@ func (x *Error) String() string {
 func (*Error) ProtoMessage() {}
 
 func (x *Error) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_shared_shared_proto_msgTypes[3]
+	mi := &file_api_proto_shared_shared_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -528,7 +712,7 @@ func (x *Error) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Error.ProtoReflect.Descriptor instead.
 func (*Error) Descriptor() ([]byte, []int) {
-	return file_api_proto_shared_shared_proto_rawDescGZIP(), []int{3}
+	return file_api_proto_shared_shared_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *Error) GetGroup() string {
@@ -558,7 +742,7 @@ type ReturnURLs struct {
 func (x *ReturnURLs) Reset() {
 	*x = ReturnURLs{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_proto_shared_shared_proto_msgTypes[4]
+		mi := &file_api_proto_shared_shared_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -571,7 +755,7 @@ func (x *ReturnURLs) String() string {
 func (*ReturnURLs) ProtoMessage() {}
 
 func (x *ReturnURLs) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_shared_shared_proto_msgTypes[4]
+	mi := &file_api_proto_shared_shared_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -584,7 +768,7 @@ func (x *ReturnURLs) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReturnURLs.ProtoReflect.Descriptor instead.
 func (*ReturnURLs) Descriptor() ([]byte, []int) {
-	return file_api_proto_shared_shared_proto_rawDescGZIP(), []int{4}
+	return file_api_proto_shared_shared_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *ReturnURLs) GetCommon() string {
@@ -629,7 +813,7 @@ type Tool struct {
 func (x *Tool) Reset() {
 	*x = Tool{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_proto_shared_shared_proto_msgTypes[5]
+		mi := &file_api_proto_shared_shared_proto_msgTypes[6]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -642,7 +826,7 @@ func (x *Tool) String() string {
 func (*Tool) ProtoMessage() {}
 
 func (x *Tool) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_shared_shared_proto_msgTypes[5]
+	mi := &file_api_proto_shared_shared_proto_msgTypes[6]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -655,7 +839,7 @@ func (x *Tool) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Tool.ProtoReflect.Descriptor instead.
 func (*Tool) Descriptor() ([]byte, []int) {
-	return file_api_proto_shared_shared_proto_rawDescGZIP(), []int{5}
+	return file_api_proto_shared_shared_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *Tool) GetId() string {
@@ -742,7 +926,38 @@ var file_api_proto_shared_shared_proto_rawDesc = []byte{
 	0x65, 0x64, 0x2f, 0x73, 0x68, 0x61, 0x72, 0x65, 0x64, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12,
 	0x06, 0x73, 0x68, 0x61, 0x72, 0x65, 0x64, 0x1a, 0x1c, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f,
 	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2f, 0x73, 0x74, 0x72, 0x75, 0x63, 0x74, 0x2e,
-	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x46, 0x0a, 0x06, 0x4c, 0x69, 0x6d, 0x69, 0x74, 0x73, 0x12,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0xed, 0x03, 0x0a, 0x09, 0x4f, 0x70, 0x65, 0x72, 0x61, 0x74,
+	0x69, 0x6f, 0x6e, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52,
+	0x02, 0x69, 0x64, 0x12, 0x17, 0x0a, 0x07, 0x75, 0x73, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x02,
+	0x20, 0x01, 0x28, 0x03, 0x52, 0x06, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x12, 0x29, 0x0a, 0x04,
+	0x74, 0x79, 0x70, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x15, 0x2e, 0x73, 0x68, 0x61,
+	0x72, 0x65, 0x64, 0x2e, 0x4f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x54, 0x79, 0x70,
+	0x65, 0x52, 0x04, 0x74, 0x79, 0x70, 0x65, 0x12, 0x1a, 0x0a, 0x08, 0x63, 0x75, 0x72, 0x72, 0x65,
+	0x6e, 0x63, 0x79, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x63, 0x75, 0x72, 0x72, 0x65,
+	0x6e, 0x63, 0x79, 0x12, 0x16, 0x0a, 0x06, 0x61, 0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x05, 0x20,
+	0x01, 0x28, 0x03, 0x52, 0x06, 0x61, 0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x12, 0x2f, 0x0a, 0x06, 0x73,
+	0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x06, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x17, 0x2e, 0x73, 0x68,
+	0x61, 0x72, 0x65, 0x64, 0x2e, 0x4f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x53, 0x74,
+	0x61, 0x74, 0x75, 0x73, 0x52, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x24, 0x0a, 0x0b,
+	0x65, 0x78, 0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c, 0x5f, 0x69, 0x64, 0x18, 0x07, 0x20, 0x01, 0x28,
+	0x09, 0x48, 0x00, 0x52, 0x0a, 0x65, 0x78, 0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c, 0x49, 0x64, 0x88,
+	0x01, 0x01, 0x12, 0x27, 0x0a, 0x0f, 0x65, 0x78, 0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c, 0x5f, 0x73,
+	0x79, 0x73, 0x74, 0x65, 0x6d, 0x18, 0x08, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0e, 0x65, 0x78, 0x74,
+	0x65, 0x72, 0x6e, 0x61, 0x6c, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x12, 0x27, 0x0a, 0x0f, 0x65,
+	0x78, 0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c, 0x5f, 0x6d, 0x65, 0x74, 0x68, 0x6f, 0x64, 0x18, 0x09,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x0e, 0x65, 0x78, 0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c, 0x4d, 0x65,
+	0x74, 0x68, 0x6f, 0x64, 0x12, 0x4d, 0x0a, 0x0f, 0x65, 0x78, 0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c,
+	0x5f, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x0a, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x1f, 0x2e,
+	0x73, 0x68, 0x61, 0x72, 0x65, 0x64, 0x2e, 0x4f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e,
+	0x45, 0x78, 0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x48, 0x01,
+	0x52, 0x0e, 0x65, 0x78, 0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73,
+	0x88, 0x01, 0x01, 0x12, 0x1d, 0x0a, 0x0a, 0x63, 0x72, 0x65, 0x61, 0x74, 0x65, 0x64, 0x5f, 0x61,
+	0x74, 0x18, 0x0b, 0x20, 0x01, 0x28, 0x03, 0x52, 0x09, 0x63, 0x72, 0x65, 0x61, 0x74, 0x65, 0x64,
+	0x41, 0x74, 0x12, 0x1d, 0x0a, 0x0a, 0x75, 0x70, 0x64, 0x61, 0x74, 0x65, 0x64, 0x5f, 0x61, 0x74,
+	0x18, 0x0c, 0x20, 0x01, 0x28, 0x03, 0x52, 0x09, 0x75, 0x70, 0x64, 0x61, 0x74, 0x65, 0x64, 0x41,
+	0x74, 0x42, 0x0e, 0x0a, 0x0c, 0x5f, 0x65, 0x78, 0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c, 0x5f, 0x69,
+	0x64, 0x42, 0x12, 0x0a, 0x10, 0x5f, 0x65, 0x78, 0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c, 0x5f, 0x73,
+	0x74, 0x61, 0x74, 0x75, 0x73, 0x22, 0x46, 0x0a, 0x06, 0x4c, 0x69, 0x6d, 0x69, 0x74, 0x73, 0x12,
 	0x1d, 0x0a, 0x0a, 0x6d, 0x69, 0x6e, 0x5f, 0x61, 0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x01, 0x20,
 	0x01, 0x28, 0x03, 0x52, 0x09, 0x6d, 0x69, 0x6e, 0x41, 0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x12, 0x1d,
 	0x0a, 0x0a, 0x6d, 0x61, 0x78, 0x5f, 0x61, 0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x02, 0x20, 0x01,
@@ -830,28 +1045,41 @@ var file_api_proto_shared_shared_proto_rawDesc = []byte{
 	0x0a, 0x0a, 0x08, 0x5f, 0x64, 0x65, 0x74, 0x61, 0x69, 0x6c, 0x73, 0x2a, 0x28, 0x0a, 0x0d, 0x4f,
 	0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x54, 0x79, 0x70, 0x65, 0x12, 0x0b, 0x0a, 0x07,
 	0x50, 0x41, 0x59, 0x4d, 0x45, 0x4e, 0x54, 0x10, 0x00, 0x12, 0x0a, 0x0a, 0x06, 0x50, 0x41, 0x59,
-	0x4f, 0x55, 0x54, 0x10, 0x01, 0x2a, 0x4c, 0x0a, 0x17, 0x4f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69,
-	0x6f, 0x6e, 0x45, 0x78, 0x74, 0x65, 0x72, 0x6e, 0x61, 0x6c, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73,
-	0x12, 0x0b, 0x0a, 0x07, 0x55, 0x4e, 0x4b, 0x4e, 0x4f, 0x57, 0x4e, 0x10, 0x00, 0x12, 0x0b, 0x0a,
-	0x07, 0x50, 0x45, 0x4e, 0x44, 0x49, 0x4e, 0x47, 0x10, 0x01, 0x12, 0x0b, 0x0a, 0x07, 0x53, 0x55,
-	0x43, 0x43, 0x45, 0x53, 0x53, 0x10, 0x02, 0x12, 0x0a, 0x0a, 0x06, 0x46, 0x41, 0x49, 0x4c, 0x45,
-	0x44, 0x10, 0x03, 0x2a, 0x40, 0x0a, 0x0e, 0x43, 0x6f, 0x6d, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f,
-	0x6e, 0x54, 0x79, 0x70, 0x65, 0x12, 0x0b, 0x0a, 0x07, 0x50, 0x45, 0x52, 0x43, 0x45, 0x4e, 0x54,
-	0x10, 0x00, 0x12, 0x09, 0x0a, 0x05, 0x46, 0x49, 0x58, 0x45, 0x44, 0x10, 0x01, 0x12, 0x0c, 0x0a,
-	0x08, 0x43, 0x4f, 0x4d, 0x42, 0x49, 0x4e, 0x45, 0x44, 0x10, 0x02, 0x12, 0x08, 0x0a, 0x04, 0x54,
-	0x45, 0x58, 0x54, 0x10, 0x03, 0x2a, 0x25, 0x0a, 0x08, 0x54, 0x6f, 0x6f, 0x6c, 0x54, 0x79, 0x70,
-	0x65, 0x12, 0x0d, 0x0a, 0x09, 0x42, 0x41, 0x4e, 0x4b, 0x5f, 0x43, 0x41, 0x52, 0x44, 0x10, 0x00,
-	0x12, 0x0a, 0x0a, 0x06, 0x57, 0x41, 0x4c, 0x4c, 0x45, 0x54, 0x10, 0x01, 0x2a, 0x61, 0x0a, 0x0a,
-	0x54, 0x6f, 0x6f, 0x6c, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x0a, 0x0a, 0x06, 0x41, 0x43,
-	0x54, 0x49, 0x56, 0x45, 0x10, 0x00, 0x12, 0x13, 0x0a, 0x0f, 0x52, 0x45, 0x4d, 0x4f, 0x56, 0x45,
-	0x44, 0x5f, 0x42, 0x59, 0x5f, 0x55, 0x53, 0x45, 0x52, 0x10, 0x01, 0x12, 0x14, 0x0a, 0x10, 0x50,
-	0x45, 0x4e, 0x44, 0x49, 0x4e, 0x47, 0x5f, 0x52, 0x45, 0x43, 0x4f, 0x56, 0x45, 0x52, 0x59, 0x10,
-	0x02, 0x12, 0x1c, 0x0a, 0x18, 0x52, 0x45, 0x4d, 0x4f, 0x56, 0x45, 0x44, 0x5f, 0x42, 0x59, 0x5f,
-	0x41, 0x44, 0x4d, 0x49, 0x4e, 0x49, 0x53, 0x54, 0x52, 0x41, 0x54, 0x4f, 0x52, 0x10, 0x03, 0x42,
-	0x30, 0x5a, 0x2e, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x74, 0x6d,
-	0x72, 0x72, 0x77, 0x6e, 0x78, 0x74, 0x73, 0x6e, 0x2f, 0x65, 0x63, 0x6f, 0x6d, 0x77, 0x61, 0x79,
-	0x2f, 0x61, 0x70, 0x69, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x73, 0x68, 0x61, 0x72, 0x65,
-	0x64, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x4f, 0x55, 0x54, 0x10, 0x01, 0x2a, 0x66, 0x0a, 0x0f, 0x4f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69,
+	0x6f, 0x6e, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x18, 0x0a, 0x14, 0x4f, 0x50, 0x45, 0x52,
+	0x41, 0x54, 0x49, 0x4f, 0x4e, 0x5f, 0x53, 0x54, 0x41, 0x54, 0x55, 0x53, 0x5f, 0x4e, 0x45, 0x57,
+	0x10, 0x00, 0x12, 0x1c, 0x0a, 0x18, 0x4f, 0x50, 0x45, 0x52, 0x41, 0x54, 0x49, 0x4f, 0x4e, 0x5f,
+	0x53, 0x54, 0x41, 0x54, 0x55, 0x53, 0x5f, 0x53, 0x55, 0x43, 0x43, 0x45, 0x53, 0x53, 0x10, 0x01,
+	0x12, 0x1b, 0x0a, 0x17, 0x4f, 0x50, 0x45, 0x52, 0x41, 0x54, 0x49, 0x4f, 0x4e, 0x5f, 0x53, 0x54,
+	0x41, 0x54, 0x55, 0x53, 0x5f, 0x46, 0x41, 0x49, 0x4c, 0x45, 0x44, 0x10, 0x02, 0x2a, 0xb4, 0x01,
+	0x0a, 0x17, 0x4f, 0x70, 0x65, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x45, 0x78, 0x74, 0x65, 0x72,
+	0x6e, 0x61, 0x6c, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x25, 0x0a, 0x21, 0x4f, 0x50, 0x45,
+	0x52, 0x41, 0x54, 0x49, 0x4f, 0x4e, 0x5f, 0x45, 0x58, 0x54, 0x45, 0x52, 0x4e, 0x41, 0x4c, 0x5f,
+	0x53, 0x54, 0x41, 0x54, 0x55, 0x53, 0x5f, 0x55, 0x4e, 0x4b, 0x4e, 0x4f, 0x57, 0x4e, 0x10, 0x00,
+	0x12, 0x25, 0x0a, 0x21, 0x4f, 0x50, 0x45, 0x52, 0x41, 0x54, 0x49, 0x4f, 0x4e, 0x5f, 0x45, 0x58,
+	0x54, 0x45, 0x52, 0x4e, 0x41, 0x4c, 0x5f, 0x53, 0x54, 0x41, 0x54, 0x55, 0x53, 0x5f, 0x50, 0x45,
+	0x4e, 0x44, 0x49, 0x4e, 0x47, 0x10, 0x01, 0x12, 0x25, 0x0a, 0x21, 0x4f, 0x50, 0x45, 0x52, 0x41,
+	0x54, 0x49, 0x4f, 0x4e, 0x5f, 0x45, 0x58, 0x54, 0x45, 0x52, 0x4e, 0x41, 0x4c, 0x5f, 0x53, 0x54,
+	0x41, 0x54, 0x55, 0x53, 0x5f, 0x53, 0x55, 0x43, 0x43, 0x45, 0x53, 0x53, 0x10, 0x02, 0x12, 0x24,
+	0x0a, 0x20, 0x4f, 0x50, 0x45, 0x52, 0x41, 0x54, 0x49, 0x4f, 0x4e, 0x5f, 0x45, 0x58, 0x54, 0x45,
+	0x52, 0x4e, 0x41, 0x4c, 0x5f, 0x53, 0x54, 0x41, 0x54, 0x55, 0x53, 0x5f, 0x46, 0x41, 0x49, 0x4c,
+	0x45, 0x44, 0x10, 0x03, 0x2a, 0x40, 0x0a, 0x0e, 0x43, 0x6f, 0x6d, 0x6d, 0x69, 0x73, 0x73, 0x69,
+	0x6f, 0x6e, 0x54, 0x79, 0x70, 0x65, 0x12, 0x0b, 0x0a, 0x07, 0x50, 0x45, 0x52, 0x43, 0x45, 0x4e,
+	0x54, 0x10, 0x00, 0x12, 0x09, 0x0a, 0x05, 0x46, 0x49, 0x58, 0x45, 0x44, 0x10, 0x01, 0x12, 0x0c,
+	0x0a, 0x08, 0x43, 0x4f, 0x4d, 0x42, 0x49, 0x4e, 0x45, 0x44, 0x10, 0x02, 0x12, 0x08, 0x0a, 0x04,
+	0x54, 0x45, 0x58, 0x54, 0x10, 0x03, 0x2a, 0x25, 0x0a, 0x08, 0x54, 0x6f, 0x6f, 0x6c, 0x54, 0x79,
+	0x70, 0x65, 0x12, 0x0d, 0x0a, 0x09, 0x42, 0x41, 0x4e, 0x4b, 0x5f, 0x43, 0x41, 0x52, 0x44, 0x10,
+	0x00, 0x12, 0x0a, 0x0a, 0x06, 0x57, 0x41, 0x4c, 0x4c, 0x45, 0x54, 0x10, 0x01, 0x2a, 0x61, 0x0a,
+	0x0a, 0x54, 0x6f, 0x6f, 0x6c, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x12, 0x0a, 0x0a, 0x06, 0x41,
+	0x43, 0x54, 0x49, 0x56, 0x45, 0x10, 0x00, 0x12, 0x13, 0x0a, 0x0f, 0x52, 0x45, 0x4d, 0x4f, 0x56,
+	0x45, 0x44, 0x5f, 0x42, 0x59, 0x5f, 0x55, 0x53, 0x45, 0x52, 0x10, 0x01, 0x12, 0x14, 0x0a, 0x10,
+	0x50, 0x45, 0x4e, 0x44, 0x49, 0x4e, 0x47, 0x5f, 0x52, 0x45, 0x43, 0x4f, 0x56, 0x45, 0x52, 0x59,
+	0x10, 0x02, 0x12, 0x1c, 0x0a, 0x18, 0x52, 0x45, 0x4d, 0x4f, 0x56, 0x45, 0x44, 0x5f, 0x42, 0x59,
+	0x5f, 0x41, 0x44, 0x4d, 0x49, 0x4e, 0x49, 0x53, 0x54, 0x52, 0x41, 0x54, 0x4f, 0x52, 0x10, 0x03,
+	0x42, 0x30, 0x5a, 0x2e, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x74,
+	0x6d, 0x72, 0x72, 0x77, 0x6e, 0x78, 0x74, 0x73, 0x6e, 0x2f, 0x65, 0x63, 0x6f, 0x6d, 0x77, 0x61,
+	0x79, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x73, 0x68, 0x61, 0x72,
+	0x65, 0x64, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -866,40 +1094,45 @@ func file_api_proto_shared_shared_proto_rawDescGZIP() []byte {
 	return file_api_proto_shared_shared_proto_rawDescData
 }
 
-var file_api_proto_shared_shared_proto_enumTypes = make([]protoimpl.EnumInfo, 5)
-var file_api_proto_shared_shared_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_api_proto_shared_shared_proto_enumTypes = make([]protoimpl.EnumInfo, 6)
+var file_api_proto_shared_shared_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_api_proto_shared_shared_proto_goTypes = []interface{}{
 	(OperationType)(0),           // 0: shared.OperationType
-	(OperationExternalStatus)(0), // 1: shared.OperationExternalStatus
-	(CommissionType)(0),          // 2: shared.CommissionType
-	(ToolType)(0),                // 3: shared.ToolType
-	(ToolStatus)(0),              // 4: shared.ToolStatus
-	(*Limits)(nil),               // 5: shared.Limits
-	(*Commission)(nil),           // 6: shared.Commission
-	(*Method)(nil),               // 7: shared.Method
-	(*Error)(nil),                // 8: shared.Error
-	(*ReturnURLs)(nil),           // 9: shared.ReturnURLs
-	(*Tool)(nil),                 // 10: shared.Tool
-	nil,                          // 11: shared.Commission.MessageEntry
-	nil,                          // 12: shared.Method.DisplayedNameEntry
-	nil,                          // 13: shared.Method.LimitsEntry
-	(*structpb.Struct)(nil),      // 14: google.protobuf.Struct
+	(OperationStatus)(0),         // 1: shared.OperationStatus
+	(OperationExternalStatus)(0), // 2: shared.OperationExternalStatus
+	(CommissionType)(0),          // 3: shared.CommissionType
+	(ToolType)(0),                // 4: shared.ToolType
+	(ToolStatus)(0),              // 5: shared.ToolStatus
+	(*Operation)(nil),            // 6: shared.Operation
+	(*Limits)(nil),               // 7: shared.Limits
+	(*Commission)(nil),           // 8: shared.Commission
+	(*Method)(nil),               // 9: shared.Method
+	(*Error)(nil),                // 10: shared.Error
+	(*ReturnURLs)(nil),           // 11: shared.ReturnURLs
+	(*Tool)(nil),                 // 12: shared.Tool
+	nil,                          // 13: shared.Commission.MessageEntry
+	nil,                          // 14: shared.Method.DisplayedNameEntry
+	nil,                          // 15: shared.Method.LimitsEntry
+	(*structpb.Struct)(nil),      // 16: google.protobuf.Struct
 }
 var file_api_proto_shared_shared_proto_depIdxs = []int32{
-	2,  // 0: shared.Commission.type:type_name -> shared.CommissionType
-	11, // 1: shared.Commission.message:type_name -> shared.Commission.MessageEntry
-	12, // 2: shared.Method.displayed_name:type_name -> shared.Method.DisplayedNameEntry
-	13, // 3: shared.Method.limits:type_name -> shared.Method.LimitsEntry
-	6,  // 4: shared.Method.commission:type_name -> shared.Commission
-	3,  // 5: shared.Tool.type:type_name -> shared.ToolType
-	14, // 6: shared.Tool.details:type_name -> google.protobuf.Struct
-	4,  // 7: shared.Tool.status:type_name -> shared.ToolStatus
-	5,  // 8: shared.Method.LimitsEntry.value:type_name -> shared.Limits
-	9,  // [9:9] is the sub-list for method output_type
-	9,  // [9:9] is the sub-list for method input_type
-	9,  // [9:9] is the sub-list for extension type_name
-	9,  // [9:9] is the sub-list for extension extendee
-	0,  // [0:9] is the sub-list for field type_name
+	0,  // 0: shared.Operation.type:type_name -> shared.OperationType
+	1,  // 1: shared.Operation.status:type_name -> shared.OperationStatus
+	2,  // 2: shared.Operation.external_status:type_name -> shared.OperationExternalStatus
+	3,  // 3: shared.Commission.type:type_name -> shared.CommissionType
+	13, // 4: shared.Commission.message:type_name -> shared.Commission.MessageEntry
+	14, // 5: shared.Method.displayed_name:type_name -> shared.Method.DisplayedNameEntry
+	15, // 6: shared.Method.limits:type_name -> shared.Method.LimitsEntry
+	8,  // 7: shared.Method.commission:type_name -> shared.Commission
+	4,  // 8: shared.Tool.type:type_name -> shared.ToolType
+	16, // 9: shared.Tool.details:type_name -> google.protobuf.Struct
+	5,  // 10: shared.Tool.status:type_name -> shared.ToolStatus
+	7,  // 11: shared.Method.LimitsEntry.value:type_name -> shared.Limits
+	12, // [12:12] is the sub-list for method output_type
+	12, // [12:12] is the sub-list for method input_type
+	12, // [12:12] is the sub-list for extension type_name
+	12, // [12:12] is the sub-list for extension extendee
+	0,  // [0:12] is the sub-list for field type_name
 }
 
 func init() { file_api_proto_shared_shared_proto_init() }
@@ -909,7 +1142,7 @@ func file_api_proto_shared_shared_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_api_proto_shared_shared_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Limits); i {
+			switch v := v.(*Operation); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -921,7 +1154,7 @@ func file_api_proto_shared_shared_proto_init() {
 			}
 		}
 		file_api_proto_shared_shared_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Commission); i {
+			switch v := v.(*Limits); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -933,7 +1166,7 @@ func file_api_proto_shared_shared_proto_init() {
 			}
 		}
 		file_api_proto_shared_shared_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Method); i {
+			switch v := v.(*Commission); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -945,7 +1178,7 @@ func file_api_proto_shared_shared_proto_init() {
 			}
 		}
 		file_api_proto_shared_shared_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*Error); i {
+			switch v := v.(*Method); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -957,7 +1190,7 @@ func file_api_proto_shared_shared_proto_init() {
 			}
 		}
 		file_api_proto_shared_shared_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ReturnURLs); i {
+			switch v := v.(*Error); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -969,6 +1202,18 @@ func file_api_proto_shared_shared_proto_init() {
 			}
 		}
 		file_api_proto_shared_shared_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ReturnURLs); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_proto_shared_shared_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*Tool); i {
 			case 0:
 				return &v.state
@@ -981,16 +1226,17 @@ func file_api_proto_shared_shared_proto_init() {
 			}
 		}
 	}
-	file_api_proto_shared_shared_proto_msgTypes[1].OneofWrappers = []interface{}{}
-	file_api_proto_shared_shared_proto_msgTypes[4].OneofWrappers = []interface{}{}
+	file_api_proto_shared_shared_proto_msgTypes[0].OneofWrappers = []interface{}{}
+	file_api_proto_shared_shared_proto_msgTypes[2].OneofWrappers = []interface{}{}
 	file_api_proto_shared_shared_proto_msgTypes[5].OneofWrappers = []interface{}{}
+	file_api_proto_shared_shared_proto_msgTypes[6].OneofWrappers = []interface{}{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_api_proto_shared_shared_proto_rawDesc,
-			NumEnums:      5,
-			NumMessages:   9,
+			NumEnums:      6,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

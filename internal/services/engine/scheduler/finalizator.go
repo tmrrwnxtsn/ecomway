@@ -11,7 +11,7 @@ import (
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/config"
 )
 
-type OperationRepository interface {
+type OperationService interface {
 	All(ctx context.Context, criteria model.OperationCriteria) ([]*model.Operation, error)
 }
 
@@ -30,14 +30,14 @@ type FinalizeOperationsTask struct {
 	maxWorkers               int
 	actualizeStatusIntervals map[time.Duration]time.Duration
 	externalSystemLifetime   map[string]time.Duration
-	operationRepository      OperationRepository
+	operationService         OperationService
 	integrationClient        IntegrationClient
 	paymentService           PaymentService
 }
 
 func NewFinalizeOperationsTask(
 	cfg config.SchedulerTaskConfig,
-	operationRepository OperationRepository,
+	operationService OperationService,
 	integrationClient IntegrationClient,
 	paymentService PaymentService,
 ) *FinalizeOperationsTask {
@@ -47,7 +47,7 @@ func NewFinalizeOperationsTask(
 		maxWorkers:               cfg.MaxWorkers,
 		actualizeStatusIntervals: make(map[time.Duration]time.Duration, len(cfg.ActualizeStatusIntervals)),
 		externalSystemLifetime:   make(map[string]time.Duration, len(cfg.ExternalSystemLifetime)),
-		operationRepository:      operationRepository,
+		operationService:         operationService,
 		integrationClient:        integrationClient,
 		paymentService:           paymentService,
 	}
@@ -92,7 +92,7 @@ func (t *FinalizeOperationsTask) execute(ctx context.Context, externalSystem str
 
 	log := slog.Default().With("task", "finalize_operations")
 
-	operations, err := t.operationRepository.All(ctx, criteria)
+	operations, err := t.operationService.All(ctx, criteria)
 	if err != nil {
 		log.Error(
 			"failed to receive operations by criteria",

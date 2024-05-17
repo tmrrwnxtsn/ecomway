@@ -105,7 +105,7 @@ SELECT %[3]v.id,
        %[4]v.processed_at
 FROM %[1]v %[3]v
          JOIN %[2]v %[4]v on %[3]v.id = %[4]v.operation_id
-WHERE %v %v
+%v %v
 `, operationTable, operationMetadataTable, operationTableAbbr, operationMetadataTableAbbr, whereStmt, forUpdateStmt),
 		args...)
 	if err != nil {
@@ -123,13 +123,10 @@ func (r *Repository) dbGetAll(ctx context.Context, criteria model.OperationCrite
 		criteria.MaxCount = defaultOperationMaxCount
 	}
 
-	whereStmt, args, err := r.whereStmt(criteria)
-	if err != nil {
-		return nil, err
-	}
+	whereStmt, args, _ := r.whereStmt(criteria)
 
 	var dbOps []dbOperation
-	err = pgxscan.Select(ctx, r.conn, &dbOps, fmt.Sprintf(`
+	err := pgxscan.Select(ctx, r.conn, &dbOps, fmt.Sprintf(`
 SELECT %[3]v.id,
        %[3]v.user_id,
        %[3]v.type,
@@ -149,7 +146,7 @@ SELECT %[3]v.id,
        %[4]v.processed_at
 FROM %[1]v %[3]v
          JOIN %[2]v %[4]v on %[3]v.id = %[4]v.operation_id
-WHERE %v ORDER BY random() LIMIT %v
+%v ORDER BY random() LIMIT %v
 `, operationTable, operationMetadataTable, operationTableAbbr, operationMetadataTableAbbr, whereStmt, criteria.MaxCount),
 		args...)
 	if err != nil {

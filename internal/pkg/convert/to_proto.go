@@ -18,19 +18,58 @@ func OperationTypeToProto(opType model.OperationType) pb.OperationType {
 	}
 }
 
-func OperationExternalStatusToProto(opExternalStatus model.OperationExternalStatus) pb.OperationExternalStatus {
-	switch opExternalStatus {
-	case model.OperationExternalStatusPending:
-		return pb.OperationExternalStatus_PENDING
-	case model.OperationExternalStatusSuccess:
-		return pb.OperationExternalStatus_SUCCESS
-	case model.OperationExternalStatusFailed:
-		return pb.OperationExternalStatus_FAILED
-	case model.OperationExternalStatusUnknown:
-		return pb.OperationExternalStatus_UNKNOWN
+func OperationStatusToProto(opStatus model.OperationStatus) pb.OperationStatus {
+	switch opStatus {
+	case model.OperationStatusNew:
+		return pb.OperationStatus_OPERATION_STATUS_NEW
+	case model.OperationStatusSuccess:
+		return pb.OperationStatus_OPERATION_STATUS_SUCCESS
+	case model.OperationStatusFailed:
+		return pb.OperationStatus_OPERATION_STATUS_FAILED
 	default:
 		return -1
 	}
+}
+
+func OperationExternalStatusToProto(opExternalStatus model.OperationExternalStatus) pb.OperationExternalStatus {
+	switch opExternalStatus {
+	case model.OperationExternalStatusPending:
+		return pb.OperationExternalStatus_OPERATION_EXTERNAL_STATUS_PENDING
+	case model.OperationExternalStatusSuccess:
+		return pb.OperationExternalStatus_OPERATION_EXTERNAL_STATUS_SUCCESS
+	case model.OperationExternalStatusFailed:
+		return pb.OperationExternalStatus_OPERATION_EXTERNAL_STATUS_FAILED
+	case model.OperationExternalStatusUnknown:
+		return pb.OperationExternalStatus_OPERATION_EXTERNAL_STATUS_UNKNOWN
+	default:
+		return -1
+	}
+}
+
+func OperationToProto(op *model.Operation) *pb.Operation {
+	result := &pb.Operation{
+		Id:             op.ID,
+		UserId:         op.UserID,
+		Type:           OperationTypeToProto(op.Type),
+		Currency:       op.Currency,
+		Amount:         op.Amount,
+		Status:         OperationStatusToProto(op.Status),
+		ExternalSystem: op.ExternalSystem,
+		ExternalMethod: op.ExternalMethod,
+		CreatedAt:      op.CreatedAt.UTC().Unix(),
+		UpdatedAt:      op.UpdatedAt.UTC().Unix(),
+	}
+
+	if op.ExternalID != "" {
+		result.ExternalId = &op.ExternalID
+	}
+
+	if op.ExternalStatus != "" {
+		pbExternalStatus := OperationExternalStatusToProto(op.ExternalStatus)
+		result.ExternalStatus = &pbExternalStatus
+	}
+
+	return result
 }
 
 func MethodsToProto(methods []model.Method) []*pb.Method {

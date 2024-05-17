@@ -18,18 +18,48 @@ func OperationTypeFromProto(opType pb.OperationType) model.OperationType {
 	}
 }
 
+func OperationStatusFromProto(opStatus pb.OperationStatus) model.OperationStatus {
+	switch opStatus {
+	case pb.OperationStatus_OPERATION_STATUS_NEW:
+		return model.OperationStatusNew
+	case pb.OperationStatus_OPERATION_STATUS_SUCCESS:
+		return model.OperationStatusSuccess
+	case pb.OperationStatus_OPERATION_STATUS_FAILED:
+		return model.OperationStatusFailed
+	default:
+		return ""
+	}
+}
+
 func OperationExternalStatusFromProto(opExternalStatus pb.OperationExternalStatus) model.OperationExternalStatus {
 	switch opExternalStatus {
-	case pb.OperationExternalStatus_PENDING:
+	case pb.OperationExternalStatus_OPERATION_EXTERNAL_STATUS_PENDING:
 		return model.OperationExternalStatusPending
-	case pb.OperationExternalStatus_SUCCESS:
+	case pb.OperationExternalStatus_OPERATION_EXTERNAL_STATUS_SUCCESS:
 		return model.OperationExternalStatusSuccess
-	case pb.OperationExternalStatus_FAILED:
+	case pb.OperationExternalStatus_OPERATION_EXTERNAL_STATUS_FAILED:
 		return model.OperationExternalStatusFailed
-	case pb.OperationExternalStatus_UNKNOWN:
+	case pb.OperationExternalStatus_OPERATION_EXTERNAL_STATUS_UNKNOWN:
 		return model.OperationExternalStatusUnknown
 	default:
 		return ""
+	}
+}
+
+func OperationFromProto(op *pb.Operation) model.Operation {
+	return model.Operation{
+		ID:             op.GetId(),
+		UserID:         op.GetUserId(),
+		Type:           OperationTypeFromProto(op.GetType()),
+		Currency:       op.GetCurrency(),
+		Amount:         op.GetAmount(),
+		Status:         OperationStatusFromProto(op.GetStatus()),
+		ExternalID:     op.GetExternalId(),
+		ExternalSystem: op.GetExternalSystem(),
+		ExternalMethod: op.GetExternalMethod(),
+		ExternalStatus: OperationExternalStatusFromProto(op.GetExternalStatus()),
+		CreatedAt:      time.Unix(op.GetCreatedAt(), 0).UTC(),
+		UpdatedAt:      time.Unix(op.GetUpdatedAt(), 0).UTC(),
 	}
 }
 

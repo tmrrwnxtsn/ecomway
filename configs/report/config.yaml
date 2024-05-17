@@ -1,0 +1,6 @@
+report:
+  http_address: ":8081"
+
+services:
+  engine:
+    grpc_address: "engine:9000"
