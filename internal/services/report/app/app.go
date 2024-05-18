@@ -19,6 +19,7 @@ import (
 	"github.com/tmrrwnxtsn/ecomway/internal/services/report/client/engine"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/report/config"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/report/service/operation"
+	"github.com/tmrrwnxtsn/ecomway/internal/services/report/service/sorting"
 )
 
 type App struct {
@@ -44,10 +45,12 @@ func New(configPath string) *App {
 	engineClient := engine.NewClient(pbEngine.NewEngineServiceClient(engineConn))
 
 	operationService := operation.NewService(engineClient)
+	sortingService := sorting.NewService()
 	translator := translate.NewTranslator("en", "ru")
 
 	apiHandlerV1 := v1.NewHandler(v1.HandlerOptions{
 		OperationService: operationService,
+		SortingService:   sortingService,
 		Translator:       translator,
 		APIKey:           cfg.Report.APIKey,
 	})

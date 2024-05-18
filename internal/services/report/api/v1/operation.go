@@ -41,6 +41,10 @@ type operationListRequest struct {
 	UserID int64 `query:"user_id" example:"1" validate:"required"`
 	// Код языка, обозначение по RFC 5646
 	LangCode string `query:"lang_code" example:"en" validate:"required"`
+	// Поле для сортировки результирующего списка (по умолчанию - "id")
+	OrderField string `query:"order_field" example:"amount"`
+	// Тип сортировки (по умолчанию - "DESC" - по убыванию)
+	OrderType string `query:"order_type" example:"ASC"`
 }
 
 type operationListResponse struct {
@@ -58,6 +62,8 @@ type operationListResponse struct {
 //	@Security	ApiKeyAuth
 //	@Param		user_id		query		int						true	"Идентификатор специалиста техподдержки"
 //	@Param		lang_code	query		string					true	"Код языка, обозначение по RFC 5646"
+//	@Param		order_field	query		string					false	"Поле для сортировки результирующего списка (по умолчанию - id)"
+//	@Param		order_type	query		string					false	"Тип сортировки (по умолчанию - DESC, по убыванию)"
 //	@Success	200			{object}	operationListResponse	"Успешный ответ"
 //	@Failure	default		{object}	errorResponse			"Ответ с ошибкой"
 //	@Router		/operation/list [get]
@@ -77,6 +83,8 @@ func (h *Handler) operationList(c *fiber.Ctx) error {
 	if err != nil {
 		return h.internalErrorResponse(c, req.LangCode, err)
 	}
+
+	operations = h.sortingService.SortReportOperations(operations, req.OrderField, req.OrderType)
 
 	resp := &operationListResponse{
 		Success:    true,

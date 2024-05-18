@@ -18,12 +18,17 @@ type OperationService interface {
 	ReportOperations(ctx context.Context, userID int64) ([]model.ReportOperation, error)
 }
 
+type SortingService interface {
+	SortReportOperations(items []model.ReportOperation, orderField, orderType string) []model.ReportOperation
+}
+
 type Translator interface {
 	Translate(lang, key string, args ...any) string
 }
 
 type Handler struct {
 	operationService OperationService
+	sortingService   SortingService
 	translator       Translator
 	validate         *validator.Validate
 	apiKey           string
@@ -31,6 +36,7 @@ type Handler struct {
 
 type HandlerOptions struct {
 	OperationService OperationService
+	SortingService   SortingService
 	Translator       Translator
 	APIKey           string
 }
@@ -68,6 +74,7 @@ func NewHandler(opts HandlerOptions) *Handler {
 
 	return &Handler{
 		operationService: opts.OperationService,
+		sortingService:   opts.SortingService,
 		translator:       opts.Translator,
 		validate:         validate,
 		apiKey:           opts.APIKey,

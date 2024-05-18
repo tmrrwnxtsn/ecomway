@@ -39,6 +39,18 @@
                         "name": "lang_code",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Поле для сортировки результирующего списка (по умолчанию - id)",
+                        "name": "order_field",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Тип сортировки (по умолчанию - DESC, по убыванию)",
+                        "name": "order_type",
+                        "in": "query"
                     }
                 ],
                 "responses": {
