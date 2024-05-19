@@ -1,14 +1,18 @@
 package v1
 
 import (
+	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
 
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/convert"
+	perror "github.com/tmrrwnxtsn/ecomway/internal/pkg/error"
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/model"
+	"github.com/tmrrwnxtsn/ecomway/internal/pkg/translate"
 )
 
 type operation struct {
@@ -165,6 +169,85 @@ func operationListCriteriaFromRequest(req operationListRequest) (model.Operation
 	}
 
 	return criteria, nil
+}
+
+type operationExternalStatusRequest struct {
+	// Идентификатор специалиста поддержки
+	UserID int64 `query:"user_id" example:"1" validate:"required"`
+	// Код языка, обозначение по RFC 5646
+	LangCode string `query:"lang_code" example:"en" validate:"required"`
+}
+
+type operationExternalStatusResponse struct {
+	// Результат обработки запроса (всегда true)
+	Success bool `json:"success" example:"true" validate:"required"`
+	// Статус операции на стороне платежной системы
+	ExternalStatus string `json:"external_status" example:"PENDING" validate:"required"`
+	// Информативное сообщение, описывающее статус транзакции на стороне платежной системы
+	Message string `json:"message" example:"Транзакция на стороне ПС еще не имеет конечный статус." validate:"required"`
+}
+
+// operationExternalStatus godoc
+//
+//	@Summary	Запросить статус операции на стороне платежной системы
+//	@Tags		Операции
+//	@Produce	json
+//	@Security	ApiKeyAuth
+//	@Param		id			path		int								true	"Идентификатор операции"
+//	@Param		user_id		query		int								true	"Идентификатор специалиста техподдержки"
+//	@Param		lang_code	query		string							true	"Код языка, обозначение по RFC 5646"
+//	@Success	200			{object}	operationExternalStatusResponse	"Успешный ответ"
+//	@Failure	default		{object}	errorResponse					"Ответ с ошибкой"
+//	@Router		/operation/{id}/external-status [get]
+func (h *Handler) operationExternalStatus(c *fiber.Ctx) error {
+	ctx := c.Context()
+
+	var req operationExternalStatusRequest
+	if err := c.QueryParser(&req); err != nil {
+		return h.requestValidationErrorResponse(c, req.LangCode, err)
+	}
+
+	if err := h.validate.Struct(req); err != nil {
+		return h.requestValidationErrorResponse(c, req.LangCode, err)
+	}
+
+	opID, err := strconv.ParseInt(c.Params("id"), 10, 64)
+	if err != nil {
+		err = fmt.Errorf("failed to parse id as int: %w", err)
+		return h.requestValidationErrorResponse(c, req.LangCode, err)
+	}
+
+	externalOperationStatus, err := h.operationService.GetExternalOperationStatus(ctx, opID)
+	if err != nil {
+		var perr *perror.Error
+		if errors.As(err, &perr) {
+			if perr.Group == perror.GroupInternal && perr.Code == perror.CodeObjectNotFound {
+				return h.objectNotFoundErrorResponse(c, req.LangCode, perr)
+			}
+		}
+		return h.internalErrorResponse(c, req.LangCode, err)
+	}
+
+	resp := &operationExternalStatusResponse{
+		Success:        true,
+		ExternalStatus: string(externalOperationStatus),
+		Message:        h.operationExternalStatusMessage(externalOperationStatus, req.LangCode),
+	}
+
+	return c.JSON(resp)
+}
+
+func (h *Handler) operationExternalStatusMessage(externalStatus model.OperationExternalStatus, langCode string) string {
+	switch externalStatus {
+	case model.OperationExternalStatusPending:
+		return h.translator.Translate(langCode, translate.KeyExternalStatusPending)
+	case model.OperationExternalStatusSuccess:
+		return h.translator.Translate(langCode, translate.KeyExternalStatusSuccess)
+	case model.OperationExternalStatusFailed:
+		return h.translator.Translate(langCode, translate.KeyExternalStatusFailed)
+	default:
+		return h.translator.Translate(langCode, translate.KeyExternalStatusUnknown)
+	}
 }
 
 func (h *Handler) operation(item model.ReportOperation) operation {

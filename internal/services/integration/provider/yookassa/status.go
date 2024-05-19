@@ -32,6 +32,8 @@ func (i *Integration) GetOperationStatus(ctx context.Context, statusData model.G
 	switch statusData.OperationType {
 	case model.OperationTypePayment:
 		return i.getPaymentStatus(ctx, statusData)
+	case model.OperationTypePayout:
+		return i.getPayoutStatus(ctx, statusData)
 	default:
 		return result, fmt.Errorf("unresolved operation type: %q", statusData.OperationType)
 	}

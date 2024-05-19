@@ -14,3 +14,10 @@ type CreatePayoutResponse struct {
 	CapturedAt   time.Time
 	Cancellation Cancellation
 }
+
+type GetPayoutResponse struct {
+	CapturedAt   time.Time
+	ID           string
+	Status       string
+	Cancellation Cancellation
+}

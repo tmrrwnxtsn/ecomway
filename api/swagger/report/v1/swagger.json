@@ -110,6 +110,59 @@
                     }
                 }
             }
+        },
+        "/operation/{id}/external-status": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Операции"
+                ],
+                "summary": "Запросить статус операции на стороне платежной системы",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Идентификатор операции",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Идентификатор специалиста техподдержки",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Код языка, обозначение по RFC 5646",
+                        "name": "lang_code",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "schema": {
+                            "$ref": "#/definitions/v1.operationExternalStatusResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "Ответ с ошибкой",
+                        "schema": {
+                            "$ref": "#/definitions/v1.errorResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -236,6 +289,31 @@
                     "description": "Время последнего обновления операции в формате UNIX Timestamp",
                     "type": "integer",
                     "example": 1715974447
+                }
+            }
+        },
+        "v1.operationExternalStatusResponse": {
+            "type": "object",
+            "required": [
+                "external_status",
+                "message",
+                "success"
+            ],
+            "properties": {
+                "external_status": {
+                    "description": "Статус операции на стороне платежной системы",
+                    "type": "string",
+                    "example": "PENDING"
+                },
+                "message": {
+                    "description": "Информативное сообщение, описывающее статус транзакции на стороне платежной системы",
+                    "type": "string",
+                    "example": "Транзакция на стороне ПС еще не имеет конечный статус."
+                },
+                "success": {
+                    "description": "Результат обработки запроса (всегда true)",
+                    "type": "boolean",
+                    "example": true
                 }
             }
         },

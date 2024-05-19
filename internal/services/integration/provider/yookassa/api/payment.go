@@ -62,7 +62,7 @@ type createPaymentResponse struct {
 	CapturedAt    string              `json:"captured_at"`
 	Confirmation  paymentConfirmation `json:"confirmation"`
 	IncomeAmount  paymentAmount       `json:"income_amount"`
-	Cancellation  paymentCancellation `json:"cancellation_details"`
+	Cancellation  cancellation        `json:"cancellation_details"`
 	PaymentMethod paymentMethod       `json:"payment_method"`
 }
 
@@ -184,18 +184,18 @@ func (c *Client) CreatePayment(ctx context.Context, request data.CreatePaymentRe
 	return response, nil
 }
 
-type paymentCancellation struct {
+type cancellation struct {
 	Party  string `json:"party"`
 	Reason string `json:"reason"`
 }
 
 type getPaymentResponse struct {
-	ID            string              `json:"id"`
-	Status        string              `json:"status"`
-	CapturedAt    string              `json:"captured_at"`
-	IncomeAmount  paymentAmount       `json:"income_amount"`
-	Cancellation  paymentCancellation `json:"cancellation_details"`
-	PaymentMethod paymentMethod       `json:"payment_method"`
+	ID            string        `json:"id"`
+	Status        string        `json:"status"`
+	CapturedAt    string        `json:"captured_at"`
+	IncomeAmount  paymentAmount `json:"income_amount"`
+	Cancellation  cancellation  `json:"cancellation_details"`
+	PaymentMethod paymentMethod `json:"payment_method"`
 }
 
 func (c *Client) GetPayment(ctx context.Context, paymentID string) (data.GetPaymentResponse, error) {

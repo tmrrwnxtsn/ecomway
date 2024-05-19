@@ -59,6 +59,16 @@ func (r *Repository) AcquireOneLocked(ctx context.Context, criteria model.Operat
 	return script(ctx, op)
 }
 
+func (r *Repository) GetOneWithoutLock(ctx context.Context, criteria model.OperationCriteria) (*model.Operation, error) {
+	dbOp, err := r.dbGetOne(ctx, r.conn, criteria, false)
+	if err != nil {
+		return nil, err
+	}
+
+	op := operationFromDB(dbOp)
+	return op, nil
+}
+
 func (r *Repository) All(ctx context.Context, criteria model.OperationCriteria) ([]*model.Operation, error) {
 	dbOps, err := r.dbGetAll(ctx, criteria)
 	if err != nil {
@@ -85,7 +95,7 @@ func (r *Repository) AllForReport(ctx context.Context, criteria model.OperationC
 	return ops, nil
 }
 
-func (r *Repository) dbGetOne(ctx context.Context, dbTX pgx.Tx, criteria model.OperationCriteria, withLock bool) (dbOperation, error) {
+func (r *Repository) dbGetOne(ctx context.Context, db pgxscan.Querier, criteria model.OperationCriteria, withLock bool) (dbOperation, error) {
 	var dbOp dbOperation
 
 	whereStmt, args, err := r.whereStmt(criteria)
@@ -98,7 +108,7 @@ func (r *Repository) dbGetOne(ctx context.Context, dbTX pgx.Tx, criteria model.O
 		forUpdateStmt = ""
 	}
 
-	err = pgxscan.Get(ctx, dbTX, &dbOp, fmt.Sprintf(`
+	err = pgxscan.Get(ctx, db, &dbOp, fmt.Sprintf(`
 SELECT %[3]v.id,
        %[3]v.user_id,
        %[3]v.type,

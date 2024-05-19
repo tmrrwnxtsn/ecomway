@@ -102,14 +102,15 @@ func New(configPath string) *App {
 
 	grpcServer := grpc.NewServer()
 	srv := server.NewServer(server.Options{
-		Server:           grpcServer,
-		Listener:         grpcListener,
-		MethodService:    methodService,
-		LimitService:     limitService,
-		PaymentService:   paymentService,
-		ToolService:      toolService,
-		PayoutService:    payoutService,
-		OperationService: operationService,
+		Server:            grpcServer,
+		Listener:          grpcListener,
+		MethodService:     methodService,
+		LimitService:      limitService,
+		PaymentService:    paymentService,
+		ToolService:       toolService,
+		PayoutService:     payoutService,
+		OperationService:  operationService,
+		IntegrationClient: integrationClient,
 	})
 	pbEngine.RegisterEngineServiceServer(grpcServer, srv)
 

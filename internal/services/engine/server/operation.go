@@ -27,6 +27,38 @@ func (s *Server) ReportOperations(ctx context.Context, request *pb.ReportOperati
 	}, nil
 }
 
+func (s *Server) GetOperationExternalStatus(ctx context.Context, request *pb.GetOperationExternalStatusRequest) (*pb.GetOperationExternalStatusResponse, error) {
+	criteria := model.OperationCriteria{
+		ID: &request.OperationId,
+	}
+
+	operation, err := s.operationService.GetOne(ctx, criteria)
+	if err != nil {
+		return nil, err
+	}
+
+	statusData := model.GetOperationStatusData{
+		CreatedAt:      operation.CreatedAt,
+		ExternalID:     operation.ExternalID,
+		ExternalSystem: operation.ExternalSystem,
+		ExternalMethod: operation.ExternalMethod,
+		Currency:       operation.Currency,
+		OperationType:  operation.Type,
+		OperationID:    operation.ID,
+		UserID:         operation.UserID,
+		Amount:         operation.Amount,
+	}
+
+	result, err := s.integrationClient.GetOperationStatus(ctx, statusData)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.GetOperationExternalStatusResponse{
+		ExternalStatus: convert.OperationExternalStatusToProto(result.ExternalStatus),
+	}, nil
+}
+
 func criteriaFromReportOperationsRequest(request *pb.ReportOperationsRequest) model.OperationCriteria {
 	criteria := model.OperationCriteria{
 		ID:         request.Id,

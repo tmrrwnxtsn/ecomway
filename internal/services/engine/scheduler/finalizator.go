@@ -81,6 +81,7 @@ func (t *FinalizeOperationsTask) Start(ctx context.Context) {
 	}
 }
 
+// TODO: обработка выплат
 func (t *FinalizeOperationsTask) execute(ctx context.Context, externalSystem string) {
 	criteria := model.OperationCriteria{
 		StatusesByType: map[model.OperationType][]model.OperationStatus{

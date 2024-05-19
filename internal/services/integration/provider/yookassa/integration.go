@@ -17,6 +17,7 @@ type APIClient interface {
 	CreatePayment(ctx context.Context, request data.CreatePaymentRequest) (data.CreatePaymentResponse, error)
 	GetPayment(ctx context.Context, paymentID string) (data.GetPaymentResponse, error)
 	CreatePayout(ctx context.Context, request data.CreatePayoutRequest) (data.CreatePayoutResponse, error)
+	GetPayout(ctx context.Context, payoutID string) (data.GetPayoutResponse, error)
 }
 
 type ChannelResolver interface {

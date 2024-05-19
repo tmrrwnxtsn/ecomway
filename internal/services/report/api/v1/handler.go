@@ -16,6 +16,7 @@ import (
 
 type OperationService interface {
 	ReportOperations(ctx context.Context, criteria model.OperationCriteria) ([]model.ReportOperation, error)
+	GetExternalOperationStatus(ctx context.Context, id int64) (model.OperationExternalStatus, error)
 }
 
 type SortingService interface {
@@ -95,6 +96,7 @@ func (h *Handler) Init(router fiber.Router) {
 		operations := apiV1.Group("/operation")
 		{
 			operations.Get("", h.operationList)
+			operations.Get("/:id/external-status", h.operationExternalStatus)
 		}
 	}
 

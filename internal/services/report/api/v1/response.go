@@ -5,6 +5,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
+	perror "github.com/tmrrwnxtsn/ecomway/internal/pkg/error"
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/translate"
 )
 
@@ -12,6 +13,7 @@ const (
 	errorCodeInvalidRequest = "InvalidRequest"
 	errorCodeInvalidAPIKey  = "InvalidAPIKey"
 	errorCodeInternalError  = "InternalError"
+	errorCodeObjectNotFound = "ObjectNotFound"
 )
 
 type errorContent struct {
@@ -48,6 +50,17 @@ func (h *Handler) internalErrorResponse(c *fiber.Ctx, langCode string, err error
 			Code:        errorCodeInternalError,
 			Description: err.Error(),
 			Message:     h.translator.Translate(langCode, translate.KeyUnexpectedError),
+		},
+	})
+}
+
+func (h *Handler) objectNotFoundErrorResponse(c *fiber.Ctx, langCode string, perr *perror.Error) error {
+	return c.Status(http.StatusNotFound).JSON(&errorResponse{
+		Success: false,
+		Error: errorContent{
+			Code:        errorCodeObjectNotFound,
+			Description: perr.Description,
+			Message:     h.translator.Translate(langCode, translate.KeyObjectNotFound),
 		},
 	})
 }

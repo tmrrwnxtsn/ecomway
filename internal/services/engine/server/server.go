@@ -35,29 +35,36 @@ type PayoutService interface {
 
 type OperationService interface {
 	AllForReport(ctx context.Context, criteria model.OperationCriteria) ([]model.ReportOperation, error)
+	GetOne(ctx context.Context, criteria model.OperationCriteria) (*model.Operation, error)
+}
+
+type IntegrationClient interface {
+	GetOperationStatus(ctx context.Context, data model.GetOperationStatusData) (model.GetOperationStatusResult, error)
 }
 
 type Server struct {
-	server           *grpc.Server
-	listener         net.Listener
-	methodService    MethodService
-	limitService     LimitService
-	paymentService   PaymentService
-	toolService      ToolService
-	payoutService    PayoutService
-	operationService OperationService
+	server            *grpc.Server
+	listener          net.Listener
+	methodService     MethodService
+	limitService      LimitService
+	paymentService    PaymentService
+	toolService       ToolService
+	payoutService     PayoutService
+	operationService  OperationService
+	integrationClient IntegrationClient
 	pb.UnimplementedEngineServiceServer
 }
 
 type Options struct {
-	Server           *grpc.Server
-	Listener         net.Listener
-	MethodService    MethodService
-	LimitService     LimitService
-	PaymentService   PaymentService
-	ToolService      ToolService
-	PayoutService    PayoutService
-	OperationService OperationService
+	Server            *grpc.Server
+	Listener          net.Listener
+	MethodService     MethodService
+	LimitService      LimitService
+	PaymentService    PaymentService
+	ToolService       ToolService
+	PayoutService     PayoutService
+	OperationService  OperationService
+	IntegrationClient IntegrationClient
 }
 
 func NewServer(opts Options) *Server {
@@ -70,6 +77,7 @@ func NewServer(opts Options) *Server {
 	s.toolService = opts.ToolService
 	s.payoutService = opts.PayoutService
 	s.operationService = opts.OperationService
+	s.integrationClient = opts.IntegrationClient
 	return &s
 }
 

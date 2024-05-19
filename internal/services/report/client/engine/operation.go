@@ -7,6 +7,7 @@ import (
 	pbEngine "github.com/tmrrwnxtsn/ecomway/api/proto/engine"
 	pb "github.com/tmrrwnxtsn/ecomway/api/proto/shared"
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/convert"
+	perror "github.com/tmrrwnxtsn/ecomway/internal/pkg/error"
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/model"
 )
 
@@ -23,6 +24,23 @@ func (c *Client) ReportOperations(ctx context.Context, criteria model.OperationC
 		operations = append(operations, reportOperationFromProto(pbOp))
 	}
 	return operations, nil
+}
+
+func (c *Client) GetExternalOperationStatus(ctx context.Context, id int64) (model.OperationExternalStatus, error) {
+	request := &pbEngine.GetOperationExternalStatusRequest{
+		OperationId: id,
+	}
+
+	response, err := c.client.GetOperationExternalStatus(ctx, request)
+	if err != nil {
+		if perr := perror.FromProto(err); perr != nil {
+			return "", perr
+		}
+		return "", err
+	}
+
+	externalStatus := convert.OperationExternalStatusFromProto(response.GetExternalStatus())
+	return externalStatus, nil
 }
 
 func reportOperationRequestFromCriteria(criteria model.OperationCriteria) *pbEngine.ReportOperationsRequest {

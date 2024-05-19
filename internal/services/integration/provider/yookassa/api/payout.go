@@ -114,3 +114,74 @@ func (c *Client) CreatePayout(ctx context.Context, request data.CreatePayoutRequ
 
 	return response, nil
 }
+
+type getPayoutResponse struct {
+	ID           string       `json:"id"`
+	Status       string       `json:"status"`
+	CapturedAt   string       `json:"captured_at"`
+	Cancellation cancellation `json:"cancellation_details"`
+}
+
+func (c *Client) GetPayout(ctx context.Context, payoutID string) (data.GetPayoutResponse, error) {
+	var response data.GetPayoutResponse
+
+	reqURL, err := url.JoinPath(c.baseURL, payoutsEndpoint, payoutID)
+	if err != nil {
+		return response, fmt.Errorf("failed to join base URL with get payout request endpoint: %w", err)
+	}
+
+	reqMethod := http.MethodGet
+
+	httpRequest, err := http.NewRequestWithContext(ctx, reqMethod, reqURL, nil)
+	if err != nil {
+		return response, fmt.Errorf("creating HTTP request with context: %w", err)
+	}
+
+	c.setPayoutRequiredHeaders(httpRequest)
+
+	httpResponse, err := c.httpClient.Do(httpRequest)
+	if err != nil {
+		return response, fmt.Errorf("making HTTP request: %w", err)
+	}
+	defer closeResponseBody(httpResponse)
+
+	respPayload, err := io.ReadAll(httpResponse.Body)
+	if err != nil {
+		err = errorFromUnresolvedResponse(reqMethod, reqURL, httpResponse.StatusCode, nil)
+		return response, err
+	}
+
+	if httpResponse.StatusCode != http.StatusOK {
+		var resp errorResponse
+		if err = json.Unmarshal(respPayload, &resp); err != nil {
+			err = errorFromUnresolvedResponse(reqMethod, reqURL, httpResponse.StatusCode, respPayload)
+			return response, err
+		}
+
+		if httpResponse.StatusCode == http.StatusNotFound && resp.Code == errorResponseCodeNotFound {
+			return response, data.ErrPayoutNotFound
+		}
+
+		err = errorResponseData(resp)
+		return response, err
+	}
+
+	var resp getPayoutResponse
+	if err = json.Unmarshal(respPayload, &resp); err != nil {
+		err = errorFromUnresolvedResponse(reqMethod, reqURL, httpResponse.StatusCode, respPayload)
+		return response, err
+	}
+
+	if resp.CapturedAt != "" {
+		response.CapturedAt, err = time.Parse(datetimeLayout, resp.CapturedAt)
+		if err != nil {
+			return response, fmt.Errorf("parse captured_at %q with layout %q: %w", resp.CapturedAt, datetimeLayout, err)
+		}
+	}
+
+	response.ID = resp.ID
+	response.Status = resp.Status
+	response.Cancellation = data.Cancellation(resp.Cancellation)
+
+	return response, nil
+}

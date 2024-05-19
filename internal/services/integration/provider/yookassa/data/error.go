@@ -5,7 +5,10 @@ import (
 	"fmt"
 )
 
-var ErrPaymentNotFound = errors.New("payment not found")
+var (
+	ErrPaymentNotFound = errors.New("payment not found")
+	ErrPayoutNotFound  = errors.New("payout not found")
+)
 
 type ErrorResponse struct {
 	ID          string

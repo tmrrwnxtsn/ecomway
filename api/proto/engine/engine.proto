@@ -17,6 +17,7 @@ service EngineService {
   rpc RemoveTool(RemoveToolRequest) returns (google.protobuf.Empty);
 
   rpc ReportOperations(ReportOperationsRequest) returns (ReportOperationsResponse);
+  rpc GetOperationExternalStatus(GetOperationExternalStatusRequest) returns (GetOperationExternalStatusResponse);
 }
 
 message AvailableMethodsRequest {
@@ -118,4 +119,12 @@ message ReportOperation {
 
 message ReportOperationsResponse {
   repeated ReportOperation operations = 1;
+}
+
+message GetOperationExternalStatusRequest {
+  int64 operation_id = 1;
+}
+
+message GetOperationExternalStatusResponse {
+  shared.OperationExternalStatus external_status = 1;
 }
