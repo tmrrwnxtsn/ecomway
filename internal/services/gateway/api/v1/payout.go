@@ -129,11 +129,15 @@ func (h *Handler) payoutCreate(c *fiber.Ctx) error {
 
 	result, err := h.payoutService.Create(ctx, data)
 	if err != nil {
-		// TODO: нельзя создать выплату на удаленный инструмент
 		var perr *perror.Error
 		if errors.As(err, &perr) {
-			if perr.Group == perror.GroupInternal && perr.Code == perror.CodeObjectNotFound {
-				return h.objectNotFoundErrorResponse(c, req.LangCode, perr)
+			if perr.Group == perror.GroupInternal {
+				switch perr.Code {
+				case perror.CodeObjectNotFound:
+					return h.objectNotFoundErrorResponse(c, req.LangCode, perr)
+				case perror.CodeToolHasBeenRemoved:
+					return h.forbiddenOnRemovedToolErrorResponse(c, req.LangCode, perr)
+				}
 			}
 		}
 		return h.internalErrorResponse(c, req.LangCode, err)

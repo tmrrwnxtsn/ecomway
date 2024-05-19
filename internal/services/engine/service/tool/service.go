@@ -49,7 +49,10 @@ func (s *Service) EditOne(ctx context.Context, id string, userID int64, external
 			return nil, perror.NewInternal().WithCode(
 				perror.CodeObjectNotFound,
 			).WithDescription(
-				fmt.Sprintf("tool with id %q, userID %v and external method %q not found", id, userID, externalMethod),
+				fmt.Sprintf(
+					"tool with id %q, user id %v and external method %q not found",
+					id, userID, externalMethod,
+				),
 			)
 		}
 		return nil, err
@@ -68,25 +71,38 @@ func (s *Service) EditOne(ctx context.Context, id string, userID int64, external
 	return tool, nil
 }
 
-func (s *Service) RemoveOne(ctx context.Context, id string, userID int64, externalMethod string) error {
+func (s *Service) RemoveOne(ctx context.Context, id string, userID int64, externalMethod string, actionSource model.ActionSource) error {
 	tool, err := s.repository.GetOne(ctx, id, userID, externalMethod)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return perror.NewInternal().WithCode(
 				perror.CodeObjectNotFound,
 			).WithDescription(
-				fmt.Sprintf("tool with id %q, userID %v and external method %q not found", id, userID, externalMethod),
+				fmt.Sprintf(
+					"tool with id %q, user id %v and external method %q not found",
+					id, userID, externalMethod,
+				),
 			)
 		}
 		return err
 	}
 
-	if tool.Removed() {
-		return nil
-	}
+	switch actionSource {
+	case model.ActionSourceDefault:
+		if tool.Removed() {
+			return nil
+		}
 
-	// TODO: добавить обработку ActionSource, чтобы различать удаление администратора и юзера
-	tool.Status = model.ToolStatusRemovedByClient
+		tool.Status = model.ToolStatusRemovedByClient
+	case model.ActionSourceAdministrator:
+		if tool.Status == model.ToolStatusRemovedByAdministrator {
+			return nil
+		}
+
+		tool.Status = model.ToolStatusRemovedByAdministrator
+	default:
+		return fmt.Errorf("unresolved action source: %v", actionSource)
+	}
 
 	return s.repository.Update(ctx, tool)
 }
@@ -98,7 +114,10 @@ func (s *Service) RecoverOne(ctx context.Context, id string, userID int64, exter
 			return perror.NewInternal().WithCode(
 				perror.CodeObjectNotFound,
 			).WithDescription(
-				fmt.Sprintf("tool with id %q, userID %v and external method %q not found", id, userID, externalMethod),
+				fmt.Sprintf(
+					"tool with id %q, user id %v and external method %q not found",
+					id, userID, externalMethod,
+				),
 			)
 		}
 		return err

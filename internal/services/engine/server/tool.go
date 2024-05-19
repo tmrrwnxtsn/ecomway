@@ -8,6 +8,7 @@ import (
 	pbEngine "github.com/tmrrwnxtsn/ecomway/api/proto/engine"
 	pb "github.com/tmrrwnxtsn/ecomway/api/proto/shared"
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/convert"
+	"github.com/tmrrwnxtsn/ecomway/internal/pkg/model"
 )
 
 func (s *Server) AvailableTools(ctx context.Context, request *pbEngine.AvailableToolsRequest) (*pbEngine.AvailableToolsResponse, error) {
@@ -48,8 +49,9 @@ func (s *Server) RemoveTool(ctx context.Context, request *pbEngine.RemoveToolReq
 	id := request.GetId()
 	userID := request.GetUserId()
 	externalMethod := request.GetExternalMethod()
+	actionSource := actionSourceFromProto(request.GetActionSource())
 
-	if err := s.toolService.RemoveOne(ctx, id, userID, externalMethod); err != nil {
+	if err := s.toolService.RemoveOne(ctx, id, userID, externalMethod, actionSource); err != nil {
 		return nil, err
 	}
 
@@ -66,4 +68,15 @@ func (s *Server) RecoverTool(ctx context.Context, request *pbEngine.RecoverToolR
 	}
 
 	return &emptypb.Empty{}, nil
+}
+
+func actionSourceFromProto(actionSource pbEngine.ActionSource) model.ActionSource {
+	switch actionSource {
+	case pbEngine.ActionSource_ACTION_SOURCE_DEFAULT:
+		return model.ActionSourceDefault
+	case pbEngine.ActionSource_ACTION_SOURCE_ADMINISTRATOR:
+		return model.ActionSourceAdministrator
+	default:
+		return model.ActionSourceDefault
+	}
 }

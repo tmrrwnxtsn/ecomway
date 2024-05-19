@@ -68,7 +68,7 @@ type toolListResponse struct {
 
 // toolList godoc
 //
-//	@Summary	Получить список сохраненных платежных средств клиента
+//	@Summary	Получить список сохраненных платежных средств
 //	@Tags		Платежные средства
 //	@Produce	json
 //	@Security	ApiKeyAuth

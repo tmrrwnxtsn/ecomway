@@ -52,6 +52,7 @@ func (c *Client) RemoveTool(ctx context.Context, id string, userID int64, extern
 		Id:             id,
 		UserId:         userID,
 		ExternalMethod: externalMethod,
+		ActionSource:   pb.ActionSource_ACTION_SOURCE_DEFAULT,
 	}
 
 	_, err := c.client.RemoveTool(ctx, request)

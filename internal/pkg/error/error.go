@@ -26,6 +26,8 @@ const (
 	CodeObjectNotFound Code = "object not found"
 	// CodeUnresolvedStatusConflict используется, когда действие не может быть соверешно над объектом из-за неподходящего состояния.
 	CodeUnresolvedStatusConflict Code = "unresolved status for action"
+	// CodeToolHasBeenRemoved используется, когда действие не может быть соверешно из-за удаленного платежного средства.
+	CodeToolHasBeenRemoved Code = "payment tool has been removed"
 )
 
 type Error struct {

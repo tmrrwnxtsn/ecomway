@@ -84,10 +84,16 @@ message EditToolResponse {
   shared.Tool tool = 1;
 }
 
+enum ActionSource {
+  ACTION_SOURCE_DEFAULT = 0;
+  ACTION_SOURCE_ADMINISTRATOR = 1;
+}
+
 message RemoveToolRequest {
   string id = 1;
   int64 user_id = 2;
   string external_method = 3;
+  ActionSource action_source = 4;
 }
 
 message ReportOperationsRequest {
