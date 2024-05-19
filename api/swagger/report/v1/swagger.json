@@ -93,6 +93,12 @@
                         "description": "Тип сортировки (по умолчанию - DESC, по убыванию)",
                         "name": "order_type",
                         "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Флаг о необходимости вернуть результат в формате CSV (по умолчанию - false)",
+                        "name": "csv",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -153,6 +159,59 @@
                         "description": "Успешный ответ",
                         "schema": {
                             "$ref": "#/definitions/v1.operationExternalStatusResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "Ответ с ошибкой",
+                        "schema": {
+                            "$ref": "#/definitions/v1.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/tool": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Платежные средства"
+                ],
+                "summary": "Получить список платежных средств клиента",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Идентификатор специалиста техподдержки",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Код языка, обозначение по RFC 5646",
+                        "name": "lang_code",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Идентификатор клиента",
+                        "name": "client_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "schema": {
+                            "$ref": "#/definitions/v1.toolListResponse"
                         }
                     },
                     "default": {
@@ -321,7 +380,9 @@
             "type": "object",
             "required": [
                 "operations",
-                "success"
+                "success",
+                "total_amount",
+                "total_count"
             ],
             "properties": {
                 "operations": {
@@ -335,6 +396,135 @@
                     "description": "Результат обработки запроса (всегда true)",
                     "type": "boolean",
                     "example": true
+                },
+                "total_amount": {
+                    "description": "Сумма всех операций из результирующего массива",
+                    "type": "number",
+                    "example": 1421.1
+                },
+                "total_count": {
+                    "description": "Количество всех операций из результирующего массива",
+                    "type": "integer",
+                    "example": 15
+                }
+            }
+        },
+        "v1.tool": {
+            "type": "object",
+            "required": [
+                "caption",
+                "created_at",
+                "external_method",
+                "id",
+                "name",
+                "status",
+                "type",
+                "updated_at"
+            ],
+            "properties": {
+                "caption": {
+                    "description": "Значение платежного средства:\n* Маскированная банковская карта\n* Номер электронного кошелька",
+                    "type": "string",
+                    "example": "444444******4444"
+                },
+                "created_at": {
+                    "description": "Время создания платежного средства в формате UNIX Timestamp",
+                    "type": "integer",
+                    "example": 1715974447
+                },
+                "details": {
+                    "description": "Дополнительная информация о платежном средстве",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/v1.toolDetails"
+                        }
+                    ]
+                },
+                "external_method": {
+                    "description": "Внутренний код платежного метода платежной системы, к которой относится платежное средство",
+                    "type": "string",
+                    "example": "yookassa_bank_card"
+                },
+                "id": {
+                    "description": "Идентификатор платежного средства",
+                    "type": "string",
+                    "example": "2dc32aa0-000f-5000-8000-16d7bc6cd09f"
+                },
+                "name": {
+                    "description": "Название платежного средства",
+                    "type": "string",
+                    "example": "Карта брата"
+                },
+                "status": {
+                    "description": "Статус платежного средства:\n* Доступен клиенту - \"ACTIVE\"\n* Удален клиентом - \"REMOVED_BY_CLIENT\"\n* Ожидает восстановления - \"PENDING_RECOVERY\"\n* Заблокирован техподдержкой - \"REMOVED_BY_ADMINISTRATOR\"",
+                    "type": "string",
+                    "example": "ACTIVE"
+                },
+                "type": {
+                    "description": "Тип платежного средства:\n* Банковская карта - \"card\"\n* Электронный кошелек - \"wallet\"",
+                    "type": "string",
+                    "example": "card"
+                },
+                "updated_at": {
+                    "description": "Время последнего обновления платежного средства в формате UNIX Timestamp",
+                    "type": "integer",
+                    "example": 1715974447
+                }
+            }
+        },
+        "v1.toolDetails": {
+            "type": "object",
+            "properties": {
+                "bank_name": {
+                    "description": "Название банка, выпустившего банковскую карту",
+                    "type": "string",
+                    "example": "Sberbank"
+                },
+                "card_holder": {
+                    "description": "Владелец банковской карты",
+                    "type": "string",
+                    "example": "Ivanov Ivan"
+                },
+                "card_type": {
+                    "description": "Тип банковской карты",
+                    "type": "string",
+                    "example": "Visa"
+                },
+                "expiry_month": {
+                    "description": "Срок действия банковской карты (месяц, MM)",
+                    "type": "integer",
+                    "example": 10
+                },
+                "expiry_year": {
+                    "description": "Срок действия банковской карты (год, YYYY)",
+                    "type": "integer",
+                    "example": 2023
+                },
+                "wallet_number": {
+                    "description": "Номер электронного кошелька",
+                    "type": "string",
+                    "example": "410011758831136"
+                }
+            }
+        },
+        "v1.toolListResponse": {
+            "type": "object",
+            "required": [
+                "success",
+                "tools"
+            ],
+            "properties": {
+                "success": {
+                    "description": "Результат обработки запроса (всегда true)",
+                    "type": "boolean",
+                    "example": true
+                },
+                "tools": {
+                    "description": "Массив платежных средств клиента",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.tool"
+                    }
                 }
             }
         }

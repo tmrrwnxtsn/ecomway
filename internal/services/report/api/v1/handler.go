@@ -27,6 +27,10 @@ type SummaryService interface {
 	CalculateReportOperationsSummary(items []model.ReportOperation) (totalAmount float64, totalCount int64)
 }
 
+type ToolService interface {
+	AllTools(ctx context.Context, userID int64) ([]*model.Tool, error)
+}
+
 type Translator interface {
 	Translate(lang, key string, args ...any) string
 }
@@ -35,6 +39,7 @@ type Handler struct {
 	operationService OperationService
 	sortingService   SortingService
 	summaryService   SummaryService
+	toolService      ToolService
 	translator       Translator
 	validate         *validator.Validate
 	apiKey           string
@@ -44,6 +49,7 @@ type HandlerOptions struct {
 	OperationService OperationService
 	SortingService   SortingService
 	SummaryService   SummaryService
+	ToolService      ToolService
 	Translator       Translator
 	APIKey           string
 }
@@ -83,6 +89,7 @@ func NewHandler(opts HandlerOptions) *Handler {
 		operationService: opts.OperationService,
 		sortingService:   opts.SortingService,
 		summaryService:   opts.SummaryService,
+		toolService:      opts.ToolService,
 		translator:       opts.Translator,
 		validate:         validate,
 		apiKey:           opts.APIKey,
@@ -108,9 +115,9 @@ func (h *Handler) Init(router fiber.Router) {
 	}
 
 	{
-		tool := apiV1.Group("/tool")
+		tools := apiV1.Group("/tool")
 		{
-			tool.Get("", h.operationList)
+			tools.Get("", h.toolList)
 		}
 	}
 }

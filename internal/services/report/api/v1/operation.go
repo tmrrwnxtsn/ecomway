@@ -131,16 +131,16 @@ func (h *Handler) operationList(c *fiber.Ctx) error {
 
 	operations = h.sortingService.SortReportOperations(operations, req.OrderField, req.OrderType)
 
-	responseOperations := h.operations(operations)
+	respOperations := h.operations(operations)
 
 	if req.CSV {
-		response := &bytes.Buffer{}
+		resp := &bytes.Buffer{}
 
-		if err = gocsv.Marshal(&responseOperations, response); err != nil {
+		if err = gocsv.Marshal(&respOperations, resp); err != nil {
 			return h.internalErrorResponse(c, req.LangCode, err)
 		}
 
-		responseRaw := response.Bytes()
+		respRaw := resp.Bytes()
 
 		filenameTime := time.Now().UTC().Format(`02_01_2006`)
 		filename := fmt.Sprintf("%v-%v-%v.csv", filenameTime, totalAmount, totalCount)
@@ -148,13 +148,13 @@ func (h *Handler) operationList(c *fiber.Ctx) error {
 		c.Set(fiber.HeaderContentDisposition, fmt.Sprintf("attachment; filename=%v", filename))
 		c.Set(fiber.HeaderContentType, "text/csv")
 
-		return c.Send(responseRaw)
+		return c.Send(respRaw)
 	} else {
 		resp := &operationListResponse{
 			Success:     true,
 			TotalAmount: totalAmount,
 			TotalCount:  totalCount,
-			Operations:  responseOperations,
+			Operations:  respOperations,
 		}
 
 		return c.JSON(resp)
