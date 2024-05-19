@@ -72,6 +72,10 @@ type operationListRequest struct {
 type operationListResponse struct {
 	// Результат обработки запроса (всегда true)
 	Success bool `json:"success" example:"true" validate:"required"`
+	// Сумма всех операций из результирующего массива
+	TotalAmount float64 `json:"total_amount" example:"1421.10" validate:"required"`
+	// Количество всех операций из результирующего массива
+	TotalCount int64 `json:"total_count" example:"15" validate:"required"`
 	// Массив операций, подходящих под фильтры и условия запроса
 	Operations []operation `json:"operations" validate:"required"`
 }
@@ -118,11 +122,15 @@ func (h *Handler) operationList(c *fiber.Ctx) error {
 		return h.internalErrorResponse(c, req.LangCode, err)
 	}
 
+	totalAmount, totalCount := h.summaryService.CalculateReportOperationsSummary(operations)
+
 	operations = h.sortingService.SortReportOperations(operations, req.OrderField, req.OrderType)
 
 	resp := &operationListResponse{
-		Success:    true,
-		Operations: h.operations(operations),
+		Success:     true,
+		TotalAmount: totalAmount,
+		TotalCount:  totalCount,
+		Operations:  h.operations(operations),
 	}
 
 	return c.JSON(resp)

@@ -23,6 +23,10 @@ type SortingService interface {
 	SortReportOperations(items []model.ReportOperation, orderField, orderType string) []model.ReportOperation
 }
 
+type SummaryService interface {
+	CalculateReportOperationsSummary(items []model.ReportOperation) (totalAmount float64, totalCount int64)
+}
+
 type Translator interface {
 	Translate(lang, key string, args ...any) string
 }
@@ -30,6 +34,7 @@ type Translator interface {
 type Handler struct {
 	operationService OperationService
 	sortingService   SortingService
+	summaryService   SummaryService
 	translator       Translator
 	validate         *validator.Validate
 	apiKey           string
@@ -38,6 +43,7 @@ type Handler struct {
 type HandlerOptions struct {
 	OperationService OperationService
 	SortingService   SortingService
+	SummaryService   SummaryService
 	Translator       Translator
 	APIKey           string
 }
@@ -76,6 +82,7 @@ func NewHandler(opts HandlerOptions) *Handler {
 	return &Handler{
 		operationService: opts.OperationService,
 		sortingService:   opts.SortingService,
+		summaryService:   opts.SummaryService,
 		translator:       opts.Translator,
 		validate:         validate,
 		apiKey:           opts.APIKey,

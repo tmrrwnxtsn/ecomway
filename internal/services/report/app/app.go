@@ -20,6 +20,7 @@ import (
 	"github.com/tmrrwnxtsn/ecomway/internal/services/report/config"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/report/service/operation"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/report/service/sorting"
+	"github.com/tmrrwnxtsn/ecomway/internal/services/report/service/summary"
 )
 
 type App struct {
@@ -46,11 +47,13 @@ func New(configPath string) *App {
 
 	operationService := operation.NewService(engineClient)
 	sortingService := sorting.NewService()
+	summaryService := summary.NewService()
 	translator := translate.NewTranslator("en", "ru")
 
 	apiHandlerV1 := v1.NewHandler(v1.HandlerOptions{
 		OperationService: operationService,
 		SortingService:   sortingService,
+		SummaryService:   summaryService,
 		Translator:       translator,
 		APIKey:           cfg.Report.APIKey,
 	})
