@@ -15,7 +15,7 @@ import (
 )
 
 type OperationService interface {
-	ReportOperations(ctx context.Context, userID int64) ([]model.ReportOperation, error)
+	ReportOperations(ctx context.Context, criteria model.OperationCriteria) ([]model.ReportOperation, error)
 }
 
 type SortingService interface {
@@ -94,14 +94,14 @@ func (h *Handler) Init(router fiber.Router) {
 	{
 		operations := apiV1.Group("/operation")
 		{
-			operations.Get("/list", h.operationList)
+			operations.Get("", h.operationList)
 		}
 	}
 
 	{
 		tool := apiV1.Group("/tool")
 		{
-			tool.Get("/list", h.operationList)
+			tool.Get("", h.operationList)
 		}
 	}
 }

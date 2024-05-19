@@ -2,14 +2,15 @@ package server
 
 import (
 	"context"
+	"time"
 
 	pb "github.com/tmrrwnxtsn/ecomway/api/proto/engine"
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/convert"
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/model"
 )
 
-func (s *Server) ReportOperations(ctx context.Context, _ *pb.ReportOperationsRequest) (*pb.ReportOperationsResponse, error) {
-	criteria := model.OperationCriteria{}
+func (s *Server) ReportOperations(ctx context.Context, request *pb.ReportOperationsRequest) (*pb.ReportOperationsResponse, error) {
+	criteria := criteriaFromReportOperationsRequest(request)
 
 	operations, err := s.operationService.AllForReport(ctx, criteria)
 	if err != nil {
@@ -24,6 +25,35 @@ func (s *Server) ReportOperations(ctx context.Context, _ *pb.ReportOperationsReq
 	return &pb.ReportOperationsResponse{
 		Operations: pbOperations,
 	}, nil
+}
+
+func criteriaFromReportOperationsRequest(request *pb.ReportOperationsRequest) model.OperationCriteria {
+	criteria := model.OperationCriteria{
+		ID:         request.Id,
+		UserID:     request.UserId,
+		ExternalID: request.ExternalId,
+	}
+	if len(request.Types) > 0 {
+		types := make([]model.OperationType, 0, len(request.Types))
+		for _, pbType := range request.Types {
+			types = append(types, convert.OperationTypeFromProto(pbType))
+		}
+		criteria.Types = &types
+	}
+	if len(request.Statuses) > 0 {
+		statuses := make([]model.OperationStatus, 0, len(request.Statuses))
+		for _, pbStatus := range request.Statuses {
+			statuses = append(statuses, convert.OperationStatusFromProto(pbStatus))
+		}
+		criteria.Statuses = &statuses
+	}
+	if request.CreatedAtFrom != nil {
+		criteria.CreatedAtFrom = time.Unix(request.GetCreatedAtFrom(), 0).UTC()
+	}
+	if request.CreatedAtTo != nil {
+		criteria.CreatedAtTo = time.Unix(request.GetCreatedAtTo(), 0).UTC()
+	}
+	return criteria
 }
 
 func reportOperationToProto(op model.ReportOperation) *pb.ReportOperation {

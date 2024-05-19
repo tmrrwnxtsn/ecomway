@@ -89,7 +89,13 @@ message RemoveToolRequest {
 }
 
 message ReportOperationsRequest {
-  int64 user_id = 1;
+  optional int64 id = 1;
+  optional int64 user_id = 2;
+  optional string external_id = 3;
+  repeated shared.OperationType types = 4;
+  repeated shared.OperationStatus statuses = 5;
+  optional int64 created_at_from = 6;
+  optional int64 created_at_to = 7;
 }
 
 message ReportOperation {

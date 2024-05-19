@@ -1,6 +1,10 @@
 package v1
 
 import (
+	"fmt"
+	"strings"
+	"time"
+
 	"github.com/gofiber/fiber/v2"
 
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/convert"
@@ -11,7 +15,7 @@ type operation struct {
 	// Идентификатор операции
 	ID int64 `json:"id" example:"1" validate:"required"`
 	// Идентификатор клиента
-	UserID int64 `json:"client_id" example:"1" validate:"required"`
+	ClientID int64 `json:"client_id" example:"1" validate:"required"`
 	// Тип операции
 	Type string `json:"type" example:"payment" validate:"required"`
 	// Валюта операции
@@ -41,6 +45,20 @@ type operationListRequest struct {
 	UserID int64 `query:"user_id" example:"1" validate:"required"`
 	// Код языка, обозначение по RFC 5646
 	LangCode string `query:"lang_code" example:"en" validate:"required"`
+	// Идентификатор операции
+	ID int64 `query:"id" example:"1"`
+	// Идентификатор операции на стороне платежной системы
+	ExternalID string `query:"external_id" example:"ew01r01w0gfw1fw1"`
+	// Идентификатор клиента
+	ClientID int64 `query:"client_id" example:"1"`
+	// Тип операции
+	Type string `query:"type" example:"payment"`
+	// Внутренние статусы операций, перечисленные через запятую
+	Statuses string `query:"statuses" example:"SUCCESS,FAILED"`
+	// Время создания операции в формате UNIX Timestamp, с которого возвращать результирующие операции
+	CreatedAtFrom int64 `query:"created_at_from" example:"1715974447"`
+	// Время создания операции в формате UNIX Timestamp, до которого возвращать результирующие операции
+	CreatedAtTo int64 `query:"created_at_to" example:"1715974447"`
 	// Поле для сортировки результирующего списка (по умолчанию - "id")
 	OrderField string `query:"order_field" example:"amount"`
 	// Тип сортировки (по умолчанию - "DESC" - по убыванию)
@@ -60,13 +78,20 @@ type operationListResponse struct {
 //	@Tags		Операции
 //	@Produce	json
 //	@Security	ApiKeyAuth
-//	@Param		user_id		query		int						true	"Идентификатор специалиста техподдержки"
-//	@Param		lang_code	query		string					true	"Код языка, обозначение по RFC 5646"
-//	@Param		order_field	query		string					false	"Поле для сортировки результирующего списка (по умолчанию - id)"
-//	@Param		order_type	query		string					false	"Тип сортировки (по умолчанию - DESC, по убыванию)"
-//	@Success	200			{object}	operationListResponse	"Успешный ответ"
-//	@Failure	default		{object}	errorResponse			"Ответ с ошибкой"
-//	@Router		/operation/list [get]
+//	@Param		user_id			query		int						true	"Идентификатор специалиста техподдержки"
+//	@Param		lang_code		query		string					true	"Код языка, обозначение по RFC 5646"
+//	@Param		id				query		int						false	"Идентификатор операции"
+//	@Param		external_id		query		string					false	"Идентификатор операции на стороне платежной системы"
+//	@Param		client_id		query		int						false	"Идентификатор клиента"
+//	@Param		type			query		string					false	"Тип операции"
+//	@Param		statuses		query		string					false	"Внутренние статусы операций, перечисленные через запятую"
+//	@Param		created_at_from	query		int						false	"Время создания операции в формате UNIX Timestamp, с которого возвращать результирующие операции"
+//	@Param		created_at_to	query		int						false	"Время создания операции в формате UNIX Timestamp, до которого возвращать результирующие операции"
+//	@Param		order_field		query		string					false	"Поле для сортировки результирующего списка (по умолчанию - id)"
+//	@Param		order_type		query		string					false	"Тип сортировки (по умолчанию - DESC, по убыванию)"
+//	@Success	200				{object}	operationListResponse	"Успешный ответ"
+//	@Failure	default			{object}	errorResponse			"Ответ с ошибкой"
+//	@Router		/operation [get]
 func (h *Handler) operationList(c *fiber.Ctx) error {
 	ctx := c.Context()
 
@@ -79,7 +104,12 @@ func (h *Handler) operationList(c *fiber.Ctx) error {
 		return h.requestValidationErrorResponse(c, req.LangCode, err)
 	}
 
-	operations, err := h.operationService.ReportOperations(ctx, req.UserID)
+	criteria, err := operationListCriteriaFromRequest(req)
+	if err != nil {
+		return h.requestValidationErrorResponse(c, req.LangCode, err)
+	}
+
+	operations, err := h.operationService.ReportOperations(ctx, criteria)
 	if err != nil {
 		return h.internalErrorResponse(c, req.LangCode, err)
 	}
@@ -94,10 +124,53 @@ func (h *Handler) operationList(c *fiber.Ctx) error {
 	return c.JSON(resp)
 }
 
+func operationListCriteriaFromRequest(req operationListRequest) (model.OperationCriteria, error) {
+	var criteria model.OperationCriteria
+
+	if req.ID > 0 {
+		criteria.ID = &req.ID
+	}
+	if req.ClientID > 0 {
+		criteria.UserID = &req.ClientID
+	}
+	if req.ExternalID != "" {
+		criteria.ExternalID = &req.ExternalID
+	}
+	if req.Type != "" {
+		switch t := model.OperationType(req.Type); t {
+		case model.OperationTypePayment, model.OperationTypePayout:
+			criteria.Types = &[]model.OperationType{t}
+		default:
+			return model.OperationCriteria{}, fmt.Errorf("unresolved operation type: %v", req.Type)
+		}
+	}
+	if req.Statuses != "" {
+		criteria.Statuses = &[]model.OperationStatus{}
+
+		statuses := strings.Split(req.Statuses, ",")
+		for _, s := range statuses {
+			switch status := model.OperationStatus(s); status {
+			case model.OperationStatusNew, model.OperationStatusFailed, model.OperationStatusSuccess:
+				*criteria.Statuses = append(*criteria.Statuses, status)
+			default:
+				return model.OperationCriteria{}, fmt.Errorf("unresolved status: %v", s)
+			}
+		}
+	}
+	if req.CreatedAtFrom > 0 {
+		criteria.CreatedAtFrom = time.Unix(req.CreatedAtFrom, 0).UTC()
+	}
+	if req.CreatedAtTo > 0 {
+		criteria.CreatedAtTo = time.Unix(req.CreatedAtTo, 0).UTC()
+	}
+
+	return criteria, nil
+}
+
 func (h *Handler) operation(item model.ReportOperation) operation {
 	result := operation{
 		ID:             item.ID,
-		UserID:         item.UserID,
+		ClientID:       item.UserID,
 		Type:           string(item.Type),
 		Currency:       item.Currency,
 		Amount:         convert.CentsToBase(item.Amount),

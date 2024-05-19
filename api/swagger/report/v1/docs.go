@@ -18,7 +18,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/operation/list": {
+        "/operation": {
             "get": {
                 "security": [
                     {
@@ -46,6 +46,48 @@ const docTemplate = `{
                         "name": "lang_code",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Идентификатор операции",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Идентификатор операции на стороне платежной системы",
+                        "name": "external_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Идентификатор клиента",
+                        "name": "client_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Тип операции",
+                        "name": "type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Внутренние статусы операций, перечисленные через запятую",
+                        "name": "statuses",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Время создания операции в формате UNIX Timestamp, с которого возвращать результирующие операции",
+                        "name": "created_at_from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Время создания операции в формате UNIX Timestamp, до которого возвращать результирующие операции",
+                        "name": "created_at_to",
+                        "in": "query"
                     },
                     {
                         "type": "string",

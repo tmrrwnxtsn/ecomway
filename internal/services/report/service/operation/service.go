@@ -7,7 +7,7 @@ import (
 )
 
 type EngineClient interface {
-	ReportOperations(ctx context.Context, userID int64) ([]model.ReportOperation, error)
+	ReportOperations(ctx context.Context, criteria model.OperationCriteria) ([]model.ReportOperation, error)
 }
 
 type Service struct {
@@ -20,6 +20,6 @@ func NewService(engineClient EngineClient) *Service {
 	}
 }
 
-func (s *Service) ReportOperations(ctx context.Context, userID int64) ([]model.ReportOperation, error) {
-	return s.engineClient.ReportOperations(ctx, userID)
+func (s *Service) ReportOperations(ctx context.Context, criteria model.OperationCriteria) ([]model.ReportOperation, error) {
+	return s.engineClient.ReportOperations(ctx, criteria)
 }

@@ -4,15 +4,14 @@ import (
 	"context"
 	"time"
 
-	pb "github.com/tmrrwnxtsn/ecomway/api/proto/engine"
+	pbEngine "github.com/tmrrwnxtsn/ecomway/api/proto/engine"
+	pb "github.com/tmrrwnxtsn/ecomway/api/proto/shared"
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/convert"
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/model"
 )
 
-func (c *Client) ReportOperations(ctx context.Context, userID int64) ([]model.ReportOperation, error) {
-	request := &pb.ReportOperationsRequest{
-		UserId: userID,
-	}
+func (c *Client) ReportOperations(ctx context.Context, criteria model.OperationCriteria) ([]model.ReportOperation, error) {
+	request := reportOperationRequestFromCriteria(criteria)
 
 	response, err := c.client.ReportOperations(ctx, request)
 	if err != nil {
@@ -26,7 +25,38 @@ func (c *Client) ReportOperations(ctx context.Context, userID int64) ([]model.Re
 	return operations, nil
 }
 
-func reportOperationFromProto(op *pb.ReportOperation) model.ReportOperation {
+func reportOperationRequestFromCriteria(criteria model.OperationCriteria) *pbEngine.ReportOperationsRequest {
+	request := &pbEngine.ReportOperationsRequest{
+		Id:         criteria.ID,
+		UserId:     criteria.UserID,
+		ExternalId: criteria.ExternalID,
+	}
+	if criteria.Types != nil {
+		pbTypes := make([]pb.OperationType, 0, len(*criteria.Types))
+		for _, operationType := range *criteria.Types {
+			pbTypes = append(pbTypes, convert.OperationTypeToProto(operationType))
+		}
+		request.Types = pbTypes
+	}
+	if criteria.Statuses != nil {
+		pbStatuses := make([]pb.OperationStatus, 0, len(*criteria.Statuses))
+		for _, operationStatus := range *criteria.Statuses {
+			pbStatuses = append(pbStatuses, convert.OperationStatusToProto(operationStatus))
+		}
+		request.Statuses = pbStatuses
+	}
+	if !criteria.CreatedAtFrom.IsZero() {
+		createdAtFromUnix := criteria.CreatedAtFrom.UTC().Unix()
+		request.CreatedAtFrom = &createdAtFromUnix
+	}
+	if !criteria.CreatedAtTo.IsZero() {
+		createdAtToUnix := criteria.CreatedAtTo.UTC().Unix()
+		request.CreatedAtTo = &createdAtToUnix
+	}
+	return request
+}
+
+func reportOperationFromProto(op *pbEngine.ReportOperation) model.ReportOperation {
 	result := model.ReportOperation{
 		ID:             op.GetId(),
 		UserID:         op.GetUserId(),
