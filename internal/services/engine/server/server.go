@@ -27,6 +27,7 @@ type ToolService interface {
 	All(ctx context.Context, userID int64) ([]*model.Tool, error)
 	EditOne(ctx context.Context, id string, userID int64, externalMethod, name string) (*model.Tool, error)
 	RemoveOne(ctx context.Context, id string, userID int64, externalMethod string) error
+	RecoverOne(ctx context.Context, id string, userID int64, externalMethod string) error
 }
 
 type PayoutService interface {

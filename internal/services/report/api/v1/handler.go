@@ -29,6 +29,7 @@ type SummaryService interface {
 
 type ToolService interface {
 	AllTools(ctx context.Context, userID int64) ([]*model.Tool, error)
+	RecoverTool(ctx context.Context, id string, userID int64, externalMethod string) error
 }
 
 type Translator interface {
@@ -118,6 +119,7 @@ func (h *Handler) Init(router fiber.Router) {
 		tools := apiV1.Group("/tool")
 		{
 			tools.Get("", h.toolList)
+			tools.Put("/recover", h.toolRecover)
 		}
 	}
 }

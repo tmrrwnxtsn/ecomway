@@ -18,6 +18,7 @@ service EngineService {
 
   rpc ReportOperations(ReportOperationsRequest) returns (ReportOperationsResponse);
   rpc GetOperationExternalStatus(GetOperationExternalStatusRequest) returns (GetOperationExternalStatusResponse);
+  rpc RecoverTool(RecoverToolRequest) returns (google.protobuf.Empty);
 }
 
 message AvailableMethodsRequest {
@@ -127,4 +128,10 @@ message GetOperationExternalStatusRequest {
 
 message GetOperationExternalStatusResponse {
   shared.OperationExternalStatus external_status = 1;
+}
+
+message RecoverToolRequest {
+  string id = 1;
+  int64 user_id = 2;
+  string external_method = 3;
 }

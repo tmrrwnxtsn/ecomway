@@ -175,7 +175,7 @@ type toolRemoveResponse struct {
 	// Результат обработки запроса (всегда true)
 	Success bool `json:"success" example:"true" validate:"required"`
 	// Сообщение, которое необходимо показать клиенту
-	Message string `json:"message" example:"Платежное средство удалено."`
+	Message string `json:"message" example:"Платежное средство удалено." validate:"required"`
 }
 
 // toolRemove godoc

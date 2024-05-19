@@ -956,6 +956,7 @@ const docTemplate = `{
         "v1.toolRemoveResponse": {
             "type": "object",
             "required": [
+                "message",
                 "success"
             ],
             "properties": {

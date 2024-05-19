@@ -1,11 +1,14 @@
 package v1
 
 import (
+	"errors"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 
+	perror "github.com/tmrrwnxtsn/ecomway/internal/pkg/error"
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/model"
+	"github.com/tmrrwnxtsn/ecomway/internal/pkg/translate"
 )
 
 const (
@@ -105,6 +108,72 @@ func (h *Handler) toolList(c *fiber.Ctx) error {
 	resp := &toolListResponse{
 		Success: true,
 		Tools:   h.tools(tools),
+	}
+
+	return c.JSON(resp)
+}
+
+type toolRecoverRequest struct {
+	// Идентификатор специалиста поддержки
+	UserID int64 `json:"user_id" example:"1" validate:"required"`
+	// Код языка, обозначение по RFC 5646
+	LangCode string `json:"lang_code" example:"en" validate:"required"`
+	// Идентификатор платежного средства
+	ID string `json:"id" example:"2dc32aa0-000f-5000-8000-16d7bc6cd09f" validate:"required"`
+	// Внутренний код платежного метода платежной системы, к которой относится платежное средство
+	ExternalMethod string `json:"external_method" example:"yookassa_bank_card" validate:"required"`
+	// Идентификатор клиента
+	ClientID int64 `json:"client_id" example:"1" validate:"required"`
+}
+
+type toolRecoverResponse struct {
+	// Результат обработки запроса (всегда true)
+	Success bool `json:"success" example:"true" validate:"required"`
+	// Сообщение, которое необходимо показать специалисту техподдержки
+	Message string `json:"message" example:"Платежное средство удалено." validate:"required"`
+}
+
+// toolRecover godoc
+//
+//	@Summary	Установить платежное средство готовым к восстановлению
+//	@Tags		Платежные средства
+//	@Accept		json
+//	@Produce	json
+//	@Security	ApiKeyAuth
+//	@Param		input	body		toolRecoverRequest	true	"Тело запроса"
+//	@Success	200		{object}	toolRecoverResponse	"Успешный ответ"
+//	@Failure	default	{object}	errorResponse		"Ответ с ошибкой"
+//	@Router		/tool/recover [put]
+func (h *Handler) toolRecover(c *fiber.Ctx) error {
+	ctx := c.Context()
+
+	var req toolRecoverRequest
+	if err := c.BodyParser(&req); err != nil {
+		return h.requestValidationErrorResponse(c, req.LangCode, err)
+	}
+
+	if err := h.validate.Struct(req); err != nil {
+		return h.requestValidationErrorResponse(c, req.LangCode, err)
+	}
+
+	if err := h.toolService.RecoverTool(ctx, req.ID, req.ClientID, req.ExternalMethod); err != nil {
+		var perr *perror.Error
+		if errors.As(err, &perr) {
+			if perr.Group == perror.GroupInternal {
+				switch perr.Code {
+				case perror.CodeObjectNotFound:
+					return h.objectNotFoundErrorResponse(c, req.LangCode, perr)
+				case perror.CodeUnresolvedStatusConflict:
+					return h.unresolvedObjectStatusErrorResponse(c, req.LangCode, perr)
+				}
+			}
+		}
+		return h.internalErrorResponse(c, req.LangCode, err)
+	}
+
+	resp := &toolRecoverResponse{
+		Success: true,
+		Message: h.translator.Translate(req.LangCode, translate.KeyToolRecovered),
 	}
 
 	return c.JSON(resp)

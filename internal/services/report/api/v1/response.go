@@ -10,10 +10,11 @@ import (
 )
 
 const (
-	errorCodeInvalidRequest = "InvalidRequest"
-	errorCodeInvalidAPIKey  = "InvalidAPIKey"
-	errorCodeInternalError  = "InternalError"
-	errorCodeObjectNotFound = "ObjectNotFound"
+	errorCodeInvalidRequest         = "InvalidRequest"
+	errorCodeInvalidAPIKey          = "InvalidAPIKey"
+	errorCodeInternalError          = "InternalError"
+	errorCodeObjectNotFound         = "ObjectNotFound"
+	errorCodeUnresolvedObjectStatus = "UnresolvedObjectStatus"
 )
 
 type errorContent struct {
@@ -61,6 +62,17 @@ func (h *Handler) objectNotFoundErrorResponse(c *fiber.Ctx, langCode string, per
 			Code:        errorCodeObjectNotFound,
 			Description: perr.Description,
 			Message:     h.translator.Translate(langCode, translate.KeyObjectNotFound),
+		},
+	})
+}
+
+func (h *Handler) unresolvedObjectStatusErrorResponse(c *fiber.Ctx, langCode string, perr *perror.Error) error {
+	return c.Status(http.StatusConflict).JSON(&errorResponse{
+		Success: false,
+		Error: errorContent{
+			Code:        errorCodeUnresolvedObjectStatus,
+			Description: perr.Description,
+			Message:     h.translator.Translate(langCode, translate.KeyUnresolvedStatusConflict),
 		},
 	})
 }

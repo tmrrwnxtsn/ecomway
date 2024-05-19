@@ -8,6 +8,7 @@ import (
 
 type EngineClient interface {
 	AvailableTools(ctx context.Context, userID int64) ([]*model.Tool, error)
+	RecoverTool(ctx context.Context, id string, userID int64, externalMethod string) error
 }
 
 type Service struct {
@@ -22,4 +23,8 @@ func NewService(engineClient EngineClient) *Service {
 
 func (s *Service) AllTools(ctx context.Context, userID int64) ([]*model.Tool, error) {
 	return s.engineClient.AvailableTools(ctx, userID)
+}
+
+func (s *Service) RecoverTool(ctx context.Context, id string, userID int64, externalMethod string) error {
+	return s.engineClient.RecoverTool(ctx, id, userID, externalMethod)
 }

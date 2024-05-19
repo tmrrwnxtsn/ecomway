@@ -24,6 +24,8 @@ type Code string
 const (
 	// CodeObjectNotFound используется, когда искомый объект, для изменения или удаления, не найден.
 	CodeObjectNotFound Code = "object not found"
+	// CodeUnresolvedStatusConflict используется, когда действие не может быть соверешно над объектом из-за неподходящего состояния.
+	CodeUnresolvedStatusConflict Code = "unresolved status for action"
 )
 
 type Error struct {

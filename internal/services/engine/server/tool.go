@@ -55,3 +55,15 @@ func (s *Server) RemoveTool(ctx context.Context, request *pbEngine.RemoveToolReq
 
 	return &emptypb.Empty{}, nil
 }
+
+func (s *Server) RecoverTool(ctx context.Context, request *pbEngine.RecoverToolRequest) (*emptypb.Empty, error) {
+	id := request.GetId()
+	userID := request.GetUserId()
+	externalMethod := request.GetExternalMethod()
+
+	if err := s.toolService.RecoverOne(ctx, id, userID, externalMethod); err != nil {
+		return nil, err
+	}
+
+	return &emptypb.Empty{}, nil
+}

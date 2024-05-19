@@ -28,6 +28,7 @@ const (
 	EngineService_RemoveTool_FullMethodName                 = "/engine.EngineService/RemoveTool"
 	EngineService_ReportOperations_FullMethodName           = "/engine.EngineService/ReportOperations"
 	EngineService_GetOperationExternalStatus_FullMethodName = "/engine.EngineService/GetOperationExternalStatus"
+	EngineService_RecoverTool_FullMethodName                = "/engine.EngineService/RecoverTool"
 )
 
 // EngineServiceClient is the client API for EngineService service.
@@ -42,6 +43,7 @@ type EngineServiceClient interface {
 	RemoveTool(ctx context.Context, in *RemoveToolRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	ReportOperations(ctx context.Context, in *ReportOperationsRequest, opts ...grpc.CallOption) (*ReportOperationsResponse, error)
 	GetOperationExternalStatus(ctx context.Context, in *GetOperationExternalStatusRequest, opts ...grpc.CallOption) (*GetOperationExternalStatusResponse, error)
+	RecoverTool(ctx context.Context, in *RecoverToolRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type engineServiceClient struct {
@@ -124,6 +126,15 @@ func (c *engineServiceClient) GetOperationExternalStatus(ctx context.Context, in
 	return out, nil
 }
 
+func (c *engineServiceClient) RecoverTool(ctx context.Context, in *RecoverToolRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, EngineService_RecoverTool_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // EngineServiceServer is the server API for EngineService service.
 // All implementations must embed UnimplementedEngineServiceServer
 // for forward compatibility
@@ -136,6 +147,7 @@ type EngineServiceServer interface {
 	RemoveTool(context.Context, *RemoveToolRequest) (*emptypb.Empty, error)
 	ReportOperations(context.Context, *ReportOperationsRequest) (*ReportOperationsResponse, error)
 	GetOperationExternalStatus(context.Context, *GetOperationExternalStatusRequest) (*GetOperationExternalStatusResponse, error)
+	RecoverTool(context.Context, *RecoverToolRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedEngineServiceServer()
 }
 
@@ -166,6 +178,9 @@ func (UnimplementedEngineServiceServer) ReportOperations(context.Context, *Repor
 }
 func (UnimplementedEngineServiceServer) GetOperationExternalStatus(context.Context, *GetOperationExternalStatusRequest) (*GetOperationExternalStatusResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetOperationExternalStatus not implemented")
+}
+func (UnimplementedEngineServiceServer) RecoverTool(context.Context, *RecoverToolRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RecoverTool not implemented")
 }
 func (UnimplementedEngineServiceServer) mustEmbedUnimplementedEngineServiceServer() {}
 
@@ -324,6 +339,24 @@ func _EngineService_GetOperationExternalStatus_Handler(srv interface{}, ctx cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _EngineService_RecoverTool_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RecoverToolRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EngineServiceServer).RecoverTool(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: EngineService_RecoverTool_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EngineServiceServer).RecoverTool(ctx, req.(*RecoverToolRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // EngineService_ServiceDesc is the grpc.ServiceDesc for EngineService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -362,6 +395,10 @@ var EngineService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetOperationExternalStatus",
 			Handler:    _EngineService_GetOperationExternalStatus_Handler,
+		},
+		{
+			MethodName: "RecoverTool",
+			Handler:    _EngineService_RecoverTool_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

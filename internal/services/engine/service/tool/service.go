@@ -90,3 +90,33 @@ func (s *Service) RemoveOne(ctx context.Context, id string, userID int64, extern
 
 	return s.repository.Update(ctx, tool)
 }
+
+func (s *Service) RecoverOne(ctx context.Context, id string, userID int64, externalMethod string) error {
+	tool, err := s.repository.GetOne(ctx, id, userID, externalMethod)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return perror.NewInternal().WithCode(
+				perror.CodeObjectNotFound,
+			).WithDescription(
+				fmt.Sprintf("tool with id %q, userID %v and external method %q not found", id, userID, externalMethod),
+			)
+		}
+		return err
+	}
+
+	if tool.Status != model.ToolStatusRemovedByAdministrator {
+		if tool.Status == model.ToolStatusPendingRecovery {
+			return nil
+		}
+
+		return perror.NewInternal().WithCode(
+			perror.CodeUnresolvedStatusConflict,
+		).WithDescription(
+			fmt.Sprintf("cannot recover tool with status %v", tool.Status),
+		)
+	}
+
+	tool.Status = model.ToolStatusPendingRecovery
+
+	return s.repository.Update(ctx, tool)
+}
