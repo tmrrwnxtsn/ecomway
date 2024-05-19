@@ -9,6 +9,7 @@ require (
 	github.com/gammazero/workerpool v1.1.3
 	github.com/georgysavva/scany v1.2.2
 	github.com/go-playground/validator/v10 v10.19.0
+	github.com/gocarina/gocsv v0.0.0-20231116093920-b87c2d0e983a
 	github.com/gofiber/fiber/v2 v2.52.2
 	github.com/google/uuid v1.6.0
 	github.com/hashicorp/go-multierror v1.1.1

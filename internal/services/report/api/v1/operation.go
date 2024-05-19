@@ -1,12 +1,14 @@
 package v1
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"strconv"
 	"strings"
 	"time"
 
+	"github.com/gocarina/gocsv"
 	"github.com/gofiber/fiber/v2"
 
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/convert"
@@ -17,31 +19,31 @@ import (
 
 type operation struct {
 	// Идентификатор операции
-	ID int64 `json:"id" example:"1" validate:"required"`
+	ID int64 `json:"id" csv:"id" example:"1" validate:"required"`
 	// Идентификатор клиента
-	ClientID int64 `json:"client_id" example:"1" validate:"required"`
+	ClientID int64 `json:"client_id" csv:"client_id" example:"1" validate:"required"`
 	// Тип операции
-	Type string `json:"type" example:"payment" validate:"required"`
+	Type string `json:"type" csv:"type" example:"payment" validate:"required"`
 	// Валюта операции
-	Currency string `json:"currency" example:"RUB" validate:"required"`
+	Currency string `json:"currency" csv:"currency" example:"RUB" validate:"required"`
 	// Сумма операции
-	Amount float64 `json:"amount" example:"121.01" validate:"required"`
+	Amount float64 `json:"amount" csv:"amount" example:"121.01" validate:"required"`
 	// Внутренний статус операции
-	Status string `json:"status" example:"SUCCESS" validate:"required"`
+	Status string `json:"status" csv:"status" example:"SUCCESS" validate:"required"`
 	// Идентификатор операции на стороне платежной системы
-	ExternalID string `json:"external_id,omitempty" example:"ew01r01w0gfw1fw1"`
+	ExternalID string `json:"external_id,omitempty" csv:"external_id" example:"ew01r01w0gfw1fw1"`
 	// Статус операции на стороне платежной системы
-	ExternalStatus string `json:"external_status,omitempty" example:"PENDING"`
+	ExternalStatus string `json:"external_status,omitempty" csv:"external_status" example:"PENDING"`
 	// Платежное средство, используемое в операции
-	ToolDisplayed string `json:"tool,omitempty" example:"5748********4124"`
+	ToolDisplayed string `json:"tool,omitempty" csv:"tool" example:"5748********4124"`
 	// Причина отклонения операции
-	FailReason string `json:"fail_reason,omitempty" example:"Technical error"`
+	FailReason string `json:"fail_reason,omitempty" csv:"fail_reason" example:"Technical error"`
 	// Время создания операции в формате UNIX Timestamp
-	CreatedAt int64 `json:"created_at" example:"1715974447" validate:"required"`
+	CreatedAt int64 `json:"created_at" csv:"created_at" example:"1715974447" validate:"required"`
 	// Время последнего обновления операции в формате UNIX Timestamp
-	UpdatedAt int64 `json:"updated_at" example:"1715974447" validate:"required"`
+	UpdatedAt int64 `json:"updated_at" csv:"updated_at" example:"1715974447" validate:"required"`
 	// Время завершения операции на стороне платежной системы в формате UNIX Timestamp
-	ProcessedAt int64 `json:"processed_at,omitempty" example:"1715974447"`
+	ProcessedAt int64 `json:"processed_at,omitempty" csv:"processed_at" example:"1715974447"`
 }
 
 type operationListRequest struct {
@@ -67,6 +69,8 @@ type operationListRequest struct {
 	OrderField string `query:"order_field" example:"amount"`
 	// Тип сортировки (по умолчанию - "DESC" - по убыванию)
 	OrderType string `query:"order_type" example:"ASC"`
+	// Флаг о необходимости вернуть результат в формате CSV (по умолчанию - false)
+	CSV bool `query:"csv" example:"true"`
 }
 
 type operationListResponse struct {
@@ -97,6 +101,7 @@ type operationListResponse struct {
 //	@Param		created_at_to	query		int						false	"Время создания операции в формате UNIX Timestamp, до которого возвращать результирующие операции"
 //	@Param		order_field		query		string					false	"Поле для сортировки результирующего списка (по умолчанию - id)"
 //	@Param		order_type		query		string					false	"Тип сортировки (по умолчанию - DESC, по убыванию)"
+//	@Param		csv				query		boolean					false	"Флаг о необходимости вернуть результат в формате CSV (по умолчанию - false)"
 //	@Success	200				{object}	operationListResponse	"Успешный ответ"
 //	@Failure	default			{object}	errorResponse			"Ответ с ошибкой"
 //	@Router		/operation [get]
@@ -126,14 +131,34 @@ func (h *Handler) operationList(c *fiber.Ctx) error {
 
 	operations = h.sortingService.SortReportOperations(operations, req.OrderField, req.OrderType)
 
-	resp := &operationListResponse{
-		Success:     true,
-		TotalAmount: totalAmount,
-		TotalCount:  totalCount,
-		Operations:  h.operations(operations),
-	}
+	responseOperations := h.operations(operations)
 
-	return c.JSON(resp)
+	if req.CSV {
+		response := &bytes.Buffer{}
+
+		if err = gocsv.Marshal(&responseOperations, response); err != nil {
+			return h.internalErrorResponse(c, req.LangCode, err)
+		}
+
+		responseRaw := response.Bytes()
+
+		filenameTime := time.Now().UTC().Format(`02_01_2006`)
+		filename := fmt.Sprintf("%v-%v-%v.csv", filenameTime, totalAmount, totalCount)
+
+		c.Set(fiber.HeaderContentDisposition, fmt.Sprintf("attachment; filename=%v", filename))
+		c.Set(fiber.HeaderContentType, "text/csv")
+
+		return c.Send(responseRaw)
+	} else {
+		resp := &operationListResponse{
+			Success:     true,
+			TotalAmount: totalAmount,
+			TotalCount:  totalCount,
+			Operations:  responseOperations,
+		}
+
+		return c.JSON(resp)
+	}
 }
 
 func operationListCriteriaFromRequest(req operationListRequest) (model.OperationCriteria, error) {
