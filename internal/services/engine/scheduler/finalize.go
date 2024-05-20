@@ -2,6 +2,7 @@ package scheduler
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"time"
 
@@ -24,6 +25,10 @@ type PaymentService interface {
 	Fail(ctx context.Context, data model.FailPaymentData) error
 }
 
+type PayoutService interface {
+	Fail(ctx context.Context, data model.FailPayoutData) error
+}
+
 type FinalizeOperationsTask struct {
 	interval                 time.Duration
 	operationBatchSize       int64
@@ -33,6 +38,7 @@ type FinalizeOperationsTask struct {
 	operationService         OperationService
 	integrationClient        IntegrationClient
 	paymentService           PaymentService
+	payoutService            PayoutService
 }
 
 func NewFinalizeOperationsTask(
@@ -40,6 +46,7 @@ func NewFinalizeOperationsTask(
 	operationService OperationService,
 	integrationClient IntegrationClient,
 	paymentService PaymentService,
+	payoutService PayoutService,
 ) *FinalizeOperationsTask {
 	task := &FinalizeOperationsTask{
 		interval:                 time.Duration(cfg.Interval) * time.Second,
@@ -50,6 +57,7 @@ func NewFinalizeOperationsTask(
 		operationService:         operationService,
 		integrationClient:        integrationClient,
 		paymentService:           paymentService,
+		payoutService:            payoutService,
 	}
 
 	for slot, interval := range cfg.ActualizeStatusIntervals {
@@ -81,12 +89,9 @@ func (t *FinalizeOperationsTask) Start(ctx context.Context) {
 	}
 }
 
-// TODO: обработка выплат
 func (t *FinalizeOperationsTask) execute(ctx context.Context, externalSystem string) {
 	criteria := model.OperationCriteria{
-		StatusesByType: map[model.OperationType][]model.OperationStatus{
-			model.OperationTypePayment: {model.OperationStatusNew},
-		},
+		Statuses:        &[]model.OperationStatus{model.OperationStatusNew},
 		ExternalSystems: &[]string{externalSystem},
 		MaxCount:        t.operationBatchSize,
 	}
@@ -110,73 +115,108 @@ func (t *FinalizeOperationsTask) execute(ctx context.Context, externalSystem str
 		wp.Submit(func() {
 			ctx := context.Background()
 
+			log := log.With("operation_id", operation.ID)
+
 			if !t.needsActualizeExternalStatus(operation) {
 				return
 			}
 
-			data := model.GetOperationStatusData{
-				CreatedAt:      operation.CreatedAt,
-				ExternalID:     operation.ExternalID,
-				ExternalSystem: operation.ExternalSystem,
-				ExternalMethod: operation.ExternalMethod,
-				Currency:       operation.Currency,
-				OperationType:  operation.Type,
-				OperationID:    operation.ID,
-				UserID:         operation.UserID,
-				Amount:         operation.Amount,
-			}
-
-			result, err := t.integrationClient.GetOperationStatus(ctx, data)
-			if err != nil {
-				log.Error(
-					"failed to get operation external status",
-					"error", err,
-					"operation_id", operation.ID,
-				)
+			if operation.Status != model.OperationStatusNew {
 				return
 			}
 
-			switch result.ExternalStatus {
-			case model.OperationExternalStatusSuccess:
-				data := model.SuccessPaymentData{
-					ProcessedAt:    result.ProcessedAt,
-					ExternalID:     result.ExternalID,
-					ExternalStatus: result.ExternalStatus,
-					OperationID:    operation.ID,
-					NewAmount:      result.NewAmount,
-					Tool:           result.Tool,
-				}
-
-				if err = t.paymentService.Success(ctx, data); err != nil {
+			switch operation.Type {
+			case model.OperationTypePayment:
+				if err := t.finalizePayment(ctx, operation); err != nil {
 					log.Error(
-						"failed to success payment",
+						"failed to finalize payment",
 						"error", err,
-						"operation_id", operation.ID,
 					)
-					return
 				}
-			case model.OperationExternalStatusFailed:
-				data := model.FailPaymentData{
-					ExternalID:     result.ExternalID,
-					ExternalStatus: result.ExternalStatus,
-					FailReason:     result.FailReason,
-					OperationID:    operation.ID,
-				}
-
-				if err = t.paymentService.Fail(ctx, data); err != nil {
+			case model.OperationTypePayout:
+				if err := t.finalizePayout(ctx, operation); err != nil {
 					log.Error(
-						"failed to fail payment",
+						"failed to finalize payout",
 						"error", err,
-						"operation_id", operation.ID,
 					)
-					return
 				}
+			default:
+				log.Error(
+					"unresolved operation type",
+					"type", operation.Type,
+				)
 			}
-
 		})
 	}
 
 	wp.StopWait()
+}
+
+func (t *FinalizeOperationsTask) finalizePayment(ctx context.Context, operation *model.Operation) error {
+	data := model.GetOperationStatusData{
+		CreatedAt:      operation.CreatedAt,
+		ExternalID:     operation.ExternalID,
+		ExternalSystem: operation.ExternalSystem,
+		ExternalMethod: operation.ExternalMethod,
+		Currency:       operation.Currency,
+		OperationType:  operation.Type,
+		OperationID:    operation.ID,
+		UserID:         operation.UserID,
+		Amount:         operation.Amount,
+	}
+
+	result, err := t.integrationClient.GetOperationStatus(ctx, data)
+	if err != nil {
+		return fmt.Errorf("failed to get operation external status: %w", err)
+	}
+
+	switch result.ExternalStatus {
+	case model.OperationExternalStatusSuccess:
+		data := model.SuccessPaymentData{
+			ProcessedAt:    result.ProcessedAt,
+			ExternalID:     result.ExternalID,
+			ExternalStatus: result.ExternalStatus,
+			OperationID:    operation.ID,
+			NewAmount:      result.NewAmount,
+			Tool:           result.Tool,
+		}
+
+		if err = t.paymentService.Success(ctx, data); err != nil {
+			return fmt.Errorf("failed to success payment: %w", err)
+		}
+	case model.OperationExternalStatusFailed:
+		data := model.FailPaymentData{
+			ExternalID:     result.ExternalID,
+			ExternalStatus: result.ExternalStatus,
+			FailReason:     result.FailReason,
+			OperationID:    operation.ID,
+		}
+
+		if err = t.paymentService.Fail(ctx, data); err != nil {
+			return fmt.Errorf("failed to fail payment: %w", err)
+		}
+	}
+
+	return nil
+}
+
+func (t *FinalizeOperationsTask) finalizePayout(ctx context.Context, operation *model.Operation) error {
+	now := time.Now().UTC()
+
+	if now.Before(operation.CreatedAt.UTC().Add(time.Hour)) {
+		return nil
+	}
+
+	data := model.FailPayoutData{
+		FailReason:  model.OperationFailReasonTimeout,
+		OperationID: operation.ID,
+	}
+
+	if err := t.payoutService.Fail(ctx, data); err != nil {
+		return fmt.Errorf("failed to fail payout: %w", err)
+	}
+
+	return nil
 }
 
 func (t *FinalizeOperationsTask) needsActualizeExternalStatus(op *model.Operation) bool {

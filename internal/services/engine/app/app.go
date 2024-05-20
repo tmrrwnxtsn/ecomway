@@ -96,6 +96,7 @@ func New(configPath string) *App {
 				operationService,
 				integrationClient,
 				paymentService,
+				payoutService,
 			))
 		}
 
