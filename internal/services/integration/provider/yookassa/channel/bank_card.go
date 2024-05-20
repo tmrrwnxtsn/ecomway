@@ -32,7 +32,7 @@ func (c bankCardChannel) PaymentTool(userID int64, externalMethod string, method
 		UserID:         userID,
 		ExternalMethod: externalMethod,
 		Displayed:      displayed,
-		Name:           "Bank card", // TODO: можно сохранять локаль в additional и сюда писать название по локали
+		Name:           "Bank card",
 		Type:           model.ToolTypeBankCard,
 		Details: map[string]any{
 			"token":        method.ID,

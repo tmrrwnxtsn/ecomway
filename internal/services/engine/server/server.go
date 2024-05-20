@@ -32,6 +32,7 @@ type ToolService interface {
 
 type PayoutService interface {
 	Create(ctx context.Context, data model.CreatePayoutData) (model.CreatePayoutResult, error)
+	Confirm(ctx context.Context, data model.ConfirmPayoutData) error
 }
 
 type OperationService interface {

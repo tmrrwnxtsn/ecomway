@@ -38,7 +38,7 @@ func (c walletChannel) PaymentTool(userID int64, externalMethod string, method d
 		UserID:         userID,
 		ExternalMethod: externalMethod,
 		Displayed:      method.AccountNumber,
-		Name:           "Wallet number", // TODO: можно сохранять локаль в additional и сюда писать название по локали
+		Name:           "Wallet number",
 		Type:           model.ToolTypeWallet,
 		Details: map[string]any{
 			"token":  method.ID,

@@ -15,6 +15,7 @@ const (
 	errorCodeInternalError          = "InternalError"
 	errorCodeObjectNotFound         = "ObjectNotFound"
 	errorCodeUnresolvedObjectStatus = "UnresolvedObjectStatus"
+	errorCodeWrongConfirmationCode  = "WrongConfirmationCode"
 )
 
 type errorContent struct {
@@ -73,6 +74,17 @@ func (h *Handler) forbiddenOnRemovedToolErrorResponse(c *fiber.Ctx, langCode str
 			Code:        errorCodeUnresolvedObjectStatus,
 			Description: perr.Description,
 			Message:     h.translator.Translate(langCode, translate.KeyForbiddenOnRemovedTool),
+		},
+	})
+}
+
+func (h *Handler) wrongConfirmationCodeErrorResponse(c *fiber.Ctx, langCode string, perr *perror.Error) error {
+	return c.Status(http.StatusBadRequest).JSON(&errorResponse{
+		Success: false,
+		Error: errorContent{
+			Code:        errorCodeWrongConfirmationCode,
+			Description: perr.Description,
+			Message:     h.translator.Translate(langCode, translate.KeyWrongConfirmationCode),
 		},
 	})
 }

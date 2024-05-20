@@ -26,6 +26,7 @@ const (
 	EngineService_CreatePayout_FullMethodName               = "/engine.EngineService/CreatePayout"
 	EngineService_EditTool_FullMethodName                   = "/engine.EngineService/EditTool"
 	EngineService_RemoveTool_FullMethodName                 = "/engine.EngineService/RemoveTool"
+	EngineService_ConfirmPayout_FullMethodName              = "/engine.EngineService/ConfirmPayout"
 	EngineService_ReportOperations_FullMethodName           = "/engine.EngineService/ReportOperations"
 	EngineService_GetOperationExternalStatus_FullMethodName = "/engine.EngineService/GetOperationExternalStatus"
 	EngineService_RecoverTool_FullMethodName                = "/engine.EngineService/RecoverTool"
@@ -41,6 +42,7 @@ type EngineServiceClient interface {
 	CreatePayout(ctx context.Context, in *CreatePayoutRequest, opts ...grpc.CallOption) (*CreatePayoutResponse, error)
 	EditTool(ctx context.Context, in *EditToolRequest, opts ...grpc.CallOption) (*EditToolResponse, error)
 	RemoveTool(ctx context.Context, in *RemoveToolRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	ConfirmPayout(ctx context.Context, in *ConfirmPayoutRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	ReportOperations(ctx context.Context, in *ReportOperationsRequest, opts ...grpc.CallOption) (*ReportOperationsResponse, error)
 	GetOperationExternalStatus(ctx context.Context, in *GetOperationExternalStatusRequest, opts ...grpc.CallOption) (*GetOperationExternalStatusResponse, error)
 	RecoverTool(ctx context.Context, in *RecoverToolRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -108,6 +110,15 @@ func (c *engineServiceClient) RemoveTool(ctx context.Context, in *RemoveToolRequ
 	return out, nil
 }
 
+func (c *engineServiceClient) ConfirmPayout(ctx context.Context, in *ConfirmPayoutRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, EngineService_ConfirmPayout_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *engineServiceClient) ReportOperations(ctx context.Context, in *ReportOperationsRequest, opts ...grpc.CallOption) (*ReportOperationsResponse, error) {
 	out := new(ReportOperationsResponse)
 	err := c.cc.Invoke(ctx, EngineService_ReportOperations_FullMethodName, in, out, opts...)
@@ -145,6 +156,7 @@ type EngineServiceServer interface {
 	CreatePayout(context.Context, *CreatePayoutRequest) (*CreatePayoutResponse, error)
 	EditTool(context.Context, *EditToolRequest) (*EditToolResponse, error)
 	RemoveTool(context.Context, *RemoveToolRequest) (*emptypb.Empty, error)
+	ConfirmPayout(context.Context, *ConfirmPayoutRequest) (*emptypb.Empty, error)
 	ReportOperations(context.Context, *ReportOperationsRequest) (*ReportOperationsResponse, error)
 	GetOperationExternalStatus(context.Context, *GetOperationExternalStatusRequest) (*GetOperationExternalStatusResponse, error)
 	RecoverTool(context.Context, *RecoverToolRequest) (*emptypb.Empty, error)
@@ -172,6 +184,9 @@ func (UnimplementedEngineServiceServer) EditTool(context.Context, *EditToolReque
 }
 func (UnimplementedEngineServiceServer) RemoveTool(context.Context, *RemoveToolRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveTool not implemented")
+}
+func (UnimplementedEngineServiceServer) ConfirmPayout(context.Context, *ConfirmPayoutRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ConfirmPayout not implemented")
 }
 func (UnimplementedEngineServiceServer) ReportOperations(context.Context, *ReportOperationsRequest) (*ReportOperationsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ReportOperations not implemented")
@@ -303,6 +318,24 @@ func _EngineService_RemoveTool_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _EngineService_ConfirmPayout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ConfirmPayoutRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EngineServiceServer).ConfirmPayout(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: EngineService_ConfirmPayout_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EngineServiceServer).ConfirmPayout(ctx, req.(*ConfirmPayoutRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _EngineService_ReportOperations_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ReportOperationsRequest)
 	if err := dec(in); err != nil {
@@ -387,6 +420,10 @@ var EngineService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RemoveTool",
 			Handler:    _EngineService_RemoveTool_Handler,
+		},
+		{
+			MethodName: "ConfirmPayout",
+			Handler:    _EngineService_ConfirmPayout_Handler,
 		},
 		{
 			MethodName: "ReportOperations",

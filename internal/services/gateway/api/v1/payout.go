@@ -2,11 +2,14 @@ package v1
 
 import (
 	"errors"
+	"fmt"
+	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 
 	perror "github.com/tmrrwnxtsn/ecomway/internal/pkg/error"
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/model"
+	"github.com/tmrrwnxtsn/ecomway/internal/pkg/translate"
 )
 
 type payoutMethodsRequest struct {
@@ -151,8 +154,83 @@ func (h *Handler) payoutCreate(c *fiber.Ctx) error {
 	return c.JSON(resp)
 }
 
+type payoutConfirmRequest struct {
+	// Идентификатор клиента
+	UserID int64 `json:"user_id" example:"1" validate:"required"`
+	// Код языка, обозначение по RFC 5646
+	LangCode string `json:"lang_code" example:"en" validate:"required"`
+	// Код подтверждения вывода средств
+	ConfirmationCode string `json:"confirmation_code" example:"123456" validate:"required"`
+}
+
+type payoutConfirmResponse struct {
+	// Результат обработки запроса (всегда true)
+	Success bool `json:"success" example:"true" validate:"required"`
+	// Сообщение, которое необходимо показать клиенту
+	Message string `json:"message" example:"Вывод средств подтвержден." validate:"required"`
+}
+
+// payoutConfirm godoc
+//
+//	@Summary	Подтвердить запрос на вывод средств
+//	@Tags		Выплаты
+//	@Accept		json
+//	@Produce	json
+//	@Security	ApiKeyAuth
+//	@Param		id		path		int						true	"Идентификатор операции"
+//	@Param		input	body		payoutConfirmRequest	true	"Тело запроса"
+//	@Success	200		{object}	payoutConfirmResponse	"Успешный ответ"
+//	@Failure	default	{object}	errorResponse			"Ответ с ошибкой"
+//	@Router		/payout/{id}/confirm [put]
 func (h *Handler) payoutConfirm(c *fiber.Ctx) error {
-	return c.SendString("Payout confirmed")
+	ctx := c.Context()
+
+	var req payoutConfirmRequest
+	if err := c.BodyParser(&req); err != nil {
+		return h.requestValidationErrorResponse(c, req.LangCode, err)
+	}
+
+	if err := h.validate.Struct(req); err != nil {
+		return h.requestValidationErrorResponse(c, req.LangCode, err)
+	}
+
+	opID, err := strconv.ParseInt(c.Params("id"), 10, 64)
+	if err != nil {
+		err = fmt.Errorf("failed to parse id as int: %w", err)
+		return h.requestValidationErrorResponse(c, req.LangCode, err)
+	}
+
+	confirmData := model.ConfirmPayoutData{
+		ConfirmationCode: req.ConfirmationCode,
+		LangCode:         req.LangCode,
+		UserID:           req.UserID,
+		OperationID:      opID,
+	}
+
+	// TODO: обработать кейс, когда ограниченное количество попыток
+	if err = h.payoutService.Confirm(ctx, confirmData); err != nil {
+		var perr *perror.Error
+		if errors.As(err, &perr) {
+			if perr.Group == perror.GroupInternal {
+				switch perr.Code {
+				case perror.CodeObjectNotFound:
+					return h.objectNotFoundErrorResponse(c, req.LangCode, perr)
+				case perror.CodeToolHasBeenRemoved:
+					return h.forbiddenOnRemovedToolErrorResponse(c, req.LangCode, perr)
+				case perror.CodeWrongConfirmationCode:
+					return h.wrongConfirmationCodeErrorResponse(c, req.LangCode, perr)
+				}
+			}
+		}
+		return h.internalErrorResponse(c, req.LangCode, err)
+	}
+
+	resp := &payoutConfirmResponse{
+		Success: true,
+		Message: h.translator.Translate(req.LangCode, translate.KeyPayoutConfirmed),
+	}
+
+	return c.JSON(resp)
 }
 
 func (h *Handler) payoutResendCode(c *fiber.Ctx) error {

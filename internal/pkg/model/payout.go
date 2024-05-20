@@ -24,6 +24,13 @@ type CreatePayoutResult struct {
 	OperationID    int64
 }
 
+type ConfirmPayoutData struct {
+	ConfirmationCode string
+	LangCode         string
+	UserID           int64
+	OperationID      int64
+}
+
 type SuccessPayoutData struct {
 	ProcessedAt    time.Time
 	ExternalID     string

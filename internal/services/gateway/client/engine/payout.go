@@ -42,3 +42,22 @@ func (c *Client) CreatePayout(ctx context.Context, data model.CreatePayoutData) 
 
 	return result, nil
 }
+
+func (c *Client) ConfirmPayout(ctx context.Context, data model.ConfirmPayoutData) error {
+	request := &pb.ConfirmPayoutRequest{
+		OperationId:      data.OperationID,
+		UserId:           data.UserID,
+		ConfirmationCode: data.ConfirmationCode,
+		LangCode:         data.LangCode,
+	}
+
+	_, err := c.client.ConfirmPayout(ctx, request)
+	if err != nil {
+		if perr := perror.FromProto(err); perr != nil {
+			return perr
+		}
+		return err
+	}
+
+	return nil
+}

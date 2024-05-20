@@ -18,6 +18,8 @@ const (
 	KeyToolRecovered            = "TOOL_RECOVERED"
 	KeyUnresolvedStatusConflict = "UNRESOLVED_STATUS_CONFLICT"
 	KeyForbiddenOnRemovedTool   = "FORBIDDEN_ON_REMOVED_TOOL"
+	KeyWrongConfirmationCode    = "WRONG_CONFIRMATION_CODE"
+	KeyPayoutConfirmed          = "PAYOUT_CONFIRMED"
 )
 
 type Translator struct {
@@ -40,6 +42,8 @@ func NewTranslator(lang ...string) *Translator {
 			KeyToolRecovered:            "Payment tool is ready for recovery.",
 			KeyUnresolvedStatusConflict: "Not able to perform the action for the object status.",
 			KeyForbiddenOnRemovedTool:   "Not able to perform action on restricted payment tool.",
+			KeyWrongConfirmationCode:    "Wrong confirmation code.",
+			KeyPayoutConfirmed:          "Payout successfully confirmed.",
 		},
 		"ru": {
 			KeyInvalidAPIKey:            "Заголовок авторизации должен содержать корректный API ключ.",
@@ -55,6 +59,8 @@ func NewTranslator(lang ...string) *Translator {
 			KeyToolRecovered:            "Платежное средство готово для восстановления.",
 			KeyUnresolvedStatusConflict: "Целевое действие невозможно для данного статуса объекта.",
 			KeyForbiddenOnRemovedTool:   "Невозможно осуществить операцию с использованием удаленного платежного средства.",
+			KeyWrongConfirmationCode:    "Неверный код подтверждения.",
+			KeyPayoutConfirmed:          "Вывод средств успешно подтвержден.",
 		},
 	}
 

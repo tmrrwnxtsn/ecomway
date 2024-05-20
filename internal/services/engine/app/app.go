@@ -47,6 +47,8 @@ func New(configPath string) *App {
 		log.Fatalf("loading config: %v", err)
 	}
 
+	env := cfg.Engine.Environment
+
 	postgresMigrator, err := migrator.NewPostgresMigrator(cfg.Engine.Storage.DatabaseURL)
 	if err != nil {
 		log.Fatalf("initializing migrator: %v", err)
@@ -82,7 +84,7 @@ func New(configPath string) *App {
 	limitService := limit.NewService()
 	paymentService := payment.NewService(operationRepository, integrationClient, toolRepository)
 	toolService := toolservice.NewService(toolRepository)
-	payoutService := payout.NewService(operationRepository, integrationClient, toolRepository)
+	payoutService := payout.NewService(operationRepository, integrationClient, toolRepository, env == "dev")
 	operationService := opservice.NewService(operationRepository)
 
 	if cfg.Engine.Scheduler.IsEnabled {

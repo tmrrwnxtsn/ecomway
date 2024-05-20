@@ -205,6 +205,103 @@
                 }
             }
         },
+        "/payout/{id}/confirm": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Выплаты"
+                ],
+                "summary": "Подтвердить запрос на вывод средств",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Идентификатор операции",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Тело запроса",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.payoutConfirmRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "schema": {
+                            "$ref": "#/definitions/v1.payoutConfirmResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "Ответ с ошибкой",
+                        "schema": {
+                            "$ref": "#/definitions/v1.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/tool": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Платежные средства"
+                ],
+                "summary": "Получить список сохраненных платежных средств клиента",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Идентификатор клиента",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Код языка, обозначение по RFC 5646",
+                        "name": "lang_code",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "schema": {
+                            "$ref": "#/definitions/v1.toolListResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "Ответ с ошибкой",
+                        "schema": {
+                            "$ref": "#/definitions/v1.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/tool/edit": {
             "put": {
                 "security": [
@@ -238,52 +335,6 @@
                         "description": "Успешный ответ",
                         "schema": {
                             "$ref": "#/definitions/v1.toolEditResponse"
-                        }
-                    },
-                    "default": {
-                        "description": "Ответ с ошибкой",
-                        "schema": {
-                            "$ref": "#/definitions/v1.errorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/tool/list": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Платежные средства"
-                ],
-                "summary": "Получить список сохраненных платежных средств",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Идентификатор клиента",
-                        "name": "user_id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Код языка, обозначение по RFC 5646",
-                        "name": "lang_code",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Успешный ответ",
-                        "schema": {
-                            "$ref": "#/definitions/v1.toolListResponse"
                         }
                     },
                     "default": {
@@ -651,6 +702,50 @@
                     "description": "URL для возврата клиента, используемый при успешном осуществлении платежа",
                     "type": "string",
                     "example": "https://example.com/success"
+                }
+            }
+        },
+        "v1.payoutConfirmRequest": {
+            "type": "object",
+            "required": [
+                "confirmation_code",
+                "lang_code",
+                "user_id"
+            ],
+            "properties": {
+                "confirmation_code": {
+                    "description": "Код подтверждения вывода средств",
+                    "type": "string",
+                    "example": "123456"
+                },
+                "lang_code": {
+                    "description": "Код языка, обозначение по RFC 5646",
+                    "type": "string",
+                    "example": "en"
+                },
+                "user_id": {
+                    "description": "Идентификатор клиента",
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "v1.payoutConfirmResponse": {
+            "type": "object",
+            "required": [
+                "message",
+                "success"
+            ],
+            "properties": {
+                "message": {
+                    "description": "Сообщение, которое необходимо показать клиенту",
+                    "type": "string",
+                    "example": "Вывод средств подтвержден. Ожидайте зачисления."
+                },
+                "success": {
+                    "description": "Результат обработки запроса (всегда true)",
+                    "type": "boolean",
+                    "example": true
                 }
             }
         },

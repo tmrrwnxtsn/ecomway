@@ -8,6 +8,7 @@ import (
 
 type EngineClient interface {
 	CreatePayout(ctx context.Context, data model.CreatePayoutData) (model.CreatePayoutResult, error)
+	ConfirmPayout(ctx context.Context, data model.ConfirmPayoutData) error
 }
 
 type Service struct {
@@ -22,4 +23,8 @@ func NewService(engineClient EngineClient) *Service {
 
 func (s *Service) Create(ctx context.Context, data model.CreatePayoutData) (model.CreatePayoutResult, error) {
 	return s.engineClient.CreatePayout(ctx, data)
+}
+
+func (s *Service) Confirm(ctx context.Context, data model.ConfirmPayoutData) error {
+	return s.engineClient.ConfirmPayout(ctx, data)
 }

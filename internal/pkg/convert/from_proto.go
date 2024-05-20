@@ -26,6 +26,8 @@ func OperationStatusFromProto(opStatus pb.OperationStatus) model.OperationStatus
 		return model.OperationStatusSuccess
 	case pb.OperationStatus_OPERATION_STATUS_FAILED:
 		return model.OperationStatusFailed
+	case pb.OperationStatus_OPERATION_STATUS_CONFIRMED:
+		return model.OperationStatusConfirmed
 	default:
 		return ""
 	}

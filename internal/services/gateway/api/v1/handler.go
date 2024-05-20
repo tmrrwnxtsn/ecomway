@@ -32,6 +32,7 @@ type ToolService interface {
 
 type PayoutService interface {
 	Create(ctx context.Context, data model.CreatePayoutData) (model.CreatePayoutResult, error)
+	Confirm(ctx context.Context, data model.ConfirmPayoutData) error
 }
 
 type Translator interface {
@@ -121,13 +122,13 @@ func (h *Handler) Init(router fiber.Router) {
 		{
 			payout.Get("/methods", h.payoutMethods)
 			payout.Post("/create", h.payoutCreate)
-			payout.Put("/confirm", h.payoutConfirm)
-			payout.Put("/resendCode", h.payoutResendCode)
+			payout.Put("/:id/confirm", h.payoutConfirm)
+			// TODO: payout.Put("/:id/resend-code", h.payoutResendCode)
 		}
 
 		tools := apiV1.Group("/tool")
 		{
-			tools.Get("/list", h.toolList)
+			tools.Get("", h.toolList)
 			tools.Put("/edit", h.toolEdit)
 			tools.Delete("/remove", h.toolRemove)
 		}

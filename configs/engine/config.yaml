@@ -1,5 +1,6 @@
 engine:
   grpc_address: ":9000"
+  environment: "dev"
 
   scheduler:
     is_enabled: true

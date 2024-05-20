@@ -15,6 +15,7 @@ enum OperationStatus {
   OPERATION_STATUS_NEW = 0;
   OPERATION_STATUS_SUCCESS = 1;
   OPERATION_STATUS_FAILED = 2;
+  OPERATION_STATUS_CONFIRMED = 3;
 }
 
 enum OperationExternalStatus {

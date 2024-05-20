@@ -68,7 +68,7 @@ type toolListResponse struct {
 
 // toolList godoc
 //
-//	@Summary	Получить список сохраненных платежных средств
+//	@Summary	Получить список сохраненных платежных средств клиента
 //	@Tags		Платежные средства
 //	@Produce	json
 //	@Security	ApiKeyAuth
@@ -76,7 +76,7 @@ type toolListResponse struct {
 //	@Param		lang_code	query		string				true	"Код языка, обозначение по RFC 5646"
 //	@Success	200			{object}	toolListResponse	"Успешный ответ"
 //	@Failure	default		{object}	errorResponse		"Ответ с ошибкой"
-//	@Router		/tool/list [get]
+//	@Router		/tool [get]
 func (h *Handler) toolList(c *fiber.Ctx) error {
 	ctx := c.Context()
 

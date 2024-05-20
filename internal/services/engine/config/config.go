@@ -16,6 +16,7 @@ type Config struct {
 
 type EngineConfig struct {
 	GRPCAddress string          `yaml:"grpc_address"`
+	Environment string          `yaml:"environment"`
 	Storage     StorageConfig   `yaml:"storage"`
 	Scheduler   SchedulerConfig `yaml:"scheduler"`
 }

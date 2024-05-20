@@ -22,12 +22,10 @@ const (
 type Code string
 
 const (
-	// CodeObjectNotFound используется, когда искомый объект, для изменения или удаления, не найден.
-	CodeObjectNotFound Code = "object not found"
-	// CodeUnresolvedStatusConflict используется, когда действие не может быть соверешно над объектом из-за неподходящего состояния.
+	CodeObjectNotFound           Code = "object not found"
 	CodeUnresolvedStatusConflict Code = "unresolved status for action"
-	// CodeToolHasBeenRemoved используется, когда действие не может быть соверешно из-за удаленного платежного средства.
-	CodeToolHasBeenRemoved Code = "payment tool has been removed"
+	CodeToolHasBeenRemoved       Code = "payment tool has been removed"
+	CodeWrongConfirmationCode    Code = "wrong confirmation code"
 )
 
 type Error struct {

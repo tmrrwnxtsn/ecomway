@@ -15,9 +15,10 @@ const (
 type OperationStatus string
 
 const (
-	OperationStatusNew     OperationStatus = "NEW"
-	OperationStatusFailed  OperationStatus = "FAILED"
-	OperationStatusSuccess OperationStatus = "SUCCESS"
+	OperationStatusNew       OperationStatus = "NEW"
+	OperationStatusConfirmed OperationStatus = "CONFIRMED"
+	OperationStatusFailed    OperationStatus = "FAILED"
+	OperationStatusSuccess   OperationStatus = "SUCCESS"
 )
 
 type OperationExternalStatus string

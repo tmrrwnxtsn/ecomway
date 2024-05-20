@@ -15,6 +15,7 @@ service EngineService {
   rpc CreatePayout(CreatePayoutRequest) returns (CreatePayoutResponse);
   rpc EditTool(EditToolRequest) returns (EditToolResponse);
   rpc RemoveTool(RemoveToolRequest) returns (google.protobuf.Empty);
+  rpc ConfirmPayout(ConfirmPayoutRequest) returns (google.protobuf.Empty);
 
   rpc ReportOperations(ReportOperationsRequest) returns (ReportOperationsResponse);
   rpc GetOperationExternalStatus(GetOperationExternalStatusRequest) returns (GetOperationExternalStatusResponse);
@@ -140,4 +141,11 @@ message RecoverToolRequest {
   string id = 1;
   int64 user_id = 2;
   string external_method = 3;
+}
+
+message ConfirmPayoutRequest {
+  int64 operation_id = 1;
+  int64 user_id = 2;
+  string confirmation_code = 3;
+  string lang_code = 4;
 }
