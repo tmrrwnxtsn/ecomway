@@ -16,6 +16,9 @@ service EngineService {
   rpc EditTool(EditToolRequest) returns (EditToolResponse);
   rpc RemoveTool(RemoveToolRequest) returns (google.protobuf.Empty);
   rpc ConfirmPayout(ConfirmPayoutRequest) returns (google.protobuf.Empty);
+  rpc AddToFavorites(FavoritesRequest) returns (google.protobuf.Empty);
+  rpc RemoveFromFavorites(FavoritesRequest) returns (google.protobuf.Empty);
+  rpc ResendConfirmationCode(ResendConfirmationCodeRequest) returns (google.protobuf.Empty);
 
   rpc ReportOperations(ReportOperationsRequest) returns (ReportOperationsResponse);
   rpc GetOperationExternalStatus(GetOperationExternalStatusRequest) returns (GetOperationExternalStatusResponse);
@@ -148,4 +151,18 @@ message ConfirmPayoutRequest {
   int64 user_id = 2;
   string confirmation_code = 3;
   string lang_code = 4;
+}
+
+message FavoritesRequest {
+  shared.OperationType type = 1;
+  int64 user_id = 2;
+  string currency = 3;
+  string external_system = 4;
+  string external_method = 5;
+}
+
+message ResendConfirmationCodeRequest {
+  int64 operation_id = 1;
+  int64 user_id = 2;
+  string lang_code = 3;
 }

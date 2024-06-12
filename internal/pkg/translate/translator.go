@@ -19,6 +19,7 @@ const (
 	KeyUnresolvedStatusConflict = "UNRESOLVED_STATUS_CONFLICT"
 	KeyForbiddenOnRemovedTool   = "FORBIDDEN_ON_REMOVED_TOOL"
 	KeyWrongConfirmationCode    = "WRONG_CONFIRMATION_CODE"
+	KeyWrongCodeLimitExceeded   = "WRONG_CODE_LIMIT_EXCEEDED"
 	KeyPayoutConfirmed          = "PAYOUT_CONFIRMED"
 )
 
@@ -43,6 +44,7 @@ func NewTranslator(lang ...string) *Translator {
 			KeyUnresolvedStatusConflict: "Not able to perform the action for the object status.",
 			KeyForbiddenOnRemovedTool:   "Not able to perform action on restricted payment tool.",
 			KeyWrongConfirmationCode:    "Wrong confirmation code.",
+			KeyWrongCodeLimitExceeded:   "The maximum number of possible confirmation attempts has been exceeded. The payout was rejected.",
 			KeyPayoutConfirmed:          "Payout successfully confirmed.",
 		},
 		"ru": {
@@ -60,6 +62,7 @@ func NewTranslator(lang ...string) *Translator {
 			KeyUnresolvedStatusConflict: "Целевое действие невозможно для данного статуса объекта.",
 			KeyForbiddenOnRemovedTool:   "Невозможно осуществить операцию с использованием удаленного платежного средства.",
 			KeyWrongConfirmationCode:    "Неверный код подтверждения.",
+			KeyWrongCodeLimitExceeded:   "Превышено максимальное количество возможных попыток для подтверждения. Выплата отклонена.",
 			KeyPayoutConfirmed:          "Вывод средств успешно подтвержден.",
 		},
 	}

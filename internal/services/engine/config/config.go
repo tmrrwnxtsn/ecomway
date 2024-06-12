@@ -7,7 +7,10 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-const databaseURLEnvKey = "DATABASE_URL"
+const (
+	databaseURLEnvKey  = "DATABASE_URL"
+	smtpPasswordEnvKey = "SMTP_PASSWORD"
+)
 
 type Config struct {
 	Engine   EngineConfig   `yaml:"engine"`
@@ -15,10 +18,11 @@ type Config struct {
 }
 
 type EngineConfig struct {
-	GRPCAddress string          `yaml:"grpc_address"`
-	Environment string          `yaml:"environment"`
-	Storage     StorageConfig   `yaml:"storage"`
-	Scheduler   SchedulerConfig `yaml:"scheduler"`
+	GRPCAddress                string          `yaml:"grpc_address"`
+	Environment                string          `yaml:"environment"`
+	Storage                    StorageConfig   `yaml:"storage"`
+	Scheduler                  SchedulerConfig `yaml:"scheduler"`
+	WrongConfirmationCodeLimit int             `yaml:"wrong_confirmation_code_limit"`
 }
 
 type StorageConfig struct {
@@ -32,6 +36,7 @@ type SchedulerConfig struct {
 
 type SchedulerTasksConfig struct {
 	FinalizeOperations SchedulerTaskConfig `yaml:"finalize_operations"`
+	RequestPayouts     SchedulerTaskConfig `yaml:"request_payouts"`
 }
 
 type SchedulerTaskConfig struct {
@@ -45,10 +50,18 @@ type SchedulerTaskConfig struct {
 
 type ServicesConfig struct {
 	Integration ServiceConfig `yaml:"integration"`
+	SMTP        SMTPConfig    `yaml:"smtp"`
 }
 
 type ServiceConfig struct {
 	GRPCAddress string `yaml:"grpc_address"`
+}
+
+type SMTPConfig struct {
+	Host     string `yaml:"host"`
+	Port     int    `yaml:"port"`
+	Username string `yaml:"username"`
+	Password string `yaml:"password"`
 }
 
 func Load(configPath string) (Config, error) {
@@ -75,5 +88,8 @@ func Load(configPath string) (Config, error) {
 func (c *Config) loadFromEnv() {
 	if dsnFromEnv, exists := os.LookupEnv(databaseURLEnvKey); exists {
 		c.Engine.Storage.DatabaseURL = dsnFromEnv
+	}
+	if smtpPass, exists := os.LookupEnv(smtpPasswordEnvKey); exists {
+		c.Services.SMTP.Password = smtpPass
 	}
 }

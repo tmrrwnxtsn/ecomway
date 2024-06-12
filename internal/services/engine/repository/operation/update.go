@@ -27,11 +27,12 @@ WHERE id = $1
 
 	_, err = dbTx.Exec(ctx, fmt.Sprintf(`
 UPDATE %v
-SET tool_id           = $2,
-    additional        = $3,
-    fail_reason       = $4,
-    confirmation_code = $5,
-    processed_at      = $6
+SET tool_id               = $2,
+    additional            = $3,
+    fail_reason           = $4,
+    confirmation_code     = $5,
+    processed_at          = $6,
+    confirmation_attempts = $7
 WHERE operation_id = $1
 `, operationMetadataTable),
 		dbOp.ID,
@@ -40,6 +41,7 @@ WHERE operation_id = $1
 		dbOp.FailReason,
 		dbOp.ConfirmationCode,
 		dbOp.ProcessedAt,
+		dbOp.ConfirmationAttempts,
 	)
 	if err != nil {
 		return err

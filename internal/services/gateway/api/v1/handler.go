@@ -33,6 +33,24 @@ type ToolService interface {
 type PayoutService interface {
 	Create(ctx context.Context, data model.CreatePayoutData) (model.CreatePayoutResult, error)
 	Confirm(ctx context.Context, data model.ConfirmPayoutData) error
+	ResendCode(ctx context.Context, opID, userID int64, langCode string) error
+}
+
+type FavoritesService interface {
+	Add(ctx context.Context, data model.FavoritesData) error
+	Remove(ctx context.Context, data model.FavoritesData) error
+}
+
+type OperationService interface {
+	ReportOperations(ctx context.Context, criteria model.OperationCriteria) ([]model.ReportOperation, error)
+}
+
+type SortingService interface {
+	SortReportOperations(items []model.ReportOperation, orderField, orderType string) []model.ReportOperation
+}
+
+type SummaryService interface {
+	CalculateReportOperationsSummary(items []model.ReportOperation) (totalAmount float64, totalCount int64)
 }
 
 type Translator interface {
@@ -40,22 +58,30 @@ type Translator interface {
 }
 
 type Handler struct {
-	methodService  MethodService
-	paymentService PaymentService
-	toolService    ToolService
-	payoutService  PayoutService
-	translator     Translator
-	validate       *validator.Validate
-	apiKey         string
+	methodService    MethodService
+	paymentService   PaymentService
+	toolService      ToolService
+	payoutService    PayoutService
+	favoritesService FavoritesService
+	operationService OperationService
+	sortingService   SortingService
+	summaryService   SummaryService
+	translator       Translator
+	validate         *validator.Validate
+	apiKey           string
 }
 
 type HandlerOptions struct {
-	MethodService  MethodService
-	PaymentService PaymentService
-	ToolService    ToolService
-	PayoutService  PayoutService
-	Translator     Translator
-	APIKey         string
+	MethodService    MethodService
+	PaymentService   PaymentService
+	ToolService      ToolService
+	PayoutService    PayoutService
+	FavoritesService FavoritesService
+	OperationService OperationService
+	SortingService   SortingService
+	SummaryService   SummaryService
+	Translator       Translator
+	APIKey           string
 }
 
 // NewHandler godoc
@@ -90,13 +116,17 @@ func NewHandler(opts HandlerOptions) *Handler {
 	})
 
 	return &Handler{
-		methodService:  opts.MethodService,
-		paymentService: opts.PaymentService,
-		toolService:    opts.ToolService,
-		payoutService:  opts.PayoutService,
-		translator:     opts.Translator,
-		validate:       validate,
-		apiKey:         opts.APIKey,
+		methodService:    opts.MethodService,
+		paymentService:   opts.PaymentService,
+		toolService:      opts.ToolService,
+		payoutService:    opts.PayoutService,
+		favoritesService: opts.FavoritesService,
+		operationService: opts.OperationService,
+		sortingService:   opts.SortingService,
+		summaryService:   opts.SummaryService,
+		translator:       opts.Translator,
+		validate:         validate,
+		apiKey:           opts.APIKey,
 	}
 }
 
@@ -123,7 +153,7 @@ func (h *Handler) Init(router fiber.Router) {
 			payout.Get("/methods", h.payoutMethods)
 			payout.Post("/create", h.payoutCreate)
 			payout.Put("/:id/confirm", h.payoutConfirm)
-			// TODO: payout.Put("/:id/resend-code", h.payoutResendCode)
+			payout.Put("/:id/resend-code", h.payoutResendCode)
 		}
 
 		tools := apiV1.Group("/tool")
@@ -131,6 +161,17 @@ func (h *Handler) Init(router fiber.Router) {
 			tools.Get("", h.toolList)
 			tools.Put("/edit", h.toolEdit)
 			tools.Delete("/remove", h.toolRemove)
+		}
+
+		favorites := apiV1.Group("/favorites/:operation_type")
+		{
+			favorites.Post("", h.favoritesAdd)
+			favorites.Delete("", h.favoritesRemove)
+		}
+
+		operations := apiV1.Group("/operation")
+		{
+			operations.Get("", h.operationList)
 		}
 	}
 }

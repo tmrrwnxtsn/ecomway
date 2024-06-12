@@ -125,7 +125,8 @@ SELECT %[3]v.id,
        %[4]v.additional,
        %[4]v.fail_reason,
        %[4]v.confirmation_code,
-       %[4]v.processed_at
+       %[4]v.processed_at,
+       %[4]v.confirmation_attempts
 FROM %[1]v %[3]v
          JOIN %[2]v %[4]v on %[3]v.id = %[4]v.operation_id
 %v %v
@@ -169,7 +170,8 @@ SELECT %[3]v.id,
        %[4]v.additional,
        %[4]v.fail_reason,
        %[4]v.confirmation_code,
-       %[4]v.processed_at
+       %[4]v.processed_at,
+       %[4]v.confirmation_attempts
 FROM %[1]v %[3]v
          JOIN %[2]v %[4]v on %[3]v.id = %[4]v.operation_id
 %v ORDER BY random() LIMIT %v

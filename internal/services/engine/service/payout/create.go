@@ -70,61 +70,6 @@ func (s *Service) Create(ctx context.Context, data model.CreatePayoutData) (mode
 		return result, err
 	}
 
-	//result, err = s.integrationClient.CreatePayout(ctx, data)
-	//if err != nil {
-	//	if saveErr := s.operationRepository.AcquireOneLocked(ctx, model.OperationCriteria{ID: &op.ID},
-	//		func(ctx context.Context, op *model.Operation) error {
-	//			op.Status = model.OperationStatusFailed
-	//			op.FailReason = err.Error()
-	//			return nil
-	//		},
-	//	); saveErr != nil {
-	//		err = multierror.Append(err, saveErr)
-	//	}
-	//	return result, err
-	//}
-	//
-	//switch result.ExternalStatus {
-	//case model.OperationExternalStatusSuccess:
-	//	data := model.SuccessPayoutData{
-	//		ProcessedAt:    result.ProcessedAt,
-	//		ExternalID:     result.ExternalID,
-	//		ExternalStatus: result.ExternalStatus,
-	//		OperationID:    data.OperationID,
-	//		Tool:           tool,
-	//	}
-	//
-	//	if err = s.Success(ctx, data); err != nil {
-	//		err = fmt.Errorf("failed to success payout: %w", err)
-	//	}
-	//
-	//	result.Status = model.OperationStatusSuccess
-	//case model.OperationExternalStatusFailed:
-	//	data := model.FailPayoutData{
-	//		ExternalID:     result.ExternalID,
-	//		ExternalStatus: result.ExternalStatus,
-	//		FailReason:     result.FailReason,
-	//		OperationID:    data.OperationID,
-	//	}
-	//
-	//	if err = s.Fail(ctx, data); err != nil {
-	//		err = fmt.Errorf("failed to fail payout: %w", err)
-	//	}
-	//
-	//	result.Status = model.OperationStatusFailed
-	//default:
-	//	err = s.operationRepository.AcquireOneLocked(ctx, model.OperationCriteria{ID: &data.OperationID},
-	//		func(ctx context.Context, op *model.Operation) error {
-	//			op.ExternalID = result.ExternalID
-	//			op.ExternalStatus = result.ExternalStatus
-	//			return nil
-	//		},
-	//	)
-	//}
-	//if err != nil {
-	//	return result, err
-	//}
-
 	result.OperationID = op.ID
 	result.Status = op.Status
 

@@ -55,3 +55,15 @@ func (s *Server) ConfirmPayout(ctx context.Context, request *pb.ConfirmPayoutReq
 
 	return &emptypb.Empty{}, nil
 }
+
+func (s *Server) ResendConfirmationCode(ctx context.Context, request *pb.ResendConfirmationCodeRequest) (*emptypb.Empty, error) {
+	opID := request.GetOperationId()
+	userID := request.GetUserId()
+	langCode := request.GetLangCode()
+
+	if err := s.payoutService.ResendCode(ctx, opID, userID, langCode); err != nil {
+		return nil, err
+	}
+
+	return &emptypb.Empty{}, nil
+}

@@ -34,6 +34,19 @@ func (s *Service) Confirm(ctx context.Context, data model.ConfirmPayoutData) err
 			}
 
 			if data.ConfirmationCode != op.ConfirmationCode {
+				op.ConfirmationAttempts++
+
+				if op.ConfirmationAttempts >= s.wrongCodeLimit {
+					op.Status = model.OperationStatusFailed
+					op.FailReason = model.OperationFailReasonWrongCodeLimitExceeded
+
+					return perror.NewInternal().WithCode(
+						perror.CodeConfirmationAttemptsExceeded,
+					).WithDescription(
+						fmt.Sprintf("code confirm attempts has been exceeded: %v", s.wrongCodeLimit),
+					)
+				}
+
 				return perror.NewInternal().WithCode(
 					perror.CodeWrongConfirmationCode,
 				).WithDescription(

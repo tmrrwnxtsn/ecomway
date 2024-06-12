@@ -10,9 +10,12 @@ import (
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/translate"
 )
 
+// TODO: Для доступа к функционалу в запросах передаются токены доступа, идентифицирующие отправителя и его права в системе
 type paymentMethodsRequest struct {
 	// Идентификатор клиента
 	UserID int64 `query:"user_id" example:"1" validate:"required"`
+	// Идентификатор сессии клиента
+	SessionID string `query:"session_id" example:"LRXZmXPGusPCfys48LadjFew" validate:"required"`
 	// Валюта платежа в соответствии со стандартом ISO 4217
 	Currency string `query:"currency" example:"RUB" validate:"required,iso4217"`
 	// Код языка, обозначение по RFC 5646
@@ -33,6 +36,7 @@ type paymentMethodsResponse struct {
 //	@Produce	json
 //	@Security	ApiKeyAuth
 //	@Param		user_id		query		int						true	"Идентификатор клиента"
+//	@Param		session_id	query		string					true	"Идентификатор сессии клиента"
 //	@Param		currency	query		string					true	"Валюта платежа в соответствии со стандартом ISO 4217"
 //	@Param		lang_code	query		string					true	"Код языка, обозначение по RFC 5646"
 //	@Success	200			{object}	paymentMethodsResponse	"Успешный ответ"
@@ -80,6 +84,8 @@ type paymentReturnURLs struct {
 type paymentCreateRequest struct {
 	// Идентификатор клиента
 	UserID int64 `json:"user_id" example:"1" validate:"required"`
+	// Идентификатор сессии клиента
+	SessionID string `json:"session_id" example:"LRXZmXPGusPCfys48LadjFew" validate:"required"`
 	// Идентификатор сохраненного платежного средства
 	ToolID string `json:"tool_id" example:"2dc32aa0-000f-5000-8000-16d7bc6cd09f"`
 	// Сумма платежа в минорных единицах валюты (копейки, центы и т.п.)

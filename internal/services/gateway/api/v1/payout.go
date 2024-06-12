@@ -15,6 +15,8 @@ import (
 type payoutMethodsRequest struct {
 	// Идентификатор клиента
 	UserID int64 `query:"user_id" example:"1" validate:"required"`
+	// Идентификатор сессии клиента
+	SessionID string `query:"session_id" example:"LRXZmXPGusPCfys48LadjFew" validate:"required"`
 	// Валюта платежа в соответствии со стандартом ISO 4217
 	Currency string `query:"currency" example:"RUB" validate:"required,iso4217"`
 	// Код языка, обозначение по RFC 5646
@@ -35,6 +37,7 @@ type payoutMethodsResponse struct {
 //	@Produce	json
 //	@Security	ApiKeyAuth
 //	@Param		user_id		query		int						true	"Идентификатор клиента"
+//	@Param		session_id	query		string					true	"Идентификатор сессии клиента"
 //	@Param		currency	query		string					true	"Валюта выплаты в соответствии со стандартом ISO 4217"
 //	@Param		lang_code	query		string					true	"Код языка, обозначение по RFC 5646"
 //	@Success	200			{object}	payoutMethodsResponse	"Успешный ответ"
@@ -73,6 +76,8 @@ func (h *Handler) payoutMethods(c *fiber.Ctx) error {
 type payoutCreateRequest struct {
 	// Идентификатор клиента
 	UserID int64 `json:"user_id" example:"1" validate:"required"`
+	// Идентификатор сессии клиента
+	SessionID string `json:"session_id" example:"LRXZmXPGusPCfys48LadjFew" validate:"required"`
 	// Идентификатор сохраненного платежного средства
 	ToolID string `json:"tool_id" example:"2dc32aa0-000f-5000-8000-16d7bc6cd09f" validate:"required"`
 	// Сумма выплаты в минорных единицах валюты (копейки, центы и т.п.)
@@ -157,6 +162,8 @@ func (h *Handler) payoutCreate(c *fiber.Ctx) error {
 type payoutConfirmRequest struct {
 	// Идентификатор клиента
 	UserID int64 `json:"user_id" example:"1" validate:"required"`
+	// Идентификатор сессии клиента
+	SessionID string `json:"session_id" example:"LRXZmXPGusPCfys48LadjFew" validate:"required"`
 	// Код языка, обозначение по RFC 5646
 	LangCode string `json:"lang_code" example:"en" validate:"required"`
 	// Код подтверждения вывода средств
@@ -207,7 +214,6 @@ func (h *Handler) payoutConfirm(c *fiber.Ctx) error {
 		OperationID:      opID,
 	}
 
-	// TODO: обработать кейс, когда ограниченное количество попыток
 	if err = h.payoutService.Confirm(ctx, confirmData); err != nil {
 		var perr *perror.Error
 		if errors.As(err, &perr) {
@@ -219,6 +225,8 @@ func (h *Handler) payoutConfirm(c *fiber.Ctx) error {
 					return h.forbiddenOnRemovedToolErrorResponse(c, req.LangCode, perr)
 				case perror.CodeWrongConfirmationCode:
 					return h.wrongConfirmationCodeErrorResponse(c, req.LangCode, perr)
+				case perror.CodeConfirmationAttemptsExceeded:
+					return h.wrongCodeLimitExceededErrorResponse(c, req.LangCode, perr)
 				}
 			}
 		}
@@ -233,6 +241,63 @@ func (h *Handler) payoutConfirm(c *fiber.Ctx) error {
 	return c.JSON(resp)
 }
 
+type payoutResendCodeRequest struct {
+	// Идентификатор клиента
+	UserID int64 `json:"user_id" example:"1" validate:"required"`
+	// Идентификатор сессии клиента
+	SessionID string `json:"session_id" example:"LRXZmXPGusPCfys48LadjFew" validate:"required"`
+	// Код языка, обозначение по RFC 5646
+	LangCode string `json:"lang_code" example:"en" validate:"required"`
+}
+
+type payoutResendCodeResponse struct {
+	// Результат обработки запроса (всегда true)
+	Success bool `json:"success" example:"true" validate:"required"`
+}
+
+// payoutResendCode godoc
+//
+//	@Summary	Отправить код подтверждения выплаты повторно
+//	@Tags		Выплаты
+//	@Accept		json
+//	@Produce	json
+//	@Security	ApiKeyAuth
+//	@Param		id		path		int							true	"Идентификатор операции"
+//	@Param		input	body		payoutResendCodeRequest		true	"Тело запроса"
+//	@Success	200		{object}	payoutResendCodeResponse	"Успешный ответ"
+//	@Failure	default	{object}	errorResponse				"Ответ с ошибкой"
+//	@Router		/payout/{id}/resend-code [put]
 func (h *Handler) payoutResendCode(c *fiber.Ctx) error {
-	return c.SendString("Payout code resend")
+	ctx := c.Context()
+
+	var req payoutResendCodeRequest
+	if err := c.BodyParser(&req); err != nil {
+		return h.requestValidationErrorResponse(c, req.LangCode, err)
+	}
+
+	if err := h.validate.Struct(req); err != nil {
+		return h.requestValidationErrorResponse(c, req.LangCode, err)
+	}
+
+	opID, err := strconv.ParseInt(c.Params("id"), 10, 64)
+	if err != nil {
+		err = fmt.Errorf("failed to parse id as int: %w", err)
+		return h.requestValidationErrorResponse(c, req.LangCode, err)
+	}
+
+	if err = h.payoutService.ResendCode(ctx, opID, req.UserID, req.LangCode); err != nil {
+		var perr *perror.Error
+		if errors.As(err, &perr) {
+			if perr.Group == perror.GroupInternal && perr.Code == perror.CodeObjectNotFound {
+				return h.objectNotFoundErrorResponse(c, req.LangCode, perr)
+			}
+		}
+		return h.internalErrorResponse(c, req.LangCode, err)
+	}
+
+	resp := &payoutResendCodeResponse{
+		Success: true,
+	}
+
+	return c.JSON(resp)
 }

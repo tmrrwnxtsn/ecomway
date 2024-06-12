@@ -20,17 +20,6 @@ func (i *Integration) CreatePayout(ctx context.Context, payoutData model.CreateP
 
 	response, err := i.apiClient.CreatePayout(ctx, request)
 	if err != nil {
-		// TODO: создавать кастомную ошибку для проброса в engine (причина отклонения) и gateway (отображение ошибки)
-		//var errorResponse *data.ErrorResponse
-		//if errors.As(err, &errorResponse) {
-		//	pmnterror.NewExternal()
-		//	failReason := errorResponse.Error()
-		//	log.Warnf("creating invoice: %v", failReason)
-		//	return common.ErrorResult(failReason), nil
-		//} else {
-		//	err = log.ErrorfErr("creating invoice: %v", err)
-		//	return common.TechnicalErrorResult(err), nil
-		//}
 		return result, fmt.Errorf("sending external system request: %w", err)
 	}
 

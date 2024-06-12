@@ -22,10 +22,11 @@ const (
 type Code string
 
 const (
-	CodeObjectNotFound           Code = "object not found"
-	CodeUnresolvedStatusConflict Code = "unresolved status for action"
-	CodeToolHasBeenRemoved       Code = "payment tool has been removed"
-	CodeWrongConfirmationCode    Code = "wrong confirmation code"
+	CodeObjectNotFound               Code = "object not found"
+	CodeUnresolvedStatusConflict     Code = "unresolved status for action"
+	CodeToolHasBeenRemoved           Code = "payment tool has been removed"
+	CodeWrongConfirmationCode        Code = "wrong confirmation code"
+	CodeConfirmationAttemptsExceeded Code = "confirmation attempts exceeded"
 )
 
 type Error struct {

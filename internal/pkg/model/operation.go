@@ -19,6 +19,7 @@ const (
 	OperationStatusConfirmed OperationStatus = "CONFIRMED"
 	OperationStatusFailed    OperationStatus = "FAILED"
 	OperationStatusSuccess   OperationStatus = "SUCCESS"
+	OperationStatusPending   OperationStatus = "PENDING"
 )
 
 type OperationExternalStatus string
@@ -44,11 +45,12 @@ type Operation struct {
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
 
-	ToolID           string
-	Additional       map[string]any
-	FailReason       string
-	ConfirmationCode string
-	ProcessedAt      time.Time
+	ToolID               string
+	Additional           map[string]any
+	FailReason           string
+	ConfirmationCode     string
+	ProcessedAt          time.Time
+	ConfirmationAttempts int
 }
 
 type ReportOperation struct {

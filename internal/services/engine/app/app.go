@@ -16,12 +16,15 @@ import (
 	pbEngine "github.com/tmrrwnxtsn/ecomway/api/proto/engine"
 	pbIntegration "github.com/tmrrwnxtsn/ecomway/api/proto/integration"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/client/integration"
+	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/client/smtp"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/config"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/migrator"
 	oprepo "github.com/tmrrwnxtsn/ecomway/internal/services/engine/repository/operation"
 	toolrepo "github.com/tmrrwnxtsn/ecomway/internal/services/engine/repository/tool"
+	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/repository/user"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/scheduler"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/server"
+	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/service/favorites"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/service/limit"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/service/method"
 	opservice "github.com/tmrrwnxtsn/ecomway/internal/services/engine/service/operation"
@@ -75,17 +78,30 @@ func New(configPath string) *App {
 		log.Fatalf("connecting integration service: %v", err)
 	}
 
+	integrationClient := integration.NewClient(pbIntegration.NewIntegrationServiceClient(integrationConn))
+	smtpClient := smtp.NewClient(cfg.Services.SMTP.Host, cfg.Services.SMTP.Port, cfg.Services.SMTP.Username, cfg.Services.SMTP.Password)
+	if err = smtpClient.Connect(); err != nil {
+		log.Fatalf("connecting to SMTP server: %v", err)
+	}
+
 	operationRepository := oprepo.NewRepository(postgresConn)
 	toolRepository := toolrepo.NewRepository(postgresConn)
-
-	integrationClient := integration.NewClient(pbIntegration.NewIntegrationServiceClient(integrationConn))
+	userRepository := user.NewRepository(postgresConn)
 
 	methodService := method.NewService(integrationClient)
 	limitService := limit.NewService()
 	paymentService := payment.NewService(operationRepository, integrationClient, toolRepository)
 	toolService := toolservice.NewService(toolRepository)
-	payoutService := payout.NewService(operationRepository, integrationClient, toolRepository, env == "dev")
+	payoutService := payout.NewService(
+		operationRepository,
+		integrationClient,
+		toolRepository,
+		smtpClient,
+		cfg.Engine.WrongConfirmationCodeLimit,
+		env == "dev",
+	)
 	operationService := opservice.NewService(operationRepository)
+	favoritesService := favorites.NewService(userRepository)
 
 	if cfg.Engine.Scheduler.IsEnabled {
 		var tasks []scheduler.BackgroundTask
@@ -96,6 +112,13 @@ func New(configPath string) *App {
 				operationService,
 				integrationClient,
 				paymentService,
+				payoutService,
+			))
+		}
+		if cfg.Engine.Scheduler.Tasks.RequestPayouts.IsEnabled {
+			tasks = append(tasks, scheduler.NewRequestPayoutsTask(
+				cfg.Engine.Scheduler.Tasks.RequestPayouts,
+				operationService,
 				payoutService,
 			))
 		}
@@ -113,6 +136,7 @@ func New(configPath string) *App {
 		ToolService:       toolService,
 		PayoutService:     payoutService,
 		OperationService:  operationService,
+		FavoritesService:  favoritesService,
 		IntegrationClient: integrationClient,
 	})
 	pbEngine.RegisterEngineServiceServer(grpcServer, srv)
@@ -120,7 +144,7 @@ func New(configPath string) *App {
 	return &App{
 		srv:     srv,
 		storage: postgresConn,
-		closers: []io.Closer{srv, integrationConn},
+		closers: []io.Closer{srv, integrationConn, smtpClient},
 	}
 }
 

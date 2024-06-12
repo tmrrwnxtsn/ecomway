@@ -58,6 +58,14 @@ func (s *Service) EditOne(ctx context.Context, id string, userID int64, external
 		return nil, err
 	}
 
+	if tool.Status != model.ToolStatusActive {
+		return nil, perror.NewInternal().WithCode(
+			perror.CodeUnresolvedStatusConflict,
+		).WithDescription(
+			fmt.Sprintf("cannot edit tool with status %v", tool.Status),
+		)
+	}
+
 	if tool.Name == name {
 		return tool, nil
 	}

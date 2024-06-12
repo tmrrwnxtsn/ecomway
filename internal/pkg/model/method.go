@@ -7,4 +7,5 @@ type Method struct {
 	ExternalMethod string
 	Limits         map[string]Limits
 	Commission     Commission
+	IsFavorite     bool
 }

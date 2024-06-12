@@ -1,6 +1,8 @@
 engine:
   grpc_address: ":9000"
-  environment: "dev"
+  environment: "prod"
+
+  wrong_confirmation_code_limit: 3
 
   scheduler:
     is_enabled: true
@@ -25,6 +27,16 @@ engine:
         external_system_lifetime:
           yookassa: 5
 
+      request_payouts:
+        is_enabled: true
+        interval: 5
+        operation_batch_size: 100
+        max_workers: 1
+
 services:
   integration:
     grpc_address: "integration:9001"
+  smtp:
+    host: "smtp.mail.ru"
+    port: 465
+    username: "towbooat@mail.ru"

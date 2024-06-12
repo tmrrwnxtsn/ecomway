@@ -13,14 +13,14 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 
 	pbEngine "github.com/tmrrwnxtsn/ecomway/api/proto/engine"
+	"github.com/tmrrwnxtsn/ecomway/internal/pkg/service/sorting"
+	"github.com/tmrrwnxtsn/ecomway/internal/pkg/service/summary"
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/translate"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/report/api"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/report/api/v1"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/report/client/engine"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/report/config"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/report/service/operation"
-	"github.com/tmrrwnxtsn/ecomway/internal/services/report/service/sorting"
-	"github.com/tmrrwnxtsn/ecomway/internal/services/report/service/summary"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/report/service/tool"
 )
 

@@ -42,6 +42,13 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "Идентификатор сессии специалиста техподдержки",
+                        "name": "session_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
                         "description": "Код языка, обозначение по RFC 5646",
                         "name": "lang_code",
                         "in": "query",
@@ -124,6 +131,50 @@ const docTemplate = `{
                 }
             }
         },
+        "/operation/{id}/change-status": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Операции"
+                ],
+                "summary": "Изменить состояние транзакции",
+                "parameters": [
+                    {
+                        "description": "Тело запроса",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.operationChangeStatusRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "schema": {
+                            "$ref": "#/definitions/v1.operationChangeStatusResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "Ответ с ошибкой",
+                        "schema": {
+                            "$ref": "#/definitions/v1.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/operation/{id}/external-status": {
             "get": {
                 "security": [
@@ -150,6 +201,13 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "Идентификатор специалиста техподдержки",
                         "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Идентификатор сессии специалиста техподдержки",
+                        "name": "session_id",
                         "in": "query",
                         "required": true
                     },
@@ -196,6 +254,13 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "Идентификатор специалиста техподдержки",
                         "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Идентификатор сессии специалиста техподдержки",
+                        "name": "session_id",
                         "in": "query",
                         "required": true
                     },
@@ -446,6 +511,56 @@ const docTemplate = `{
                 }
             }
         },
+        "v1.operationChangeStatusRequest": {
+            "type": "object",
+            "required": [
+                "lang_code",
+                "new_external_status",
+                "new_status",
+                "session_id",
+                "user_id"
+            ],
+            "properties": {
+                "lang_code": {
+                    "description": "Код языка, обозначение по RFC 5646",
+                    "type": "string",
+                    "example": "en"
+                },
+                "new_external_status": {
+                    "description": "Новый статус операции на стороне ПС",
+                    "type": "string",
+                    "example": "FAILED"
+                },
+                "new_status": {
+                    "description": "Новый внутренний статус операции",
+                    "type": "string",
+                    "example": "FAILED"
+                },
+                "session_id": {
+                    "description": "Идентификатор сессии специалиста техподдержки",
+                    "type": "string",
+                    "example": "LRXZmXPGusPCfys48LadjFew"
+                },
+                "user_id": {
+                    "description": "Идентификатор специалиста поддержки",
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "v1.operationChangeStatusResponse": {
+            "type": "object",
+            "required": [
+                "success"
+            ],
+            "properties": {
+                "success": {
+                    "description": "Результат обработки запроса (всегда true)",
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
         "v1.operationExternalStatusResponse": {
             "type": "object",
             "required": [
@@ -630,6 +745,7 @@ const docTemplate = `{
                 "external_method",
                 "id",
                 "lang_code",
+                "session_id",
                 "user_id"
             ],
             "properties": {
@@ -652,6 +768,11 @@ const docTemplate = `{
                     "description": "Код языка, обозначение по RFC 5646",
                     "type": "string",
                     "example": "en"
+                },
+                "session_id": {
+                    "description": "Идентификатор сессии специалиста поддержки",
+                    "type": "string",
+                    "example": "LRXZmXPGusPCfys48LadjFew"
                 },
                 "user_id": {
                     "description": "Идентификатор специалиста поддержки",
@@ -686,6 +807,7 @@ const docTemplate = `{
                 "external_method",
                 "id",
                 "lang_code",
+                "session_id",
                 "user_id"
             ],
             "properties": {
@@ -708,6 +830,11 @@ const docTemplate = `{
                     "description": "Код языка, обозначение по RFC 5646",
                     "type": "string",
                     "example": "en"
+                },
+                "session_id": {
+                    "description": "Идентификатор сессии специалиста поддержки",
+                    "type": "string",
+                    "example": "LRXZmXPGusPCfys48LadjFew"
                 },
                 "user_id": {
                     "description": "Идентификатор специалиста поддержки",

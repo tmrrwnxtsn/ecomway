@@ -3,7 +3,8 @@ package model
 import "time"
 
 const (
-	OperationFailReasonTimeout = "Timeout"
+	OperationFailReasonTimeout                = "Timeout"
+	OperationFailReasonWrongCodeLimitExceeded = "Code confirm attempts has been exceeded"
 )
 
 type GetOperationStatusData struct {

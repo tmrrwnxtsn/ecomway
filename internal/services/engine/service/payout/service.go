@@ -31,18 +31,22 @@ type Service struct {
 	integrationClient   IntegrationClient
 	toolRepository      ToolRepository
 	codeManager         ConfirmationCodeManager
+	wrongCodeLimit      int
 }
 
 func NewService(
 	operationRepository OperationRepository,
 	integrationClient IntegrationClient,
 	toolRepository ToolRepository,
+	smtpClient confirmation.SMTPClient,
+	wrongCodeLimit int,
 	isTest bool,
 ) *Service {
 	return &Service{
 		operationRepository: operationRepository,
 		integrationClient:   integrationClient,
 		toolRepository:      toolRepository,
-		codeManager:         confirmation.NewCodeManager(isTest),
+		codeManager:         confirmation.NewCodeManager(smtpClient, isTest),
+		wrongCodeLimit:      wrongCodeLimit,
 	}
 }

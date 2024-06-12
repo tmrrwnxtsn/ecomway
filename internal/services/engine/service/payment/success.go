@@ -26,10 +26,6 @@ func (s *Service) Success(ctx context.Context, data model.SuccessPaymentData) er
 				return nil
 			}
 
-			if op.Status == model.OperationStatusFailed {
-				return errors.New("payment FAILED to SUCCESS not allowed")
-			}
-
 			if data.Tool != nil {
 				if op.ToolID != "" && data.Tool.ID != op.ToolID {
 					return fmt.Errorf("operation tool %q differs from payment tool %q", op.ToolID, data.Tool.ID)

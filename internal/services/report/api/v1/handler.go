@@ -114,7 +114,7 @@ func (h *Handler) Init(router fiber.Router) {
 		{
 			operations.Get("", h.operationList)
 			operations.Get("/:id/external-status", h.operationExternalStatus).Use(middleware.NewAccessLog())
-			// TODO: operations.Put("/:id/change-status", h.operationChangeStatus).Use(middleware.NewAccessLog())
+			operations.Put("/:id/change-status", h.operationChangeStatus).Use(middleware.NewAccessLog())
 		}
 	}
 

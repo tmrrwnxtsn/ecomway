@@ -21,11 +21,12 @@ type dbOperation struct {
 	CreatedAt      time.Time `db:"created_at"`
 	UpdatedAt      time.Time `db:"updated_at"`
 
-	ToolID           *string        `db:"tool_id"`
-	Additional       map[string]any `db:"additional"`
-	FailReason       *string        `db:"fail_reason"`
-	ConfirmationCode *string        `db:"confirmation_code"`
-	ProcessedAt      *time.Time     `db:"processed_at"`
+	ToolID               *string        `db:"tool_id"`
+	Additional           map[string]any `db:"additional"`
+	FailReason           *string        `db:"fail_reason"`
+	ConfirmationCode     *string        `db:"confirmation_code"`
+	ProcessedAt          *time.Time     `db:"processed_at"`
+	ConfirmationAttempts *int           `db:"confirmation_attempts"`
 }
 
 func operationToDB(op *model.Operation) dbOperation {
@@ -68,6 +69,10 @@ func operationToDB(op *model.Operation) dbOperation {
 
 	if !op.ProcessedAt.IsZero() {
 		dbOp.ProcessedAt = &op.ProcessedAt
+	}
+
+	if op.ConfirmationAttempts != 0 {
+		dbOp.ConfirmationAttempts = &op.ConfirmationAttempts
 	}
 
 	return dbOp
@@ -113,6 +118,10 @@ func operationFromDB(dbOp dbOperation) *model.Operation {
 
 	if dbOp.ProcessedAt != nil {
 		op.ProcessedAt = *dbOp.ProcessedAt
+	}
+
+	if dbOp.ConfirmationAttempts != nil {
+		op.ConfirmationAttempts = *dbOp.ConfirmationAttempts
 	}
 
 	return op

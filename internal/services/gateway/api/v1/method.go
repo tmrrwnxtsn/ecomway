@@ -66,7 +66,7 @@ func (h *Handler) method(item model.Method, tools []*model.Tool, langCode string
 		Name:           item.DisplayedName[langCode],
 		ExternalSystem: item.ExternalSystem,
 		ExternalMethod: item.ExternalMethod,
-		IsFavorite:     false,
+		IsFavorite:     item.IsFavorite,
 		Limits:         h.limits(item.Limits),
 		Commission:     h.commission(item.Commission, langCode),
 		Tools:          h.tools(tools),

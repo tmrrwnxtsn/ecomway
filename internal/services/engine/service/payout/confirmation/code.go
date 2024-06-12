@@ -15,15 +15,21 @@ const (
 	confirmationCodeRandMaxLimit = 888889
 )
 
-type CodeManager struct {
-	isTest bool
-	r      *rand.Rand
+type SMTPClient interface {
+	SendEmail(to, subject, body string) error
 }
 
-func NewCodeManager(isTest bool) *CodeManager {
+type CodeManager struct {
+	smtpClient SMTPClient
+	isTest     bool
+	r          *rand.Rand
+}
+
+func NewCodeManager(smtpClient SMTPClient, isTest bool) *CodeManager {
 	return &CodeManager{
-		isTest: isTest,
-		r:      rand.New(rand.NewSource(time.Now().UnixNano())),
+		smtpClient: smtpClient,
+		isTest:     isTest,
+		r:          rand.New(rand.NewSource(time.Now().UnixNano())),
 	}
 }
 
@@ -40,11 +46,19 @@ func (m *CodeManager) SendCode(_ context.Context, opID int64, email, code, langC
 	}
 
 	message := fmt.Sprintf("Код подтверждения для вывода средств по операции %v: %v", opID, code)
+	subject := "Код подтверждения вывода средств Ecomway"
+
 	if langCode == "en" {
-		message = fmt.Sprintf("Withdrawal confirmation code for operation %v: %v", opID, code)
+		message = fmt.Sprintf("Payout confirmation code for operation %v: %v", opID, code)
+		subject = "Ecomway payout confirmation code"
 	}
 
-	// TODO: реализовать отправку кода подтверждения на почту
+	if !m.isTest {
+		if err := m.smtpClient.SendEmail(email, subject, message); err != nil {
+			return err
+		}
+	}
+
 	slog.Info("confirmation code send",
 		"email", email,
 		"code", code,

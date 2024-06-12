@@ -13,12 +13,16 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 
 	pbEngine "github.com/tmrrwnxtsn/ecomway/api/proto/engine"
+	"github.com/tmrrwnxtsn/ecomway/internal/pkg/service/sorting"
+	"github.com/tmrrwnxtsn/ecomway/internal/pkg/service/summary"
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/translate"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/gateway/api"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/gateway/api/v1"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/gateway/client/engine"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/gateway/config"
+	"github.com/tmrrwnxtsn/ecomway/internal/services/gateway/service/favorites"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/gateway/service/method"
+	"github.com/tmrrwnxtsn/ecomway/internal/services/gateway/service/operation"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/gateway/service/payment"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/gateway/service/payout"
 	"github.com/tmrrwnxtsn/ecomway/internal/services/gateway/service/tool"
@@ -50,15 +54,23 @@ func New(configPath string) *App {
 	paymentService := payment.NewService(engineClient)
 	toolService := tool.NewService(engineClient)
 	payoutService := payout.NewService(engineClient)
+	favoritesService := favorites.NewService(engineClient)
+	operationService := operation.NewService(engineClient)
+	sortingService := sorting.NewService()
+	summaryService := summary.NewService()
 	translator := translate.NewTranslator("en", "ru")
 
 	apiHandlerV1 := v1.NewHandler(v1.HandlerOptions{
-		MethodService:  methodService,
-		PaymentService: paymentService,
-		ToolService:    toolService,
-		PayoutService:  payoutService,
-		Translator:     translator,
-		APIKey:         cfg.Gateway.APIKey,
+		MethodService:    methodService,
+		PaymentService:   paymentService,
+		ToolService:      toolService,
+		PayoutService:    payoutService,
+		FavoritesService: favoritesService,
+		OperationService: operationService,
+		SortingService:   sortingService,
+		SummaryService:   summaryService,
+		Translator:       translator,
+		APIKey:           cfg.Gateway.APIKey,
 	})
 	apiServer := api.NewServer(apiHandlerV1)
 

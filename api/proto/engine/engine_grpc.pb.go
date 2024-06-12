@@ -27,6 +27,9 @@ const (
 	EngineService_EditTool_FullMethodName                   = "/engine.EngineService/EditTool"
 	EngineService_RemoveTool_FullMethodName                 = "/engine.EngineService/RemoveTool"
 	EngineService_ConfirmPayout_FullMethodName              = "/engine.EngineService/ConfirmPayout"
+	EngineService_AddToFavorites_FullMethodName             = "/engine.EngineService/AddToFavorites"
+	EngineService_RemoveFromFavorites_FullMethodName        = "/engine.EngineService/RemoveFromFavorites"
+	EngineService_ResendConfirmationCode_FullMethodName     = "/engine.EngineService/ResendConfirmationCode"
 	EngineService_ReportOperations_FullMethodName           = "/engine.EngineService/ReportOperations"
 	EngineService_GetOperationExternalStatus_FullMethodName = "/engine.EngineService/GetOperationExternalStatus"
 	EngineService_RecoverTool_FullMethodName                = "/engine.EngineService/RecoverTool"
@@ -43,6 +46,9 @@ type EngineServiceClient interface {
 	EditTool(ctx context.Context, in *EditToolRequest, opts ...grpc.CallOption) (*EditToolResponse, error)
 	RemoveTool(ctx context.Context, in *RemoveToolRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	ConfirmPayout(ctx context.Context, in *ConfirmPayoutRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	AddToFavorites(ctx context.Context, in *FavoritesRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	RemoveFromFavorites(ctx context.Context, in *FavoritesRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	ResendConfirmationCode(ctx context.Context, in *ResendConfirmationCodeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	ReportOperations(ctx context.Context, in *ReportOperationsRequest, opts ...grpc.CallOption) (*ReportOperationsResponse, error)
 	GetOperationExternalStatus(ctx context.Context, in *GetOperationExternalStatusRequest, opts ...grpc.CallOption) (*GetOperationExternalStatusResponse, error)
 	RecoverTool(ctx context.Context, in *RecoverToolRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -119,6 +125,33 @@ func (c *engineServiceClient) ConfirmPayout(ctx context.Context, in *ConfirmPayo
 	return out, nil
 }
 
+func (c *engineServiceClient) AddToFavorites(ctx context.Context, in *FavoritesRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, EngineService_AddToFavorites_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *engineServiceClient) RemoveFromFavorites(ctx context.Context, in *FavoritesRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, EngineService_RemoveFromFavorites_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *engineServiceClient) ResendConfirmationCode(ctx context.Context, in *ResendConfirmationCodeRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, EngineService_ResendConfirmationCode_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *engineServiceClient) ReportOperations(ctx context.Context, in *ReportOperationsRequest, opts ...grpc.CallOption) (*ReportOperationsResponse, error) {
 	out := new(ReportOperationsResponse)
 	err := c.cc.Invoke(ctx, EngineService_ReportOperations_FullMethodName, in, out, opts...)
@@ -157,6 +190,9 @@ type EngineServiceServer interface {
 	EditTool(context.Context, *EditToolRequest) (*EditToolResponse, error)
 	RemoveTool(context.Context, *RemoveToolRequest) (*emptypb.Empty, error)
 	ConfirmPayout(context.Context, *ConfirmPayoutRequest) (*emptypb.Empty, error)
+	AddToFavorites(context.Context, *FavoritesRequest) (*emptypb.Empty, error)
+	RemoveFromFavorites(context.Context, *FavoritesRequest) (*emptypb.Empty, error)
+	ResendConfirmationCode(context.Context, *ResendConfirmationCodeRequest) (*emptypb.Empty, error)
 	ReportOperations(context.Context, *ReportOperationsRequest) (*ReportOperationsResponse, error)
 	GetOperationExternalStatus(context.Context, *GetOperationExternalStatusRequest) (*GetOperationExternalStatusResponse, error)
 	RecoverTool(context.Context, *RecoverToolRequest) (*emptypb.Empty, error)
@@ -187,6 +223,15 @@ func (UnimplementedEngineServiceServer) RemoveTool(context.Context, *RemoveToolR
 }
 func (UnimplementedEngineServiceServer) ConfirmPayout(context.Context, *ConfirmPayoutRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ConfirmPayout not implemented")
+}
+func (UnimplementedEngineServiceServer) AddToFavorites(context.Context, *FavoritesRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddToFavorites not implemented")
+}
+func (UnimplementedEngineServiceServer) RemoveFromFavorites(context.Context, *FavoritesRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveFromFavorites not implemented")
+}
+func (UnimplementedEngineServiceServer) ResendConfirmationCode(context.Context, *ResendConfirmationCodeRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ResendConfirmationCode not implemented")
 }
 func (UnimplementedEngineServiceServer) ReportOperations(context.Context, *ReportOperationsRequest) (*ReportOperationsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ReportOperations not implemented")
@@ -336,6 +381,60 @@ func _EngineService_ConfirmPayout_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _EngineService_AddToFavorites_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FavoritesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EngineServiceServer).AddToFavorites(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: EngineService_AddToFavorites_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EngineServiceServer).AddToFavorites(ctx, req.(*FavoritesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _EngineService_RemoveFromFavorites_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FavoritesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EngineServiceServer).RemoveFromFavorites(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: EngineService_RemoveFromFavorites_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EngineServiceServer).RemoveFromFavorites(ctx, req.(*FavoritesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _EngineService_ResendConfirmationCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResendConfirmationCodeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EngineServiceServer).ResendConfirmationCode(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: EngineService_ResendConfirmationCode_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EngineServiceServer).ResendConfirmationCode(ctx, req.(*ResendConfirmationCodeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _EngineService_ReportOperations_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ReportOperationsRequest)
 	if err := dec(in); err != nil {
@@ -424,6 +523,18 @@ var EngineService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ConfirmPayout",
 			Handler:    _EngineService_ConfirmPayout_Handler,
+		},
+		{
+			MethodName: "AddToFavorites",
+			Handler:    _EngineService_AddToFavorites_Handler,
+		},
+		{
+			MethodName: "RemoveFromFavorites",
+			Handler:    _EngineService_RemoveFromFavorites_Handler,
+		},
+		{
+			MethodName: "ResendConfirmationCode",
+			Handler:    _EngineService_ResendConfirmationCode_Handler,
 		},
 		{
 			MethodName: "ReportOperations",

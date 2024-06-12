@@ -62,15 +62,17 @@ INSERT INTO %v (operation_id,
                 additional,
                 fail_reason,
                 confirmation_code,
-                processed_at)
-VALUES ($1, $2, $3, $4, $5, $6)`,
+                processed_at,
+                confirmation_attempts)
+VALUES ($1, $2, $3, $4, $5, $6, $7)`,
 		operationMetadataTable),
 		dbOp.ID,
 		dbOp.ToolID,
 		dbOp.Additional,
 		dbOp.FailReason,
 		dbOp.ConfirmationCode,
-		dbOp.ProcessedAt)
+		dbOp.ProcessedAt,
+		dbOp.ConfirmationAttempts)
 	if err != nil {
 		return 0, err
 	}

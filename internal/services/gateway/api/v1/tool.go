@@ -55,6 +55,8 @@ type tool struct {
 type toolListRequest struct {
 	// Идентификатор клиента
 	UserID int64 `query:"user_id" example:"1" validate:"required"`
+	// Идентификатор сессии клиента
+	SessionID string `query:"session_id" example:"LRXZmXPGusPCfys48LadjFew" validate:"required"`
 	// Код языка, обозначение по RFC 5646
 	LangCode string `query:"lang_code" example:"en" validate:"required"`
 }
@@ -73,6 +75,7 @@ type toolListResponse struct {
 //	@Produce	json
 //	@Security	ApiKeyAuth
 //	@Param		user_id		query		int					true	"Идентификатор клиента"
+//	@Param		session_id	query		string				true	"Идентификатор сессии клиента"
 //	@Param		lang_code	query		string				true	"Код языка, обозначение по RFC 5646"
 //	@Success	200			{object}	toolListResponse	"Успешный ответ"
 //	@Failure	default		{object}	errorResponse		"Ответ с ошибкой"
@@ -82,6 +85,10 @@ func (h *Handler) toolList(c *fiber.Ctx) error {
 
 	var req toolListRequest
 	if err := c.QueryParser(&req); err != nil {
+		return h.requestValidationErrorResponse(c, req.LangCode, err)
+	}
+
+	if err := h.validate.Struct(req); err != nil {
 		return h.requestValidationErrorResponse(c, req.LangCode, err)
 	}
 
@@ -103,6 +110,8 @@ type toolEditRequest struct {
 	ID string `json:"id" example:"2dc32aa0-000f-5000-8000-16d7bc6cd09f" validate:"required"`
 	// Идентификатор клиента
 	UserID int64 `json:"user_id" example:"1" validate:"required"`
+	// Идентификатор сессии клиента
+	SessionID string `json:"session_id" example:"LRXZmXPGusPCfys48LadjFew" validate:"required"`
 	// Внутренний код платежного метода платежной системы, к которой относится платежное средство
 	ExternalMethod string `json:"external_method" example:"yookassa_bank_card" validate:"required"`
 	// Код языка, обозначение по RFC 5646
@@ -165,6 +174,8 @@ type toolRemoveRequest struct {
 	ID string `json:"id" example:"2dc32aa0-000f-5000-8000-16d7bc6cd09f" validate:"required"`
 	// Идентификатор клиента
 	UserID int64 `json:"user_id" example:"1" validate:"required"`
+	// Идентификатор сессии клиента
+	SessionID string `json:"session_id" example:"LRXZmXPGusPCfys48LadjFew" validate:"required"`
 	// Внутренний код платежного метода платежной системы, к которой относится платежное средство
 	ExternalMethod string `json:"external_method" example:"yookassa_bank_card" validate:"required"`
 	// Код языка, обозначение по RFC 5646
@@ -204,7 +215,6 @@ func (h *Handler) toolRemove(c *fiber.Ctx) error {
 	if err := h.toolService.RemoveTool(ctx, req.ID, req.UserID, req.ExternalMethod); err != nil {
 		var perr *perror.Error
 		if errors.As(err, &perr) {
-			// TODO: обработать кейс INSTRUMENT_IN_USE_BY_TRANSACTION
 			if perr.Group == perror.GroupInternal {
 				switch perr.Code {
 				case perror.CodeObjectNotFound:

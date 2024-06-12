@@ -12,23 +12,6 @@ import (
 	"github.com/tmrrwnxtsn/ecomway/internal/services/engine/config"
 )
 
-type OperationService interface {
-	All(ctx context.Context, criteria model.OperationCriteria) ([]*model.Operation, error)
-}
-
-type IntegrationClient interface {
-	GetOperationStatus(ctx context.Context, data model.GetOperationStatusData) (model.GetOperationStatusResult, error)
-}
-
-type PaymentService interface {
-	Success(ctx context.Context, data model.SuccessPaymentData) error
-	Fail(ctx context.Context, data model.FailPaymentData) error
-}
-
-type PayoutService interface {
-	Fail(ctx context.Context, data model.FailPayoutData) error
-}
-
 type FinalizeOperationsTask struct {
 	interval                 time.Duration
 	operationBatchSize       int64

@@ -15,6 +15,10 @@ func (s *Server) AvailableMethods(ctx context.Context, request *pb.AvailableMeth
 		return nil, err
 	}
 
+	if err = s.favoritesService.FillForMethods(ctx, opType, request.GetUserId(), methods); err != nil {
+		return nil, err
+	}
+
 	return &pb.AvailableMethodsResponse{
 		Methods: convert.MethodsToProto(methods),
 	}, nil

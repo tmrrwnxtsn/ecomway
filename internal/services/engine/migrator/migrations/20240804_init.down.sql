@@ -6,3 +6,4 @@ DROP INDEX IF EXISTS ix_operation_created_at;
 DROP TABLE IF EXISTS tool;
 DROP TABLE IF EXISTS operation;
 DROP TABLE IF EXISTS operation_metadata;
+DROP TABLE IF EXISTS "user";

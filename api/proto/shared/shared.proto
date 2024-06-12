@@ -16,6 +16,7 @@ enum OperationStatus {
   OPERATION_STATUS_SUCCESS = 1;
   OPERATION_STATUS_FAILED = 2;
   OPERATION_STATUS_CONFIRMED = 3;
+  OPERATION_STATUS_PENDING = 4;
 }
 
 enum OperationExternalStatus {
@@ -52,6 +53,7 @@ message Method {
   string external_method = 4;
   map<string, Limits> limits = 5;
   Commission commission = 6;
+  bool is_favorite = 7;
 }
 
 message Error {

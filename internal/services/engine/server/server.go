@@ -33,11 +33,18 @@ type ToolService interface {
 type PayoutService interface {
 	Create(ctx context.Context, data model.CreatePayoutData) (model.CreatePayoutResult, error)
 	Confirm(ctx context.Context, data model.ConfirmPayoutData) error
+	ResendCode(ctx context.Context, opID, userID int64, langCode string) error
 }
 
 type OperationService interface {
 	AllForReport(ctx context.Context, criteria model.OperationCriteria) ([]model.ReportOperation, error)
 	GetOne(ctx context.Context, criteria model.OperationCriteria) (*model.Operation, error)
+}
+
+type FavoritesService interface {
+	AddToFavorites(ctx context.Context, data model.FavoritesData) error
+	RemoveFromFavorites(ctx context.Context, data model.FavoritesData) error
+	FillForMethods(ctx context.Context, opType model.OperationType, userID int64, methods []model.Method) error
 }
 
 type IntegrationClient interface {
@@ -53,6 +60,7 @@ type Server struct {
 	toolService       ToolService
 	payoutService     PayoutService
 	operationService  OperationService
+	favoritesService  FavoritesService
 	integrationClient IntegrationClient
 	pb.UnimplementedEngineServiceServer
 }
@@ -66,6 +74,7 @@ type Options struct {
 	ToolService       ToolService
 	PayoutService     PayoutService
 	OperationService  OperationService
+	FavoritesService  FavoritesService
 	IntegrationClient IntegrationClient
 }
 
@@ -79,6 +88,7 @@ func NewServer(opts Options) *Server {
 	s.toolService = opts.ToolService
 	s.payoutService = opts.PayoutService
 	s.operationService = opts.OperationService
+	s.favoritesService = opts.FavoritesService
 	s.integrationClient = opts.IntegrationClient
 	return &s
 }

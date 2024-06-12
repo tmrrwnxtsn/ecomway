@@ -49,6 +49,8 @@ type operation struct {
 type operationListRequest struct {
 	// Идентификатор специалиста поддержки
 	UserID int64 `query:"user_id" example:"1" validate:"required"`
+	// Идентификатор сессии специалиста техподдержки
+	SessionID string `query:"session_id" example:"LRXZmXPGusPCfys48LadjFew" validate:"required"`
 	// Код языка, обозначение по RFC 5646
 	LangCode string `query:"lang_code" example:"en" validate:"required"`
 	// Идентификатор операции
@@ -91,6 +93,7 @@ type operationListResponse struct {
 //	@Produce	json
 //	@Security	ApiKeyAuth
 //	@Param		user_id			query		int						true	"Идентификатор специалиста техподдержки"
+//	@Param		session_id		query		string					true	"Идентификатор сессии специалиста техподдержки"
 //	@Param		lang_code		query		string					true	"Код языка, обозначение по RFC 5646"
 //	@Param		id				query		int						false	"Идентификатор операции"
 //	@Param		external_id		query		string					false	"Идентификатор операции на стороне платежной системы"
@@ -207,6 +210,8 @@ func operationListCriteriaFromRequest(req operationListRequest) (model.Operation
 type operationExternalStatusRequest struct {
 	// Идентификатор специалиста поддержки
 	UserID int64 `query:"user_id" example:"1" validate:"required"`
+	// Идентификатор сессии специалиста техподдержки
+	SessionID string `query:"session_id" example:"LRXZmXPGusPCfys48LadjFew" validate:"required"`
 	// Код языка, обозначение по RFC 5646
 	LangCode string `query:"lang_code" example:"en" validate:"required"`
 }
@@ -228,6 +233,7 @@ type operationExternalStatusResponse struct {
 //	@Security	ApiKeyAuth
 //	@Param		id			path		int								true	"Идентификатор операции"
 //	@Param		user_id		query		int								true	"Идентификатор специалиста техподдержки"
+//	@Param		session_id	query		string							true	"Идентификатор сессии специалиста техподдержки"
 //	@Param		lang_code	query		string							true	"Код языка, обозначение по RFC 5646"
 //	@Success	200			{object}	operationExternalStatusResponse	"Успешный ответ"
 //	@Failure	default		{object}	errorResponse					"Ответ с ошибкой"
@@ -281,6 +287,41 @@ func (h *Handler) operationExternalStatusMessage(externalStatus model.OperationE
 	default:
 		return h.translator.Translate(langCode, translate.KeyExternalStatusUnknown)
 	}
+}
+
+type operationChangeStatusRequest struct {
+	// Идентификатор специалиста поддержки
+	UserID int64 `json:"user_id" example:"1" validate:"required"`
+	// Идентификатор сессии специалиста техподдержки
+	SessionID string `json:"session_id" example:"LRXZmXPGusPCfys48LadjFew" validate:"required"`
+	// Код языка, обозначение по RFC 5646
+	LangCode string `json:"lang_code" example:"en" validate:"required"`
+	// Новый внутренний статус операции
+	NewStatus string `json:"new_status" example:"FAILED" validate:"required"`
+	// Новый статус операции на стороне ПС
+	NewExternalStatus string `json:"new_external_status" example:"FAILED" validate:"required"`
+}
+
+type operationChangeStatusResponse struct {
+	// Результат обработки запроса (всегда true)
+	Success bool `json:"success" example:"true" validate:"required"`
+}
+
+// operationChangeStatus godoc
+//
+//	@Summary	Изменить состояние транзакции
+//	@Tags		Операции
+//	@Accept		json
+//	@Produce	json
+//	@Security	ApiKeyAuth
+//	@Param		input	body		operationChangeStatusRequest	true	"Тело запроса"
+//	@Success	200		{object}	operationChangeStatusResponse	"Успешный ответ"
+//	@Failure	default	{object}	errorResponse					"Ответ с ошибкой"
+//	@Router		/operation/{id}/change-status [put]
+func (h *Handler) operationChangeStatus(c *fiber.Ctx) error {
+	return c.JSON(&operationChangeStatusResponse{
+		Success: true,
+	})
 }
 
 func (h *Handler) operation(item model.ReportOperation) operation {

@@ -22,12 +22,13 @@ CREATE INDEX ix_operation_created_at ON operation (created_at);
 
 CREATE TABLE IF NOT EXISTS operation_metadata
 (
-    operation_id      BIGINT NOT NULL REFERENCES operation ON DELETE CASCADE,
-    tool_id           VARCHAR(255),
-    additional        JSONB,
-    fail_reason       VARCHAR(255),
-    confirmation_code VARCHAR(255),
-    processed_at      TIMESTAMP WITH TIME ZONE
+    operation_id          BIGINT NOT NULL REFERENCES operation ON DELETE CASCADE,
+    tool_id               VARCHAR(255),
+    additional            JSONB,
+    fail_reason           VARCHAR(255),
+    confirmation_code     VARCHAR(255),
+    processed_at          TIMESTAMP WITH TIME ZONE,
+    confirmation_attempts INTEGER
 );
 
 CREATE TABLE IF NOT EXISTS tool
@@ -44,4 +45,10 @@ CREATE TABLE IF NOT EXISTS tool
     created_at      TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     updated_at      TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     PRIMARY KEY (id, user_id, external_method)
+);
+
+CREATE TABLE IF NOT EXISTS "user"
+(
+    id        BIGINT PRIMARY KEY,
+    favorites JSONB
 );

@@ -28,6 +28,8 @@ func OperationStatusToProto(opStatus model.OperationStatus) pb.OperationStatus {
 		return pb.OperationStatus_OPERATION_STATUS_FAILED
 	case model.OperationStatusConfirmed:
 		return pb.OperationStatus_OPERATION_STATUS_CONFIRMED
+	case model.OperationStatusPending:
+		return pb.OperationStatus_OPERATION_STATUS_PENDING
 	default:
 		return -1
 	}
@@ -68,6 +70,7 @@ func MethodToProto(method model.Method) *pb.Method {
 		ExternalMethod: method.ExternalMethod,
 		Limits:         LimitsToProto(method.Limits),
 		Commission:     CommissionToProto(method.Commission),
+		IsFavorite:     method.IsFavorite,
 	}
 }
 

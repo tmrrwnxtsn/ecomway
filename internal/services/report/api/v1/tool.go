@@ -63,6 +63,8 @@ type tool struct {
 type toolListRequest struct {
 	// Идентификатор специалиста поддержки
 	UserID int64 `query:"user_id" example:"1" validate:"required"`
+	// Идентификатор сессии специалиста техподдержки
+	SessionID string `query:"session_id" example:"LRXZmXPGusPCfys48LadjFew" validate:"required"`
 	// Код языка, обозначение по RFC 5646
 	LangCode string `query:"lang_code" example:"en" validate:"required"`
 	// Идентификатор клиента
@@ -83,6 +85,7 @@ type toolListResponse struct {
 //	@Produce	json
 //	@Security	ApiKeyAuth
 //	@Param		user_id		query		int					true	"Идентификатор специалиста техподдержки"
+//	@Param		session_id	query		string				true	"Идентификатор сессии специалиста техподдержки"
 //	@Param		lang_code	query		string				true	"Код языка, обозначение по RFC 5646"
 //	@Param		client_id	query		int					true	"Идентификатор клиента"
 //	@Success	200			{object}	toolListResponse	"Успешный ответ"
@@ -116,6 +119,8 @@ func (h *Handler) toolList(c *fiber.Ctx) error {
 type toolRecoverRequest struct {
 	// Идентификатор специалиста поддержки
 	UserID int64 `json:"user_id" example:"1" validate:"required"`
+	// Идентификатор сессии специалиста поддержки
+	SessionID string `json:"session_id" example:"LRXZmXPGusPCfys48LadjFew" validate:"required"`
 	// Код языка, обозначение по RFC 5646
 	LangCode string `json:"lang_code" example:"en" validate:"required"`
 	// Идентификатор платежного средства
@@ -182,6 +187,8 @@ func (h *Handler) toolRecover(c *fiber.Ctx) error {
 type toolRemoveRequest struct {
 	// Идентификатор специалиста поддержки
 	UserID int64 `json:"user_id" example:"1" validate:"required"`
+	// Идентификатор сессии специалиста поддержки
+	SessionID string `json:"session_id" example:"LRXZmXPGusPCfys48LadjFew" validate:"required"`
 	// Код языка, обозначение по RFC 5646
 	LangCode string `json:"lang_code" example:"en" validate:"required"`
 	// Идентификатор платежного средства
@@ -222,7 +229,6 @@ func (h *Handler) toolDelete(c *fiber.Ctx) error {
 		return h.requestValidationErrorResponse(c, req.LangCode, err)
 	}
 
-	// TODO: обработать кейс INSTRUMENT_IN_USE_BY_TRANSACTION
 	if err := h.toolService.RemoveTool(ctx, req.ID, req.ClientID, req.ExternalMethod); err != nil {
 		var perr *perror.Error
 		if errors.As(err, &perr) {

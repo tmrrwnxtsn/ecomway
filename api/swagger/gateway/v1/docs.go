@@ -18,6 +18,201 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/favorites/{operation_type}": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Избранное"
+                ],
+                "summary": "Добавить платежную систему в избранные способы оплаты (выплаты)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Тип транзакции",
+                        "name": "operation_type",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Тело запроса",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.favoritesRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "schema": {
+                            "$ref": "#/definitions/v1.favoritesResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "Ответ с ошибкой",
+                        "schema": {
+                            "$ref": "#/definitions/v1.errorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Избранное"
+                ],
+                "summary": "Удалить платежную систему из избранных способов оплаты (выплаты)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Тип транзакции",
+                        "name": "operation_type",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Тело запроса",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.favoritesRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "schema": {
+                            "$ref": "#/definitions/v1.favoritesResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "Ответ с ошибкой",
+                        "schema": {
+                            "$ref": "#/definitions/v1.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/operation": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Операции"
+                ],
+                "summary": "Получить список операций по заданным фильтрам",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Идентификатор клиента",
+                        "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Идентификатор сессии клиента",
+                        "name": "session_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Код языка, обозначение по RFC 5646",
+                        "name": "lang_code",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Идентификатор операции",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Тип операции",
+                        "name": "type",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Внутренние статусы операций, перечисленные через запятую",
+                        "name": "statuses",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Время создания операции в формате UNIX Timestamp, с которого возвращать результирующие операции",
+                        "name": "created_at_from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Время создания операции в формате UNIX Timestamp, до которого возвращать результирующие операции",
+                        "name": "created_at_to",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Поле для сортировки результирующего списка (по умолчанию - id)",
+                        "name": "order_field",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Тип сортировки (по умолчанию - DESC, по убыванию)",
+                        "name": "order_type",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "schema": {
+                            "$ref": "#/definitions/v1.operationListResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "Ответ с ошибкой",
+                        "schema": {
+                            "$ref": "#/definitions/v1.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/payment/create": {
             "post": {
                 "security": [
@@ -81,6 +276,13 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "Идентификатор клиента",
                         "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Идентификатор сессии клиента",
+                        "name": "session_id",
                         "in": "query",
                         "required": true
                     },
@@ -178,6 +380,13 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "Идентификатор клиента",
                         "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Идентификатор сессии клиента",
+                        "name": "session_id",
                         "in": "query",
                         "required": true
                     },
@@ -282,6 +491,13 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "Идентификатор клиента",
                         "name": "user_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Идентификатор сессии клиента",
+                        "name": "session_id",
                         "in": "query",
                         "required": true
                     },
@@ -478,6 +694,62 @@ const docTemplate = `{
                 }
             }
         },
+        "v1.favoritesRequest": {
+            "type": "object",
+            "required": [
+                "currency",
+                "external_method",
+                "external_system",
+                "lang_code",
+                "session_id",
+                "user_id"
+            ],
+            "properties": {
+                "currency": {
+                    "description": "Валюта платежного метода платежной системы, которого необходимо занести в \"Избранное\"",
+                    "type": "string",
+                    "example": "RUB"
+                },
+                "external_method": {
+                    "description": "Внутренний код платежного метода платежной системы, которого необходимо занести в \"Избранное\"",
+                    "type": "string",
+                    "example": "yookassa_bank_card"
+                },
+                "external_system": {
+                    "description": "Внутренний код платежной системы, платежный метод которой необходимо занести в \"Избранное\"",
+                    "type": "string",
+                    "example": "yookassa"
+                },
+                "lang_code": {
+                    "description": "Код языка, обозначение по RFC 5646",
+                    "type": "string",
+                    "example": "en"
+                },
+                "session_id": {
+                    "description": "Идентификатор сессии клиента",
+                    "type": "string",
+                    "example": "LRXZmXPGusPCfys48LadjFew"
+                },
+                "user_id": {
+                    "description": "Идентификатор клиента",
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "v1.favoritesResponse": {
+            "type": "object",
+            "required": [
+                "success"
+            ],
+            "properties": {
+                "success": {
+                    "description": "Результат обработки запроса (всегда true)",
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
         "v1.limits": {
             "type": "object",
             "required": [
@@ -564,6 +836,92 @@ const docTemplate = `{
                 }
             }
         },
+        "v1.operation": {
+            "type": "object",
+            "required": [
+                "amount",
+                "created_at",
+                "currency",
+                "id",
+                "status",
+                "type"
+            ],
+            "properties": {
+                "amount": {
+                    "description": "Сумма операции",
+                    "type": "number",
+                    "example": 121.01
+                },
+                "created_at": {
+                    "description": "Время создания операции в формате UNIX Timestamp",
+                    "type": "integer",
+                    "example": 1715974447
+                },
+                "currency": {
+                    "description": "Валюта операции",
+                    "type": "string",
+                    "example": "RUB"
+                },
+                "id": {
+                    "description": "Идентификатор операции",
+                    "type": "integer",
+                    "example": 1
+                },
+                "processed_at": {
+                    "description": "Время завершения операции на стороне платежной системы в формате UNIX Timestamp",
+                    "type": "integer",
+                    "example": 1715974447
+                },
+                "status": {
+                    "description": "Внутренний статус операции",
+                    "type": "string",
+                    "example": "SUCCESS"
+                },
+                "tool": {
+                    "description": "Платежное средство, используемое в операции",
+                    "type": "string",
+                    "example": "5748********4124"
+                },
+                "type": {
+                    "description": "Тип операции",
+                    "type": "string",
+                    "example": "payment"
+                }
+            }
+        },
+        "v1.operationListResponse": {
+            "type": "object",
+            "required": [
+                "operations",
+                "success",
+                "total_amount",
+                "total_count"
+            ],
+            "properties": {
+                "operations": {
+                    "description": "Массив операций, подходящих под фильтры и условия запроса",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/v1.operation"
+                    }
+                },
+                "success": {
+                    "description": "Результат обработки запроса (всегда true)",
+                    "type": "boolean",
+                    "example": true
+                },
+                "total_amount": {
+                    "description": "Сумма всех операций из результирующего массива",
+                    "type": "number",
+                    "example": 1421.1
+                },
+                "total_count": {
+                    "description": "Количество всех операций из результирующего массива",
+                    "type": "integer",
+                    "example": 15
+                }
+            }
+        },
         "v1.paymentCreateRequest": {
             "type": "object",
             "required": [
@@ -573,6 +931,7 @@ const docTemplate = `{
                 "external_system",
                 "lang_code",
                 "return_urls",
+                "session_id",
                 "user_id"
             ],
             "properties": {
@@ -620,6 +979,11 @@ const docTemplate = `{
                             "$ref": "#/definitions/v1.paymentReturnURLs"
                         }
                     ]
+                },
+                "session_id": {
+                    "description": "Идентификатор сессии клиента",
+                    "type": "string",
+                    "example": "LRXZmXPGusPCfys48LadjFew"
                 },
                 "tool_id": {
                     "description": "Идентификатор сохраненного платежного средства",
@@ -717,6 +1081,7 @@ const docTemplate = `{
             "required": [
                 "confirmation_code",
                 "lang_code",
+                "session_id",
                 "user_id"
             ],
             "properties": {
@@ -729,6 +1094,11 @@ const docTemplate = `{
                     "description": "Код языка, обозначение по RFC 5646",
                     "type": "string",
                     "example": "en"
+                },
+                "session_id": {
+                    "description": "Идентификатор сессии клиента",
+                    "type": "string",
+                    "example": "LRXZmXPGusPCfys48LadjFew"
                 },
                 "user_id": {
                     "description": "Идентификатор клиента",
@@ -747,7 +1117,7 @@ const docTemplate = `{
                 "message": {
                     "description": "Сообщение, которое необходимо показать клиенту",
                     "type": "string",
-                    "example": "Вывод средств подтвержден. Ожидайте зачисления."
+                    "example": "Вывод средств подтвержден."
                 },
                 "success": {
                     "description": "Результат обработки запроса (всегда true)",
@@ -764,6 +1134,7 @@ const docTemplate = `{
                 "external_method",
                 "external_system",
                 "lang_code",
+                "session_id",
                 "tool_id",
                 "user_id"
             ],
@@ -804,6 +1175,11 @@ const docTemplate = `{
                     "description": "Код языка, обозначение по RFC 5646",
                     "type": "string",
                     "example": "en"
+                },
+                "session_id": {
+                    "description": "Идентификатор сессии клиента",
+                    "type": "string",
+                    "example": "LRXZmXPGusPCfys48LadjFew"
                 },
                 "tool_id": {
                     "description": "Идентификатор сохраненного платежного средства",
@@ -944,6 +1320,7 @@ const docTemplate = `{
                 "id",
                 "lang_code",
                 "name",
+                "session_id",
                 "user_id"
             ],
             "properties": {
@@ -966,6 +1343,11 @@ const docTemplate = `{
                     "description": "Новое название платежного инструмента, выбранное клиентом",
                     "type": "string",
                     "example": "Карта брата"
+                },
+                "session_id": {
+                    "description": "Идентификатор сессии клиента",
+                    "type": "string",
+                    "example": "LRXZmXPGusPCfys48LadjFew"
                 },
                 "user_id": {
                     "description": "Идентификатор клиента",
@@ -1023,6 +1405,7 @@ const docTemplate = `{
                 "external_method",
                 "id",
                 "lang_code",
+                "session_id",
                 "user_id"
             ],
             "properties": {
@@ -1040,6 +1423,11 @@ const docTemplate = `{
                     "description": "Код языка, обозначение по RFC 5646",
                     "type": "string",
                     "example": "en"
+                },
+                "session_id": {
+                    "description": "Идентификатор сессии клиента",
+                    "type": "string",
+                    "example": "LRXZmXPGusPCfys48LadjFew"
                 },
                 "user_id": {
                     "description": "Идентификатор клиента",

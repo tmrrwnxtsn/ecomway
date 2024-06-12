@@ -16,6 +16,7 @@ const (
 	errorCodeObjectNotFound         = "ObjectNotFound"
 	errorCodeUnresolvedObjectStatus = "UnresolvedObjectStatus"
 	errorCodeWrongConfirmationCode  = "WrongConfirmationCode"
+	errorCodeWrongCodeLimitExceeded = "WrongCodeLimitExceeded"
 )
 
 type errorContent struct {
@@ -85,6 +86,17 @@ func (h *Handler) wrongConfirmationCodeErrorResponse(c *fiber.Ctx, langCode stri
 			Code:        errorCodeWrongConfirmationCode,
 			Description: perr.Description,
 			Message:     h.translator.Translate(langCode, translate.KeyWrongConfirmationCode),
+		},
+	})
+}
+
+func (h *Handler) wrongCodeLimitExceededErrorResponse(c *fiber.Ctx, langCode string, perr *perror.Error) error {
+	return c.Status(http.StatusBadRequest).JSON(&errorResponse{
+		Success: false,
+		Error: errorContent{
+			Code:        errorCodeWrongCodeLimitExceeded,
+			Description: perr.Description,
+			Message:     h.translator.Translate(langCode, translate.KeyWrongCodeLimitExceeded),
 		},
 	})
 }
