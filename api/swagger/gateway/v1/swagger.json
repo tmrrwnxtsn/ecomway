@@ -465,6 +465,57 @@
                 }
             }
         },
+        "/payout/{id}/resend-code": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Выплаты"
+                ],
+                "summary": "Отправить код подтверждения выплаты повторно",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Идентификатор операции",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Тело запроса",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.payoutResendCodeRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный ответ",
+                        "schema": {
+                            "$ref": "#/definitions/v1.payoutResendCodeResponse"
+                        }
+                    },
+                    "default": {
+                        "description": "Ответ с ошибкой",
+                        "schema": {
+                            "$ref": "#/definitions/v1.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/tool": {
             "get": {
                 "security": [
@@ -1219,6 +1270,44 @@
                         "$ref": "#/definitions/v1.method"
                     }
                 },
+                "success": {
+                    "description": "Результат обработки запроса (всегда true)",
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "v1.payoutResendCodeRequest": {
+            "type": "object",
+            "required": [
+                "lang_code",
+                "session_id",
+                "user_id"
+            ],
+            "properties": {
+                "lang_code": {
+                    "description": "Код языка, обозначение по RFC 5646",
+                    "type": "string",
+                    "example": "en"
+                },
+                "session_id": {
+                    "description": "Идентификатор сессии клиента",
+                    "type": "string",
+                    "example": "LRXZmXPGusPCfys48LadjFew"
+                },
+                "user_id": {
+                    "description": "Идентификатор клиента",
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "v1.payoutResendCodeResponse": {
+            "type": "object",
+            "required": [
+                "success"
+            ],
+            "properties": {
                 "success": {
                     "description": "Результат обработки запроса (всегда true)",
                     "type": "boolean",

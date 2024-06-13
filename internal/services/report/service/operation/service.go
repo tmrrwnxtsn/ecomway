@@ -9,6 +9,7 @@ import (
 type EngineClient interface {
 	ReportOperations(ctx context.Context, criteria model.OperationCriteria) ([]model.ReportOperation, error)
 	GetExternalOperationStatus(ctx context.Context, id int64) (model.OperationExternalStatus, error)
+	ChangeStatus(ctx context.Context, id int64, newStatus model.OperationStatus, newExternalStatus model.OperationExternalStatus) error
 }
 
 type Service struct {
@@ -27,4 +28,8 @@ func (s *Service) ReportOperations(ctx context.Context, criteria model.Operation
 
 func (s *Service) GetExternalOperationStatus(ctx context.Context, id int64) (model.OperationExternalStatus, error) {
 	return s.engineClient.GetExternalOperationStatus(ctx, id)
+}
+
+func (s *Service) ChangeStatus(ctx context.Context, id int64, newStatus model.OperationStatus, newExternalStatus model.OperationExternalStatus) error {
+	return s.engineClient.ChangeStatus(ctx, id, newStatus, newExternalStatus)
 }

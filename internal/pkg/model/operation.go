@@ -31,6 +31,15 @@ const (
 	OperationExternalStatusFailed  OperationExternalStatus = "FAILED"
 )
 
+type OperationChangeStatusResult string
+
+const (
+	OperationChangeStatusResultSuccessPayment = "SUCCESS_PAYMENT"
+	OperationChangeStatusResultFailPayment    = "FAIL_PAYMENT"
+	OperationChangeStatusResultSuccessPayout  = "SUCCESS_PAYOUT"
+	OperationChangeStatusResultFailPayout     = "FAIL_PAYOUT"
+)
+
 type Operation struct {
 	ID             int64
 	UserID         int64

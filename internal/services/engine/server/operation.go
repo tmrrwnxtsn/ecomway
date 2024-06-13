@@ -2,7 +2,10 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"time"
+
+	"google.golang.org/protobuf/types/known/emptypb"
 
 	pb "github.com/tmrrwnxtsn/ecomway/api/proto/engine"
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/convert"
@@ -57,6 +60,74 @@ func (s *Server) GetOperationExternalStatus(ctx context.Context, request *pb.Get
 	return &pb.GetOperationExternalStatusResponse{
 		ExternalStatus: convert.OperationExternalStatusToProto(result.ExternalStatus),
 	}, nil
+}
+
+func (s *Server) ChangeOperationStatus(ctx context.Context, request *pb.ChangeOperationStatusRequest) (*emptypb.Empty, error) {
+	id := request.GetId()
+
+	criteria := model.OperationCriteria{
+		ID: &id,
+	}
+
+	operation, err := s.operationService.GetOne(ctx, criteria)
+	if err != nil {
+		return nil, err
+	}
+
+	newStatus := convert.OperationStatusFromProto(request.GetNewStatus())
+	newExternalStatus := convert.OperationExternalStatusFromProto(request.GetNewExternalStatus())
+
+	result, err := s.operationService.ChangeStatus(ctx, id, newStatus, newExternalStatus)
+	if err != nil {
+		return nil, err
+	}
+
+	if result == "" {
+		return &emptypb.Empty{}, nil
+	}
+
+	switch result {
+	case model.OperationChangeStatusResultFailPayment:
+		err = s.paymentService.Fail(ctx, model.FailPaymentData{
+			ExternalID:     operation.ExternalID,
+			ExternalStatus: newExternalStatus,
+			FailReason:     model.OperationFailReasonManual,
+			OperationID:    operation.ID,
+		})
+	case model.OperationChangeStatusResultFailPayout:
+		err = s.payoutService.Fail(ctx, model.FailPayoutData{
+			ExternalID:     operation.ExternalID,
+			ExternalStatus: newExternalStatus,
+			FailReason:     model.OperationFailReasonManual,
+			OperationID:    operation.ID,
+		})
+	case model.OperationChangeStatusResultSuccessPayment:
+		err = s.paymentService.Success(ctx, model.SuccessPaymentData{
+			ProcessedAt:    time.Now(),
+			ExternalID:     operation.ExternalID,
+			ExternalStatus: operation.ExternalStatus,
+			OperationID:    operation.ID,
+			NewAmount:      operation.Amount,
+		})
+	case model.OperationChangeStatusResultSuccessPayout:
+		tool, err := s.toolService.GetOne(ctx, operation.ToolID, operation.UserID, operation.ExternalMethod)
+		if err != nil {
+			return nil, fmt.Errorf("get tool from db: %w", err)
+		}
+
+		err = s.payoutService.Success(ctx, model.SuccessPayoutData{
+			ProcessedAt:    time.Now(),
+			ExternalID:     operation.ExternalID,
+			ExternalStatus: newExternalStatus,
+			OperationID:    operation.ID,
+			Tool:           tool,
+		})
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	return &emptypb.Empty{}, nil
 }
 
 func criteriaFromReportOperationsRequest(request *pb.ReportOperationsRequest) model.OperationCriteria {

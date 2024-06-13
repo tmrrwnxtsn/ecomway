@@ -14,6 +14,7 @@ type Repository interface {
 	All(ctx context.Context, criteria model.OperationCriteria) ([]*model.Operation, error)
 	AllForReport(ctx context.Context, criteria model.OperationCriteria) ([]model.ReportOperation, error)
 	GetOneWithoutLock(ctx context.Context, criteria model.OperationCriteria) (*model.Operation, error)
+	AcquireOneLocked(ctx context.Context, criteria model.OperationCriteria, script model.ScriptAcquiredFor) error
 }
 
 type Service struct {
@@ -56,4 +57,60 @@ func (s *Service) GetOne(ctx context.Context, criteria model.OperationCriteria) 
 		return nil, err
 	}
 	return operation, nil
+}
+
+func (s *Service) ChangeStatus(ctx context.Context, id int64, newStatus model.OperationStatus, newExternalStatus model.OperationExternalStatus) (model.OperationChangeStatusResult, error) {
+	var result model.OperationChangeStatusResult
+	if err := s.repository.AcquireOneLocked(ctx, model.OperationCriteria{ID: &id},
+		func(ctx context.Context, op *model.Operation) error {
+			switch newStatus {
+			case model.OperationStatusNew:
+				switch newExternalStatus {
+				case model.OperationExternalStatusSuccess:
+					if op.Type == model.OperationTypePayment {
+						result = model.OperationChangeStatusResultSuccessPayment
+						return nil
+					} else {
+						return fmt.Errorf("can't process payout in %q status - %q external status", newStatus, newExternalStatus)
+					}
+				case model.OperationExternalStatusFailed:
+					if op.Type == model.OperationTypePayment {
+						result = model.OperationChangeStatusResultFailPayment
+						return nil
+					} else {
+						result = model.OperationChangeStatusResultFailPayout
+						return nil
+					}
+				}
+			case model.OperationStatusConfirmed, model.OperationStatusPending:
+				switch newExternalStatus {
+				case model.OperationExternalStatusSuccess:
+					if op.Type == model.OperationTypePayout {
+						result = model.OperationChangeStatusResultSuccessPayout
+						return nil
+					} else {
+						return fmt.Errorf("can't process payment in %q status - %q external status", newStatus, newExternalStatus)
+					}
+				case model.OperationExternalStatusFailed:
+					if op.Type == model.OperationTypePayout {
+						result = model.OperationChangeStatusResultFailPayout
+						return nil
+					} else {
+						return fmt.Errorf("can't process payment in %q status - %q external status", newStatus, newExternalStatus)
+					}
+				}
+			}
+			return nil
+		},
+	); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return "", perror.NewInternal().WithCode(
+				perror.CodeObjectNotFound,
+			).WithDescription(
+				fmt.Sprintf("payout with id %v not found", id),
+			)
+		}
+		return "", err
+	}
+	return result, nil
 }

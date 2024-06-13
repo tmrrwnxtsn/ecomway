@@ -319,6 +319,36 @@ type operationChangeStatusResponse struct {
 //	@Failure	default	{object}	errorResponse					"Ответ с ошибкой"
 //	@Router		/operation/{id}/change-status [put]
 func (h *Handler) operationChangeStatus(c *fiber.Ctx) error {
+	ctx := c.Context()
+
+	var req operationChangeStatusRequest
+	if err := c.QueryParser(&req); err != nil {
+		return h.requestValidationErrorResponse(c, req.LangCode, err)
+	}
+
+	if err := h.validate.Struct(req); err != nil {
+		return h.requestValidationErrorResponse(c, req.LangCode, err)
+	}
+
+	opID, err := strconv.ParseInt(c.Params("id"), 10, 64)
+	if err != nil {
+		err = fmt.Errorf("failed to parse id as int: %w", err)
+		return h.requestValidationErrorResponse(c, req.LangCode, err)
+	}
+
+	newStatus := model.OperationStatus(req.NewStatus)
+	newExternalStatus := model.OperationExternalStatus(req.NewExternalStatus)
+
+	if err = h.operationService.ChangeStatus(ctx, opID, newStatus, newExternalStatus); err != nil {
+		var perr *perror.Error
+		if errors.As(err, &perr) {
+			if perr.Group == perror.GroupInternal && perr.Code == perror.CodeObjectNotFound {
+				return h.objectNotFoundErrorResponse(c, req.LangCode, perr)
+			}
+		}
+		return h.internalErrorResponse(c, req.LangCode, err)
+	}
+
 	return c.JSON(&operationChangeStatusResponse{
 		Success: true,
 	})

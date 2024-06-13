@@ -9,7 +9,7 @@ import (
 
 type OperationRepository interface {
 	Create(ctx context.Context, op *model.Operation) error
-	AcquireOneLocked(ctx context.Context, criteria model.OperationCriteria, script model.ScriptAcquiredFor) (err error)
+	AcquireOneLocked(ctx context.Context, criteria model.OperationCriteria, script model.ScriptAcquiredFor) error
 }
 
 type IntegrationClient interface {

@@ -4,6 +4,7 @@ import "time"
 
 const (
 	OperationFailReasonTimeout                = "Timeout"
+	OperationFailReasonManual                 = "Manual"
 	OperationFailReasonWrongCodeLimitExceeded = "Code confirm attempts has been exceeded"
 )
 

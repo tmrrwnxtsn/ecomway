@@ -147,3 +147,7 @@ func (s *Service) RecoverOne(ctx context.Context, id string, userID int64, exter
 
 	return s.repository.Update(ctx, tool)
 }
+
+func (s *Service) GetOne(ctx context.Context, id string, userID int64, externalMethod string) (*model.Tool, error) {
+	return s.repository.GetOne(ctx, id, userID, externalMethod)
+}

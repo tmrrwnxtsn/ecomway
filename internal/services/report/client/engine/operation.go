@@ -43,6 +43,24 @@ func (c *Client) GetExternalOperationStatus(ctx context.Context, id int64) (mode
 	return externalStatus, nil
 }
 
+func (c *Client) ChangeStatus(ctx context.Context, id int64, newStatus model.OperationStatus, newExternalStatus model.OperationExternalStatus) error {
+	request := &pbEngine.ChangeOperationStatusRequest{
+		Id:                id,
+		NewStatus:         convert.OperationStatusToProto(newStatus),
+		NewExternalStatus: convert.OperationExternalStatusToProto(newExternalStatus),
+	}
+
+	_, err := c.client.ChangeOperationStatus(ctx, request)
+	if err != nil {
+		if perr := perror.FromProto(err); perr != nil {
+			return perr
+		}
+		return err
+	}
+
+	return nil
+}
+
 func reportOperationRequestFromCriteria(criteria model.OperationCriteria) *pbEngine.ReportOperationsRequest {
 	request := &pbEngine.ReportOperationsRequest{
 		Id:         criteria.ID,

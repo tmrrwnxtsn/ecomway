@@ -33,6 +33,7 @@ const (
 	EngineService_ReportOperations_FullMethodName           = "/engine.EngineService/ReportOperations"
 	EngineService_GetOperationExternalStatus_FullMethodName = "/engine.EngineService/GetOperationExternalStatus"
 	EngineService_RecoverTool_FullMethodName                = "/engine.EngineService/RecoverTool"
+	EngineService_ChangeOperationStatus_FullMethodName      = "/engine.EngineService/ChangeOperationStatus"
 )
 
 // EngineServiceClient is the client API for EngineService service.
@@ -52,6 +53,7 @@ type EngineServiceClient interface {
 	ReportOperations(ctx context.Context, in *ReportOperationsRequest, opts ...grpc.CallOption) (*ReportOperationsResponse, error)
 	GetOperationExternalStatus(ctx context.Context, in *GetOperationExternalStatusRequest, opts ...grpc.CallOption) (*GetOperationExternalStatusResponse, error)
 	RecoverTool(ctx context.Context, in *RecoverToolRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	ChangeOperationStatus(ctx context.Context, in *ChangeOperationStatusRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type engineServiceClient struct {
@@ -179,6 +181,15 @@ func (c *engineServiceClient) RecoverTool(ctx context.Context, in *RecoverToolRe
 	return out, nil
 }
 
+func (c *engineServiceClient) ChangeOperationStatus(ctx context.Context, in *ChangeOperationStatusRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, EngineService_ChangeOperationStatus_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // EngineServiceServer is the server API for EngineService service.
 // All implementations must embed UnimplementedEngineServiceServer
 // for forward compatibility
@@ -196,6 +207,7 @@ type EngineServiceServer interface {
 	ReportOperations(context.Context, *ReportOperationsRequest) (*ReportOperationsResponse, error)
 	GetOperationExternalStatus(context.Context, *GetOperationExternalStatusRequest) (*GetOperationExternalStatusResponse, error)
 	RecoverTool(context.Context, *RecoverToolRequest) (*emptypb.Empty, error)
+	ChangeOperationStatus(context.Context, *ChangeOperationStatusRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedEngineServiceServer()
 }
 
@@ -241,6 +253,9 @@ func (UnimplementedEngineServiceServer) GetOperationExternalStatus(context.Conte
 }
 func (UnimplementedEngineServiceServer) RecoverTool(context.Context, *RecoverToolRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RecoverTool not implemented")
+}
+func (UnimplementedEngineServiceServer) ChangeOperationStatus(context.Context, *ChangeOperationStatusRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ChangeOperationStatus not implemented")
 }
 func (UnimplementedEngineServiceServer) mustEmbedUnimplementedEngineServiceServer() {}
 
@@ -489,6 +504,24 @@ func _EngineService_RecoverTool_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _EngineService_ChangeOperationStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ChangeOperationStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EngineServiceServer).ChangeOperationStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: EngineService_ChangeOperationStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EngineServiceServer).ChangeOperationStatus(ctx, req.(*ChangeOperationStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // EngineService_ServiceDesc is the grpc.ServiceDesc for EngineService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -547,6 +580,10 @@ var EngineService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RecoverTool",
 			Handler:    _EngineService_RecoverTool_Handler,
+		},
+		{
+			MethodName: "ChangeOperationStatus",
+			Handler:    _EngineService_ChangeOperationStatus_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

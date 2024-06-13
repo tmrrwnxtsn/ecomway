@@ -21,6 +21,8 @@ type LimitService interface {
 
 type PaymentService interface {
 	Create(ctx context.Context, data model.CreatePaymentData) (model.CreatePaymentResult, error)
+	Success(ctx context.Context, data model.SuccessPaymentData) error
+	Fail(ctx context.Context, data model.FailPaymentData) error
 }
 
 type ToolService interface {
@@ -28,17 +30,21 @@ type ToolService interface {
 	EditOne(ctx context.Context, id string, userID int64, externalMethod, name string) (*model.Tool, error)
 	RemoveOne(ctx context.Context, id string, userID int64, externalMethod string, source model.ActionSource) error
 	RecoverOne(ctx context.Context, id string, userID int64, externalMethod string) error
+	GetOne(ctx context.Context, id string, userID int64, externalMethod string) (*model.Tool, error)
 }
 
 type PayoutService interface {
 	Create(ctx context.Context, data model.CreatePayoutData) (model.CreatePayoutResult, error)
 	Confirm(ctx context.Context, data model.ConfirmPayoutData) error
 	ResendCode(ctx context.Context, opID, userID int64, langCode string) error
+	Fail(ctx context.Context, data model.FailPayoutData) error
+	Success(ctx context.Context, data model.SuccessPayoutData) error
 }
 
 type OperationService interface {
 	AllForReport(ctx context.Context, criteria model.OperationCriteria) ([]model.ReportOperation, error)
 	GetOne(ctx context.Context, criteria model.OperationCriteria) (*model.Operation, error)
+	ChangeStatus(ctx context.Context, id int64, newStatus model.OperationStatus, newExternalStatus model.OperationExternalStatus) (model.OperationChangeStatusResult, error)
 }
 
 type FavoritesService interface {
