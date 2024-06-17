@@ -26,17 +26,17 @@ type PaymentService interface {
 }
 
 type ToolService interface {
-	All(ctx context.Context, userID int64) ([]*model.Tool, error)
-	EditOne(ctx context.Context, id string, userID int64, externalMethod, name string) (*model.Tool, error)
-	RemoveOne(ctx context.Context, id string, userID int64, externalMethod string, source model.ActionSource) error
-	RecoverOne(ctx context.Context, id string, userID int64, externalMethod string) error
-	GetOne(ctx context.Context, id string, userID int64, externalMethod string) (*model.Tool, error)
+	All(ctx context.Context, userID string) ([]*model.Tool, error)
+	EditOne(ctx context.Context, id, userID, externalMethod, name string) (*model.Tool, error)
+	RemoveOne(ctx context.Context, id, userID, externalMethod string, source model.ActionSource) error
+	RecoverOne(ctx context.Context, id, userID, externalMethod string) error
+	GetOne(ctx context.Context, id, userID, externalMethod string) (*model.Tool, error)
 }
 
 type PayoutService interface {
 	Create(ctx context.Context, data model.CreatePayoutData) (model.CreatePayoutResult, error)
 	Confirm(ctx context.Context, data model.ConfirmPayoutData) error
-	ResendCode(ctx context.Context, opID, userID int64, langCode string) error
+	ResendCode(ctx context.Context, opID int64, userID, langCode string) error
 	Fail(ctx context.Context, data model.FailPayoutData) error
 	Success(ctx context.Context, data model.SuccessPayoutData) error
 }
@@ -50,7 +50,7 @@ type OperationService interface {
 type FavoritesService interface {
 	AddToFavorites(ctx context.Context, data model.FavoritesData) error
 	RemoveFromFavorites(ctx context.Context, data model.FavoritesData) error
-	FillForMethods(ctx context.Context, opType model.OperationType, userID int64, methods []model.Method) error
+	FillForMethods(ctx context.Context, opType model.OperationType, userID string, methods []model.Method) error
 }
 
 type IntegrationClient interface {

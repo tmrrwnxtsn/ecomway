@@ -62,7 +62,7 @@ func (c *Client) ConfirmPayout(ctx context.Context, data model.ConfirmPayoutData
 	return nil
 }
 
-func (c *Client) ResendCode(ctx context.Context, opID, userID int64, langCode string) error {
+func (c *Client) ResendCode(ctx context.Context, opID int64, userID string, langCode string) error {
 	request := &pb.ResendConfirmationCodeRequest{
 		OperationId: opID,
 		UserId:      userID,

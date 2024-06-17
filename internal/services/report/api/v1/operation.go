@@ -21,7 +21,7 @@ type operation struct {
 	// Идентификатор операции
 	ID int64 `json:"id" csv:"id" example:"1" validate:"required"`
 	// Идентификатор клиента
-	ClientID int64 `json:"client_id" csv:"client_id" example:"1" validate:"required"`
+	ClientID string `json:"client_id" csv:"client_id" example:"1" validate:"required"`
 	// Тип операции
 	Type string `json:"type" csv:"type" example:"payment" validate:"required"`
 	// Валюта операции
@@ -48,7 +48,7 @@ type operation struct {
 
 type operationListRequest struct {
 	// Идентификатор специалиста поддержки
-	UserID int64 `query:"user_id" example:"1" validate:"required"`
+	UserID string `query:"user_id" example:"1" validate:"required"`
 	// Идентификатор сессии специалиста техподдержки
 	SessionID string `query:"session_id" example:"LRXZmXPGusPCfys48LadjFew" validate:"required"`
 	// Код языка, обозначение по RFC 5646
@@ -58,7 +58,7 @@ type operationListRequest struct {
 	// Идентификатор операции на стороне платежной системы
 	ExternalID string `query:"external_id" example:"ew01r01w0gfw1fw1"`
 	// Идентификатор клиента
-	ClientID int64 `query:"client_id" example:"1"`
+	ClientID string `query:"client_id" example:"1"`
 	// Тип операции
 	Type string `query:"type" example:"payment"`
 	// Внутренние статусы операций, перечисленные через запятую
@@ -92,12 +92,12 @@ type operationListResponse struct {
 //	@Tags		Операции
 //	@Produce	json
 //	@Security	ApiKeyAuth
-//	@Param		user_id			query		int						true	"Идентификатор специалиста техподдержки"
+//	@Param		user_id			query		string					true	"Идентификатор специалиста техподдержки"
 //	@Param		session_id		query		string					true	"Идентификатор сессии специалиста техподдержки"
 //	@Param		lang_code		query		string					true	"Код языка, обозначение по RFC 5646"
 //	@Param		id				query		int						false	"Идентификатор операции"
 //	@Param		external_id		query		string					false	"Идентификатор операции на стороне платежной системы"
-//	@Param		client_id		query		int						false	"Идентификатор клиента"
+//	@Param		client_id		query		string					false	"Идентификатор клиента"
 //	@Param		type			query		string					false	"Тип операции"
 //	@Param		statuses		query		string					false	"Внутренние статусы операций, перечисленные через запятую"
 //	@Param		created_at_from	query		int						false	"Время создания операции в формате UNIX Timestamp, с которого возвращать результирующие операции"
@@ -170,7 +170,7 @@ func operationListCriteriaFromRequest(req operationListRequest) (model.Operation
 	if req.ID > 0 {
 		criteria.ID = &req.ID
 	}
-	if req.ClientID > 0 {
+	if req.ClientID != "" {
 		criteria.UserID = &req.ClientID
 	}
 	if req.ExternalID != "" {

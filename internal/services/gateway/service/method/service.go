@@ -7,7 +7,7 @@ import (
 )
 
 type EngineClient interface {
-	AvailableMethods(ctx context.Context, opType model.OperationType, userID int64, currency string) ([]model.Method, error)
+	AvailableMethods(ctx context.Context, opType model.OperationType, userID string, currency string) ([]model.Method, error)
 }
 
 type Service struct {
@@ -20,6 +20,6 @@ func NewService(engineClient EngineClient) *Service {
 	}
 }
 
-func (s *Service) AvailableMethods(ctx context.Context, opType model.OperationType, userID int64, currency string) ([]model.Method, error) {
+func (s *Service) AvailableMethods(ctx context.Context, opType model.OperationType, userID string, currency string) ([]model.Method, error) {
 	return s.engineClient.AvailableMethods(ctx, opType, userID, currency)
 }

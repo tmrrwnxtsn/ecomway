@@ -32,7 +32,7 @@ type operation struct {
 
 type operationListRequest struct {
 	// Идентификатор клиента
-	UserID int64 `query:"user_id" example:"1" validate:"required"`
+	UserID string `query:"user_id" example:"1" validate:"required"`
 	// Идентификатор сессии клиента
 	SessionID string `query:"session_id" example:"LRXZmXPGusPCfys48LadjFew" validate:"required"`
 	// Код языка, обозначение по RFC 5646
@@ -70,7 +70,7 @@ type operationListResponse struct {
 //	@Tags		Операции
 //	@Produce	json
 //	@Security	ApiKeyAuth
-//	@Param		user_id			query		int						true	"Идентификатор клиента"
+//	@Param		user_id			query		string					true	"Идентификатор клиента"
 //	@Param		session_id		query		string					true	"Идентификатор сессии клиента"
 //	@Param		lang_code		query		string					true	"Код языка, обозначение по RFC 5646"
 //	@Param		id				query		int						false	"Идентификатор операции"

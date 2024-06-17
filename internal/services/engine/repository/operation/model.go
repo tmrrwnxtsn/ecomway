@@ -9,7 +9,7 @@ import (
 
 type dbOperation struct {
 	ID             int64     `db:"id"`
-	UserID         int64     `db:"user_id"`
+	UserID         string    `db:"user_id"`
 	Type           string    `db:"type"`
 	Currency       string    `db:"currency"`
 	Amount         float64   `db:"amount"`
@@ -129,7 +129,7 @@ func operationFromDB(dbOp dbOperation) *model.Operation {
 
 type dbReportOperation struct {
 	ID             int64      `db:"id"`
-	UserID         int64      `db:"user_id"`
+	UserID         string     `db:"user_id"`
 	Type           string     `db:"type"`
 	Currency       string     `db:"currency"`
 	Amount         float64    `db:"amount"`

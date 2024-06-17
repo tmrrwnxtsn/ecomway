@@ -29,7 +29,7 @@ service EngineService {
 message AvailableMethodsRequest {
   shared.OperationType operation_type = 1;
   string currency = 2;
-  int64 user_id = 3;
+  string user_id = 3;
 }
 
 message AvailableMethodsResponse {
@@ -37,7 +37,7 @@ message AvailableMethodsResponse {
 }
 
 message CreatePaymentRequest {
-  int64 user_id = 1;
+  string user_id = 1;
   optional string tool_id = 2;
   string lang_code = 3;
   string external_system = 4;
@@ -55,7 +55,7 @@ message CreatePaymentResponse {
 }
 
 message AvailableToolsRequest {
-  int64 user_id = 1;
+  string user_id = 1;
 }
 
 message AvailableToolsResponse {
@@ -63,7 +63,7 @@ message AvailableToolsResponse {
 }
 
 message CreatePayoutRequest {
-  int64 user_id = 1;
+  string user_id = 1;
   string tool_id = 2;
   string lang_code = 3;
   string external_system = 4;
@@ -80,7 +80,7 @@ message CreatePayoutResponse {
 
 message EditToolRequest {
   string id = 1;
-  int64 user_id = 2;
+  string user_id = 2;
   string external_method = 3;
   string name = 4;
 }
@@ -96,14 +96,14 @@ enum ActionSource {
 
 message RemoveToolRequest {
   string id = 1;
-  int64 user_id = 2;
+  string user_id = 2;
   string external_method = 3;
   ActionSource action_source = 4;
 }
 
 message ReportOperationsRequest {
   optional int64 id = 1;
-  optional int64 user_id = 2;
+  optional string user_id = 2;
   optional string external_id = 3;
   repeated shared.OperationType types = 4;
   repeated shared.OperationStatus statuses = 5;
@@ -113,7 +113,7 @@ message ReportOperationsRequest {
 
 message ReportOperation {
   int64 id = 1;
-  int64 user_id = 2;
+  string user_id = 2;
   shared.OperationType type = 3;
   string currency = 4;
   int64 amount = 5;
@@ -143,20 +143,20 @@ message GetOperationExternalStatusResponse {
 
 message RecoverToolRequest {
   string id = 1;
-  int64 user_id = 2;
+  string user_id = 2;
   string external_method = 3;
 }
 
 message ConfirmPayoutRequest {
   int64 operation_id = 1;
-  int64 user_id = 2;
+  string user_id = 2;
   string confirmation_code = 3;
   string lang_code = 4;
 }
 
 message FavoritesRequest {
   shared.OperationType type = 1;
-  int64 user_id = 2;
+  string user_id = 2;
   string currency = 3;
   string external_system = 4;
   string external_method = 5;
@@ -164,7 +164,7 @@ message FavoritesRequest {
 
 message ResendConfirmationCodeRequest {
   int64 operation_id = 1;
-  int64 user_id = 2;
+  string user_id = 2;
   string lang_code = 3;
 }
 

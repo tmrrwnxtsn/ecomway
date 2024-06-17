@@ -81,7 +81,7 @@ enum ToolStatus {
 
 message Tool {
   string id = 1;
-  int64 user_id = 2;
+  string user_id = 2;
   string external_method = 3;
   optional ToolType type = 4;
   optional google.protobuf.Struct details = 5;

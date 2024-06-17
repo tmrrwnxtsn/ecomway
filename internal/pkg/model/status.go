@@ -16,7 +16,7 @@ type GetOperationStatusData struct {
 	Currency       string
 	OperationType  OperationType
 	OperationID    int64
-	UserID         int64
+	UserID         string
 	Amount         int64
 }
 

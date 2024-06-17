@@ -134,7 +134,7 @@ const docTemplate = `{
                 "summary": "Получить список операций по заданным фильтрам",
                 "parameters": [
                     {
-                        "type": "integer",
+                        "type": "string",
                         "description": "Идентификатор клиента",
                         "name": "user_id",
                         "in": "query",
@@ -273,7 +273,7 @@ const docTemplate = `{
                 "summary": "Получить список способов для пополнения баланса",
                 "parameters": [
                     {
-                        "type": "integer",
+                        "type": "string",
                         "description": "Идентификатор клиента",
                         "name": "user_id",
                         "in": "query",
@@ -377,7 +377,7 @@ const docTemplate = `{
                 "summary": "Получить список способов для вывода средств",
                 "parameters": [
                     {
-                        "type": "integer",
+                        "type": "string",
                         "description": "Идентификатор клиента",
                         "name": "user_id",
                         "in": "query",
@@ -539,7 +539,7 @@ const docTemplate = `{
                 "summary": "Получить список сохраненных платежных средств клиента",
                 "parameters": [
                     {
-                        "type": "integer",
+                        "type": "string",
                         "description": "Идентификатор клиента",
                         "name": "user_id",
                         "in": "query",
@@ -783,8 +783,8 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "description": "Идентификатор клиента",
-                    "type": "integer",
-                    "example": 1
+                    "type": "string",
+                    "example": "1"
                 }
             }
         },
@@ -1043,8 +1043,8 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "description": "Идентификатор клиента",
-                    "type": "integer",
-                    "example": 1
+                    "type": "string",
+                    "example": "1"
                 }
             }
         },
@@ -1153,8 +1153,8 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "description": "Идентификатор клиента",
-                    "type": "integer",
-                    "example": 1
+                    "type": "string",
+                    "example": "1"
                 }
             }
         },
@@ -1239,8 +1239,8 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "description": "Идентификатор клиента",
-                    "type": "integer",
-                    "example": 1
+                    "type": "string",
+                    "example": "1"
                 }
             }
         },
@@ -1304,8 +1304,8 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "description": "Идентификатор клиента",
-                    "type": "integer",
-                    "example": 1
+                    "type": "string",
+                    "example": "1"
                 }
             }
         },
@@ -1440,8 +1440,8 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "description": "Идентификатор клиента",
-                    "type": "integer",
-                    "example": 1
+                    "type": "string",
+                    "example": "1"
                 }
             }
         },
@@ -1520,8 +1520,8 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "description": "Идентификатор клиента",
-                    "type": "integer",
-                    "example": 1
+                    "type": "string",
+                    "example": "1"
                 }
             }
         },

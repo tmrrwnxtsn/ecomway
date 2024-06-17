@@ -8,7 +8,7 @@ import (
 
 type dbTool struct {
 	ID             string         `db:"id"`
-	UserID         int64          `db:"user_id"`
+	UserID         string         `db:"user_id"`
 	ExternalMethod string         `db:"external_method"`
 	Type           *string        `db:"type"`
 	Details        map[string]any `db:"details"`

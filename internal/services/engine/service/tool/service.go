@@ -12,8 +12,8 @@ import (
 )
 
 type Repository interface {
-	All(ctx context.Context, userID int64) ([]*model.Tool, error)
-	GetOne(ctx context.Context, id string, userID int64, externalMethod string) (*model.Tool, error)
+	All(ctx context.Context, userID string) ([]*model.Tool, error)
+	GetOne(ctx context.Context, id string, userID string, externalMethod string) (*model.Tool, error)
 	Update(ctx context.Context, tool *model.Tool) error
 }
 
@@ -27,7 +27,7 @@ func NewService(repository Repository) *Service {
 	}
 }
 
-func (s *Service) All(ctx context.Context, userID int64) ([]*model.Tool, error) {
+func (s *Service) All(ctx context.Context, userID string) ([]*model.Tool, error) {
 	tools, err := s.repository.All(ctx, userID)
 	if err != nil {
 		return nil, err
@@ -42,7 +42,7 @@ func (s *Service) All(ctx context.Context, userID int64) ([]*model.Tool, error) 
 	return tools, nil
 }
 
-func (s *Service) EditOne(ctx context.Context, id string, userID int64, externalMethod, name string) (*model.Tool, error) {
+func (s *Service) EditOne(ctx context.Context, id string, userID string, externalMethod, name string) (*model.Tool, error) {
 	tool, err := s.repository.GetOne(ctx, id, userID, externalMethod)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -79,7 +79,7 @@ func (s *Service) EditOne(ctx context.Context, id string, userID int64, external
 	return tool, nil
 }
 
-func (s *Service) RemoveOne(ctx context.Context, id string, userID int64, externalMethod string, actionSource model.ActionSource) error {
+func (s *Service) RemoveOne(ctx context.Context, id string, userID string, externalMethod string, actionSource model.ActionSource) error {
 	tool, err := s.repository.GetOne(ctx, id, userID, externalMethod)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -115,7 +115,7 @@ func (s *Service) RemoveOne(ctx context.Context, id string, userID int64, extern
 	return s.repository.Update(ctx, tool)
 }
 
-func (s *Service) RecoverOne(ctx context.Context, id string, userID int64, externalMethod string) error {
+func (s *Service) RecoverOne(ctx context.Context, id string, userID string, externalMethod string) error {
 	tool, err := s.repository.GetOne(ctx, id, userID, externalMethod)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -148,6 +148,6 @@ func (s *Service) RecoverOne(ctx context.Context, id string, userID int64, exter
 	return s.repository.Update(ctx, tool)
 }
 
-func (s *Service) GetOne(ctx context.Context, id string, userID int64, externalMethod string) (*model.Tool, error) {
+func (s *Service) GetOne(ctx context.Context, id string, userID string, externalMethod string) (*model.Tool, error) {
 	return s.repository.GetOne(ctx, id, userID, externalMethod)
 }

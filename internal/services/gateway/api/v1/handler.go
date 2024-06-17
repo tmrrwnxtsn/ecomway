@@ -16,7 +16,7 @@ import (
 )
 
 type MethodService interface {
-	AvailableMethods(ctx context.Context, opType model.OperationType, userID int64, currency string) ([]model.Method, error)
+	AvailableMethods(ctx context.Context, opType model.OperationType, userID string, currency string) ([]model.Method, error)
 }
 
 type PaymentService interface {
@@ -24,16 +24,16 @@ type PaymentService interface {
 }
 
 type ToolService interface {
-	AvailableTools(ctx context.Context, userID int64) ([]*model.Tool, error)
-	AvailableToolsGroupedByMethod(ctx context.Context, userID int64) (map[string][]*model.Tool, error)
-	EditTool(ctx context.Context, id string, userID int64, externalMethod, name string) (*model.Tool, error)
-	RemoveTool(ctx context.Context, id string, userID int64, externalMethod string) error
+	AvailableTools(ctx context.Context, userID string) ([]*model.Tool, error)
+	AvailableToolsGroupedByMethod(ctx context.Context, userID string) (map[string][]*model.Tool, error)
+	EditTool(ctx context.Context, id string, userID string, externalMethod, name string) (*model.Tool, error)
+	RemoveTool(ctx context.Context, id string, userID string, externalMethod string) error
 }
 
 type PayoutService interface {
 	Create(ctx context.Context, data model.CreatePayoutData) (model.CreatePayoutResult, error)
 	Confirm(ctx context.Context, data model.ConfirmPayoutData) error
-	ResendCode(ctx context.Context, opID, userID int64, langCode string) error
+	ResendCode(ctx context.Context, opID int64, userID string, langCode string) error
 }
 
 type FavoritesService interface {

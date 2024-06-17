@@ -11,7 +11,7 @@ import (
 type Repository interface {
 	AddToFavorites(ctx context.Context, data model.FavoritesData) error
 	RemoveFromFavorites(ctx context.Context, data model.FavoritesData) error
-	GetFavorites(ctx context.Context, userID int64) (model.UserFavorites, error)
+	GetFavorites(ctx context.Context, userID string) (model.UserFavorites, error)
 }
 
 type Service struct {
@@ -32,7 +32,7 @@ func (s *Service) RemoveFromFavorites(ctx context.Context, data model.FavoritesD
 	return s.repository.RemoveFromFavorites(ctx, data)
 }
 
-func (s *Service) FillForMethods(ctx context.Context, opType model.OperationType, userID int64, methods []model.Method) error {
+func (s *Service) FillForMethods(ctx context.Context, opType model.OperationType, userID string, methods []model.Method) error {
 	favorites, err := s.repository.GetFavorites(ctx, userID)
 	if err != nil {
 		return err

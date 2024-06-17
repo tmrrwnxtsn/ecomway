@@ -62,13 +62,13 @@ type tool struct {
 
 type toolListRequest struct {
 	// Идентификатор специалиста поддержки
-	UserID int64 `query:"user_id" example:"1" validate:"required"`
+	UserID string `query:"user_id" example:"1" validate:"required"`
 	// Идентификатор сессии специалиста техподдержки
 	SessionID string `query:"session_id" example:"LRXZmXPGusPCfys48LadjFew" validate:"required"`
 	// Код языка, обозначение по RFC 5646
 	LangCode string `query:"lang_code" example:"en" validate:"required"`
 	// Идентификатор клиента
-	ClientID int64 `query:"client_id" example:"1" validate:"required"`
+	ClientID string `query:"client_id" example:"1" validate:"required"`
 }
 
 type toolListResponse struct {
@@ -84,10 +84,10 @@ type toolListResponse struct {
 //	@Tags		Платежные средства
 //	@Produce	json
 //	@Security	ApiKeyAuth
-//	@Param		user_id		query		int					true	"Идентификатор специалиста техподдержки"
+//	@Param		user_id		query		string				true	"Идентификатор специалиста техподдержки"
 //	@Param		session_id	query		string				true	"Идентификатор сессии специалиста техподдержки"
 //	@Param		lang_code	query		string				true	"Код языка, обозначение по RFC 5646"
-//	@Param		client_id	query		int					true	"Идентификатор клиента"
+//	@Param		client_id	query		string				true	"Идентификатор клиента"
 //	@Success	200			{object}	toolListResponse	"Успешный ответ"
 //	@Failure	default		{object}	errorResponse		"Ответ с ошибкой"
 //	@Router		/tool [get]
@@ -118,7 +118,7 @@ func (h *Handler) toolList(c *fiber.Ctx) error {
 
 type toolRecoverRequest struct {
 	// Идентификатор специалиста поддержки
-	UserID int64 `json:"user_id" example:"1" validate:"required"`
+	UserID string `json:"user_id" example:"1" validate:"required"`
 	// Идентификатор сессии специалиста поддержки
 	SessionID string `json:"session_id" example:"LRXZmXPGusPCfys48LadjFew" validate:"required"`
 	// Код языка, обозначение по RFC 5646
@@ -128,7 +128,7 @@ type toolRecoverRequest struct {
 	// Внутренний код платежного метода платежной системы, к которой относится платежное средство
 	ExternalMethod string `json:"external_method" example:"yookassa_bank_card" validate:"required"`
 	// Идентификатор клиента
-	ClientID int64 `json:"client_id" example:"1" validate:"required"`
+	ClientID string `json:"client_id" example:"1" validate:"required"`
 }
 
 type toolRecoverResponse struct {
@@ -186,7 +186,7 @@ func (h *Handler) toolRecover(c *fiber.Ctx) error {
 
 type toolRemoveRequest struct {
 	// Идентификатор специалиста поддержки
-	UserID int64 `json:"user_id" example:"1" validate:"required"`
+	UserID string `json:"user_id" example:"1" validate:"required"`
 	// Идентификатор сессии специалиста поддержки
 	SessionID string `json:"session_id" example:"LRXZmXPGusPCfys48LadjFew" validate:"required"`
 	// Код языка, обозначение по RFC 5646
@@ -196,7 +196,7 @@ type toolRemoveRequest struct {
 	// Внутренний код платежного метода платежной системы, к которой относится платежное средство
 	ExternalMethod string `json:"external_method" example:"yookassa_bank_card" validate:"required"`
 	// Идентификатор клиента
-	ClientID int64 `json:"client_id" example:"1" validate:"required"`
+	ClientID string `json:"client_id" example:"1" validate:"required"`
 }
 
 type toolRemoveResponse struct {

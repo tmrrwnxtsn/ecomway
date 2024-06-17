@@ -20,7 +20,7 @@ func newBankCardChannel(cfg config.YooKassaChannelConfig) bankCardChannel {
 	}
 }
 
-func (c bankCardChannel) PaymentTool(userID int64, externalMethod string, method data.PaymentMethod) *model.Tool {
+func (c bankCardChannel) PaymentTool(userID string, externalMethod string, method data.PaymentMethod) *model.Tool {
 	if method.Type != c.paymentMethodType || !method.Saved {
 		return nil
 	}

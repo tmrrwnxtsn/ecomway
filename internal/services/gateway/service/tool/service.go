@@ -8,9 +8,9 @@ import (
 )
 
 type EngineClient interface {
-	AvailableTools(ctx context.Context, userID int64) ([]*model.Tool, error)
-	EditTool(ctx context.Context, id string, userID int64, externalMethod, name string) (*model.Tool, error)
-	RemoveTool(ctx context.Context, id string, userID int64, externalMethod string) error
+	AvailableTools(ctx context.Context, userID string) ([]*model.Tool, error)
+	EditTool(ctx context.Context, id string, userID string, externalMethod, name string) (*model.Tool, error)
+	RemoveTool(ctx context.Context, id string, userID string, externalMethod string) error
 }
 
 type Service struct {
@@ -23,7 +23,7 @@ func NewService(engineClient EngineClient) *Service {
 	}
 }
 
-func (s *Service) AvailableTools(ctx context.Context, userID int64) ([]*model.Tool, error) {
+func (s *Service) AvailableTools(ctx context.Context, userID string) ([]*model.Tool, error) {
 	tools, err := s.engineClient.AvailableTools(ctx, userID)
 	if err != nil {
 		return nil, err
@@ -36,7 +36,7 @@ func (s *Service) AvailableTools(ctx context.Context, userID int64) ([]*model.To
 	return tools, nil
 }
 
-func (s *Service) AvailableToolsGroupedByMethod(ctx context.Context, userID int64) (map[string][]*model.Tool, error) {
+func (s *Service) AvailableToolsGroupedByMethod(ctx context.Context, userID string) (map[string][]*model.Tool, error) {
 	tools, err := s.AvailableTools(ctx, userID)
 	if err != nil {
 		return nil, err
@@ -49,10 +49,10 @@ func (s *Service) AvailableToolsGroupedByMethod(ctx context.Context, userID int6
 	return toolsGrouped, nil
 }
 
-func (s *Service) EditTool(ctx context.Context, id string, userID int64, externalMethod, name string) (*model.Tool, error) {
+func (s *Service) EditTool(ctx context.Context, id string, userID string, externalMethod, name string) (*model.Tool, error) {
 	return s.engineClient.EditTool(ctx, id, userID, externalMethod, name)
 }
 
-func (s *Service) RemoveTool(ctx context.Context, id string, userID int64, externalMethod string) error {
+func (s *Service) RemoveTool(ctx context.Context, id string, userID string, externalMethod string) error {
 	return s.engineClient.RemoveTool(ctx, id, userID, externalMethod)
 }

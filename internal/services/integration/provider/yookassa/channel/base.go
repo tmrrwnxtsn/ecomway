@@ -95,7 +95,7 @@ func (c baseChannel) CreatePayoutRequest(d model.CreatePayoutData) data.CreatePa
 	}
 }
 
-func (c baseChannel) PaymentTool(_ int64, _ string, _ data.PaymentMethod) *model.Tool {
+func (c baseChannel) PaymentTool(_ string, _ string, _ data.PaymentMethod) *model.Tool {
 	return &model.Tool{}
 }
 

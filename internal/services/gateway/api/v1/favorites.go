@@ -11,7 +11,7 @@ import (
 
 type favoritesRequest struct {
 	// Идентификатор клиента
-	UserID int64 `json:"user_id" example:"1" validate:"required"`
+	UserID string `json:"user_id" example:"1" validate:"required"`
 	// Идентификатор сессии клиента
 	SessionID string `json:"session_id" example:"LRXZmXPGusPCfys48LadjFew" validate:"required"`
 	// Внутренний код платежной системы, платежный метод которой необходимо занести в "Избранное"

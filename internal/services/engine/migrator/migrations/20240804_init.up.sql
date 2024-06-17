@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS operation
 (
     id              SERIAL PRIMARY KEY,
-    user_id         BIGINT                   NOT NULL,
+    user_id         VARCHAR(255)             NOT NULL,
     type            VARCHAR(255)             NOT NULL,
     currency        VARCHAR(255)             NOT NULL,
     amount          NUMERIC(20, 8)           NOT NULL,
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS operation_metadata
 CREATE TABLE IF NOT EXISTS tool
 (
     id              VARCHAR(255),
-    user_id         BIGINT,
+    user_id         VARCHAR(255),
     external_method VARCHAR(255),
     type            VARCHAR(255),
     details         JSONB,
@@ -49,6 +49,6 @@ CREATE TABLE IF NOT EXISTS tool
 
 CREATE TABLE IF NOT EXISTS "user"
 (
-    id        BIGINT PRIMARY KEY,
+    id        VARCHAR(255) PRIMARY KEY,
     favorites JSONB
 );

@@ -17,7 +17,7 @@ type CreatePaymentData struct {
 	Currency       string
 	LangCode       string
 	ToolID         string
-	UserID         int64
+	UserID         string
 	Amount         int64
 	OperationID    int64
 }

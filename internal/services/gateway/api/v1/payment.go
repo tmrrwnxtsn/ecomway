@@ -13,7 +13,7 @@ import (
 // TODO: Для доступа к функционалу в запросах передаются токены доступа, идентифицирующие отправителя и его права в системе
 type paymentMethodsRequest struct {
 	// Идентификатор клиента
-	UserID int64 `query:"user_id" example:"1" validate:"required"`
+	UserID string `query:"user_id" example:"1" validate:"required"`
 	// Идентификатор сессии клиента
 	SessionID string `query:"session_id" example:"LRXZmXPGusPCfys48LadjFew" validate:"required"`
 	// Валюта платежа в соответствии со стандартом ISO 4217
@@ -35,7 +35,7 @@ type paymentMethodsResponse struct {
 //	@Tags		Платежи
 //	@Produce	json
 //	@Security	ApiKeyAuth
-//	@Param		user_id		query		int						true	"Идентификатор клиента"
+//	@Param		user_id		query		string					true	"Идентификатор клиента"
 //	@Param		session_id	query		string					true	"Идентификатор сессии клиента"
 //	@Param		currency	query		string					true	"Валюта платежа в соответствии со стандартом ISO 4217"
 //	@Param		lang_code	query		string					true	"Код языка, обозначение по RFC 5646"
@@ -83,7 +83,7 @@ type paymentReturnURLs struct {
 
 type paymentCreateRequest struct {
 	// Идентификатор клиента
-	UserID int64 `json:"user_id" example:"1" validate:"required"`
+	UserID string `json:"user_id" example:"1" validate:"required"`
 	// Идентификатор сессии клиента
 	SessionID string `json:"session_id" example:"LRXZmXPGusPCfys48LadjFew" validate:"required"`
 	// Идентификатор сохраненного платежного средства

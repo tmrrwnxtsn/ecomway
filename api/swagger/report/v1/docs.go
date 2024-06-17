@@ -34,7 +34,7 @@ const docTemplate = `{
                 "summary": "Получить список операций по заданным фильтрам",
                 "parameters": [
                     {
-                        "type": "integer",
+                        "type": "string",
                         "description": "Идентификатор специалиста техподдержки",
                         "name": "user_id",
                         "in": "query",
@@ -67,7 +67,7 @@ const docTemplate = `{
                         "in": "query"
                     },
                     {
-                        "type": "integer",
+                        "type": "string",
                         "description": "Идентификатор клиента",
                         "name": "client_id",
                         "in": "query"
@@ -251,7 +251,7 @@ const docTemplate = `{
                 "summary": "Получить список платежных средств клиента",
                 "parameters": [
                     {
-                        "type": "integer",
+                        "type": "string",
                         "description": "Идентификатор специалиста техподдержки",
                         "name": "user_id",
                         "in": "query",
@@ -272,7 +272,7 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "type": "integer",
+                        "type": "string",
                         "description": "Идентификатор клиента",
                         "name": "client_id",
                         "in": "query",
@@ -451,8 +451,8 @@ const docTemplate = `{
                 },
                 "client_id": {
                     "description": "Идентификатор клиента",
-                    "type": "integer",
-                    "example": 1
+                    "type": "string",
+                    "example": "1"
                 },
                 "created_at": {
                     "description": "Время создания операции в формате UNIX Timestamp",
@@ -751,8 +751,8 @@ const docTemplate = `{
             "properties": {
                 "client_id": {
                     "description": "Идентификатор клиента",
-                    "type": "integer",
-                    "example": 1
+                    "type": "string",
+                    "example": "1"
                 },
                 "external_method": {
                     "description": "Внутренний код платежного метода платежной системы, к которой относится платежное средство",
@@ -776,8 +776,8 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "description": "Идентификатор специалиста поддержки",
-                    "type": "integer",
-                    "example": 1
+                    "type": "string",
+                    "example": "1"
                 }
             }
         },
@@ -813,8 +813,8 @@ const docTemplate = `{
             "properties": {
                 "client_id": {
                     "description": "Идентификатор клиента",
-                    "type": "integer",
-                    "example": 1
+                    "type": "string",
+                    "example": "1"
                 },
                 "external_method": {
                     "description": "Внутренний код платежного метода платежной системы, к которой относится платежное средство",
@@ -838,8 +838,8 @@ const docTemplate = `{
                 },
                 "user_id": {
                     "description": "Идентификатор специалиста поддержки",
-                    "type": "integer",
-                    "example": 1
+                    "type": "string",
+                    "example": "1"
                 }
             }
         },

@@ -9,7 +9,7 @@ import (
 type EngineClient interface {
 	CreatePayout(ctx context.Context, data model.CreatePayoutData) (model.CreatePayoutResult, error)
 	ConfirmPayout(ctx context.Context, data model.ConfirmPayoutData) error
-	ResendCode(ctx context.Context, opID, userID int64, langCode string) error
+	ResendCode(ctx context.Context, opID int64, userID string, langCode string) error
 }
 
 type Service struct {
@@ -30,6 +30,6 @@ func (s *Service) Confirm(ctx context.Context, data model.ConfirmPayoutData) err
 	return s.engineClient.ConfirmPayout(ctx, data)
 }
 
-func (s *Service) ResendCode(ctx context.Context, opID, userID int64, langCode string) error {
+func (s *Service) ResendCode(ctx context.Context, opID int64, userID string, langCode string) error {
 	return s.engineClient.ResendCode(ctx, opID, userID, langCode)
 }

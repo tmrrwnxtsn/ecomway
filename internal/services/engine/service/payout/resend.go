@@ -12,7 +12,7 @@ import (
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/model"
 )
 
-func (s *Service) ResendCode(ctx context.Context, opID, userID int64, langCode string) error {
+func (s *Service) ResendCode(ctx context.Context, opID int64, userID string, langCode string) error {
 	confirmationCode := s.codeManager.GenerateCode()
 
 	var email string

@@ -27,7 +27,7 @@
                 "summary": "Получить список операций по заданным фильтрам",
                 "parameters": [
                     {
-                        "type": "integer",
+                        "type": "string",
                         "description": "Идентификатор специалиста техподдержки",
                         "name": "user_id",
                         "in": "query",
@@ -60,7 +60,7 @@
                         "in": "query"
                     },
                     {
-                        "type": "integer",
+                        "type": "string",
                         "description": "Идентификатор клиента",
                         "name": "client_id",
                         "in": "query"
@@ -244,7 +244,7 @@
                 "summary": "Получить список платежных средств клиента",
                 "parameters": [
                     {
-                        "type": "integer",
+                        "type": "string",
                         "description": "Идентификатор специалиста техподдержки",
                         "name": "user_id",
                         "in": "query",
@@ -265,7 +265,7 @@
                         "required": true
                     },
                     {
-                        "type": "integer",
+                        "type": "string",
                         "description": "Идентификатор клиента",
                         "name": "client_id",
                         "in": "query",
@@ -444,8 +444,8 @@
                 },
                 "client_id": {
                     "description": "Идентификатор клиента",
-                    "type": "integer",
-                    "example": 1
+                    "type": "string",
+                    "example": "1"
                 },
                 "created_at": {
                     "description": "Время создания операции в формате UNIX Timestamp",
@@ -744,8 +744,8 @@
             "properties": {
                 "client_id": {
                     "description": "Идентификатор клиента",
-                    "type": "integer",
-                    "example": 1
+                    "type": "string",
+                    "example": "1"
                 },
                 "external_method": {
                     "description": "Внутренний код платежного метода платежной системы, к которой относится платежное средство",
@@ -769,8 +769,8 @@
                 },
                 "user_id": {
                     "description": "Идентификатор специалиста поддержки",
-                    "type": "integer",
-                    "example": 1
+                    "type": "string",
+                    "example": "1"
                 }
             }
         },
@@ -806,8 +806,8 @@
             "properties": {
                 "client_id": {
                     "description": "Идентификатор клиента",
-                    "type": "integer",
-                    "example": 1
+                    "type": "string",
+                    "example": "1"
                 },
                 "external_method": {
                     "description": "Внутренний код платежного метода платежной системы, к которой относится платежное средство",
@@ -831,8 +831,8 @@
                 },
                 "user_id": {
                     "description": "Идентификатор специалиста поддержки",
-                    "type": "integer",
-                    "example": 1
+                    "type": "string",
+                    "example": "1"
                 }
             }
         },

@@ -9,7 +9,7 @@ import (
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/model"
 )
 
-func (c *Client) AvailableTools(ctx context.Context, userID int64) ([]*model.Tool, error) {
+func (c *Client) AvailableTools(ctx context.Context, userID string) ([]*model.Tool, error) {
 	request := &pb.AvailableToolsRequest{
 		UserId: userID,
 	}
@@ -26,7 +26,7 @@ func (c *Client) AvailableTools(ctx context.Context, userID int64) ([]*model.Too
 	return tools, nil
 }
 
-func (c *Client) EditTool(ctx context.Context, id string, userID int64, externalMethod, name string) (*model.Tool, error) {
+func (c *Client) EditTool(ctx context.Context, id string, userID string, externalMethod, name string) (*model.Tool, error) {
 	request := &pb.EditToolRequest{
 		Id:             id,
 		UserId:         userID,
@@ -47,7 +47,7 @@ func (c *Client) EditTool(ctx context.Context, id string, userID int64, external
 	return tool, nil
 }
 
-func (c *Client) RemoveTool(ctx context.Context, id string, userID int64, externalMethod string) error {
+func (c *Client) RemoveTool(ctx context.Context, id string, userID string, externalMethod string) error {
 	request := &pb.RemoveToolRequest{
 		Id:             id,
 		UserId:         userID,

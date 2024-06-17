@@ -10,5 +10,5 @@ type FavoritesData struct {
 	Currency       string
 	ExternalSystem string
 	ExternalMethod string
-	UserID         int64
+	UserID         string
 }

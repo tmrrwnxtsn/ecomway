@@ -85,7 +85,7 @@ func (r *Repository) RemoveFromFavorites(ctx context.Context, data model.Favorit
 	return r.dbSetFavorites(ctx, data.UserID, favorites)
 }
 
-func (r *Repository) GetFavorites(ctx context.Context, userID int64) (model.UserFavorites, error) {
+func (r *Repository) GetFavorites(ctx context.Context, userID string) (model.UserFavorites, error) {
 	favorites, err := r.dbGetFavorites(ctx, userID)
 	if err != nil {
 		if pgxscan.NotFound(err) {
@@ -96,7 +96,7 @@ func (r *Repository) GetFavorites(ctx context.Context, userID int64) (model.User
 	return userFavoritesFromDB(favorites), nil
 }
 
-func (r *Repository) dbGetFavorites(ctx context.Context, userID int64) (dbUserFavorites, error) {
+func (r *Repository) dbGetFavorites(ctx context.Context, userID string) (dbUserFavorites, error) {
 	var favoritesRaw []byte
 	if err := pgxscan.Get(ctx, r.conn, &favoritesRaw,
 		`SELECT favorites FROM "user" WHERE id = $1`,
@@ -115,7 +115,7 @@ func (r *Repository) dbGetFavorites(ctx context.Context, userID int64) (dbUserFa
 	return result, nil
 }
 
-func (r *Repository) dbSetFavorites(ctx context.Context, userID int64, favorites dbUserFavorites) error {
+func (r *Repository) dbSetFavorites(ctx context.Context, userID string, favorites dbUserFavorites) error {
 	favoritesRaw, err := json.Marshal(favorites)
 	if err != nil {
 		return fmt.Errorf("marshal favorites %v: %w", favorites, err)

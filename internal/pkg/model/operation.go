@@ -42,7 +42,7 @@ const (
 
 type Operation struct {
 	ID             int64
-	UserID         int64
+	UserID         string
 	Type           OperationType
 	Currency       string
 	Amount         int64
@@ -64,7 +64,7 @@ type Operation struct {
 
 type ReportOperation struct {
 	ID             int64
-	UserID         int64
+	UserID         string
 	Type           OperationType
 	Currency       string
 	Amount         int64
@@ -84,7 +84,7 @@ type ScriptAcquiredFor func(ctx context.Context, op *Operation) error
 
 type OperationCriteria struct {
 	ID         *int64
-	UserID     *int64
+	UserID     *string
 	ExternalID *string
 
 	Types           *[]OperationType

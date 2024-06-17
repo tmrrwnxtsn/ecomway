@@ -9,7 +9,7 @@ import (
 	"github.com/tmrrwnxtsn/ecomway/internal/pkg/model"
 )
 
-func (r *Repository) All(ctx context.Context, userID int64) ([]*model.Tool, error) {
+func (r *Repository) All(ctx context.Context, userID string) ([]*model.Tool, error) {
 	dbTools, err := r.dbGetAll(ctx, userID)
 	if err != nil {
 		return nil, err
@@ -22,7 +22,7 @@ func (r *Repository) All(ctx context.Context, userID int64) ([]*model.Tool, erro
 	return tools, nil
 }
 
-func (r *Repository) GetOne(ctx context.Context, id string, userID int64, externalMethod string) (*model.Tool, error) {
+func (r *Repository) GetOne(ctx context.Context, id string, userID string, externalMethod string) (*model.Tool, error) {
 	dbT, err := r.dbGetOne(ctx, id, userID, externalMethod)
 	if err != nil {
 		return nil, err
@@ -30,7 +30,7 @@ func (r *Repository) GetOne(ctx context.Context, id string, userID int64, extern
 	return toolFromDB(dbT), nil
 }
 
-func (r *Repository) dbGetOne(ctx context.Context, id string, userID int64, externalMethod string) (dbTool, error) {
+func (r *Repository) dbGetOne(ctx context.Context, id string, userID string, externalMethod string) (dbTool, error) {
 	var dbT dbTool
 
 	err := pgxscan.Get(ctx, r.conn, &dbT, `
@@ -58,7 +58,7 @@ WHERE id = $1 AND user_id = $2 AND external_method = $3
 	return dbT, nil
 }
 
-func (r *Repository) dbGetAll(ctx context.Context, userID int64) ([]dbTool, error) {
+func (r *Repository) dbGetAll(ctx context.Context, userID string) ([]dbTool, error) {
 	var dbTools []dbTool
 	err := pgxscan.Select(ctx, r.conn, &dbTools, `
 SELECT id,

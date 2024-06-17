@@ -10,7 +10,7 @@ type CreatePayoutData struct {
 	Currency       string
 	LangCode       string
 	ToolID         string
-	UserID         int64
+	UserID         string
 	Amount         int64
 	OperationID    int64
 }
@@ -27,7 +27,7 @@ type CreatePayoutResult struct {
 type ConfirmPayoutData struct {
 	ConfirmationCode string
 	LangCode         string
-	UserID           int64
+	UserID           string
 	OperationID      int64
 }
 

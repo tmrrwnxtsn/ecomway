@@ -54,7 +54,7 @@ type tool struct {
 
 type toolListRequest struct {
 	// Идентификатор клиента
-	UserID int64 `query:"user_id" example:"1" validate:"required"`
+	UserID string `query:"user_id" example:"1" validate:"required"`
 	// Идентификатор сессии клиента
 	SessionID string `query:"session_id" example:"LRXZmXPGusPCfys48LadjFew" validate:"required"`
 	// Код языка, обозначение по RFC 5646
@@ -74,7 +74,7 @@ type toolListResponse struct {
 //	@Tags		Платежные средства
 //	@Produce	json
 //	@Security	ApiKeyAuth
-//	@Param		user_id		query		int					true	"Идентификатор клиента"
+//	@Param		user_id		query		string				true	"Идентификатор клиента"
 //	@Param		session_id	query		string				true	"Идентификатор сессии клиента"
 //	@Param		lang_code	query		string				true	"Код языка, обозначение по RFC 5646"
 //	@Success	200			{object}	toolListResponse	"Успешный ответ"
@@ -109,7 +109,7 @@ type toolEditRequest struct {
 	// Идентификатор платежного средства
 	ID string `json:"id" example:"2dc32aa0-000f-5000-8000-16d7bc6cd09f" validate:"required"`
 	// Идентификатор клиента
-	UserID int64 `json:"user_id" example:"1" validate:"required"`
+	UserID string `json:"user_id" example:"1" validate:"required"`
 	// Идентификатор сессии клиента
 	SessionID string `json:"session_id" example:"LRXZmXPGusPCfys48LadjFew" validate:"required"`
 	// Внутренний код платежного метода платежной системы, к которой относится платежное средство
@@ -173,7 +173,7 @@ type toolRemoveRequest struct {
 	// Идентификатор платежного средства
 	ID string `json:"id" example:"2dc32aa0-000f-5000-8000-16d7bc6cd09f" validate:"required"`
 	// Идентификатор клиента
-	UserID int64 `json:"user_id" example:"1" validate:"required"`
+	UserID string `json:"user_id" example:"1" validate:"required"`
 	// Идентификатор сессии клиента
 	SessionID string `json:"session_id" example:"LRXZmXPGusPCfys48LadjFew" validate:"required"`
 	// Внутренний код платежного метода платежной системы, к которой относится платежное средство
